@@ -1,0 +1,400 @@
+/******************************
+* CALENDRIER: CSS PART       
+******************************/
+
+
+hr{
+	margin-top: 0px !important;
+}
+
+.passover {
+	position:absolute;
+	background-color: white;
+	border-left: 1px dotted #887A2E;
+	border-top: 1px dotted #887A2E;
+	box-shadow: 3px 3px 3px #888888;
+	color: #887A2E;
+	cursor: default;
+	padding: 10px;
+	z-index: 500;
+}
+.glyphicon-passover-large {
+/*    min-height: 50px;*/
+	font-size: 3em;
+	width: 1em;
+	display: block;
+	top: 50%;
+	margin: -0.4em auto 0px;
+}
+
+.bandeau_gcb {
+	margin:auto;
+	margin-top:50px;
+	text-align:center;
+}
+
+/* Patch pour dhtmlx */
+.dhx_time_block, .dhx_marked_timespan {
+	margin: 0px;
+}
+.dhx_scale_holder {
+	background-image: url(../img/scheduler_bg_1hour.png) !important;
+}
+
+.dhx_cal_event{
+	height: 24px !important;
+}
+/*.dhx_cal_event_line.custom, .dhx_cal_event.custom div {*/
+/*	background-color: #fd7;*/
+/*	border-color: #da6;*/
+/*	color: #444;*/
+/*}*/
+
+/*.dhx_event_move.dhx_title.reservation*/
+
+.dhx_cal_event .dhx_title.event_provi{
+	background: #DDDDDD !important;
+}
+
+.dhx_cal_event .dhx_title.reservation{
+	border-radius:4px;
+/*	border-bottom-left-radius:4px !important;*/
+/*	border-bottom-right-radius:4px !important;*/
+	border-style: solid !important;
+	border-color: rgb(128, 128, 128) !important;
+	height:16px !important;
+	line-height: 16px !important;
+	margin-top: 3px !important;
+	margin-left: -2px !important;
+	border-width: 1px !important;
+	padding: 0px !important;
+	font-family: inherit !important;
+	font-weight: inherit !important;
+	font-size: inherit !important;
+}
+
+.dhx_cal_event .dhx_title.event_1p{
+	background: #62C400 !important;
+}
+
+.dhx_cal_event .dhx_title.event_2p{
+	background: #169700 !important;
+}
+
+.dhx_cal_event .dhx_title.event_3p{
+	background: #00691A !important;
+}
+
+.dhx_cal_event .dhx_title.event_full{
+	background: #003F13;
+	/*color: #ff9065;*/
+	/*border-color: #ff9065 !important;*/
+}
+
+.dhx_cal_event .dhx_title.event_user{
+	background: #fe6dff;
+}
+
+.dhx_cal_event .dhx_title.event_userfull{
+	background: #ad4dfe;
+}
+
+/* AGENDA */
+
+.dhx_cal_tab,
+.dhx_cal_tab.active
+ {
+	width: initial;
+	text-shadow: none;
+	padding: 0 5px;
+	webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;}
+
+/*.dhx_cal_tab_standalone {
+	padding: 0 5px;
+}
+*/
+
+.dhx_agenda_area {
+	background-image: url(../img/agenda_bg_84px.png);
+}
+.dhx_agenda_line {
+	height: 84px;
+}
+/*.dhx_event_icon .icon_details > span {*/
+.dhx_agenda_line span {
+	float: left;
+	margin-left: 10px;
+}
+
+/* SLOTS */
+
+.eventslot{
+	padding-right: 2px !important;
+	padding-left: 4px !important;
+	margin-left: -1px !important;
+}
+
+.eventslot_full{
+	padding-right: 2px !important;
+	padding-left: 4px !important;
+	margin-left: -1px !important;
+	background: #ff6075;
+/*	width: 284px !important;*/
+}
+
+.user_play_timespan {
+	
+}
+
+.user_payant{
+	text-align:left;
+	float:left;
+	font-weight:normal;
+}
+
+.user_play_section{
+	/*   display: block;*/
+	background-color: #EFD5FF;
+/*	background-color: #AA22FF;*/
+/*	opacity: 0.15;*/
+/*	filter:alpha(opacity=15);*/
+	background-image: url(../img/scheduler_bg_1hour.png) !important;
+}
+
+.dhx_footer {
+	height: 0px;
+	display: none;
+}
+
+.minute_tag,
+.hour_tag{
+	height:22px;
+	line-height:22px;
+	padding-top:2px;
+}
+.hour_tag{
+	font-weight: bolder;
+	font-size: larger;
+}
+#scheduler_here {
+	margin-top:0px;
+	margin-bottom:10px;
+	height: 100%;
+	width:650px;
+	margin-left:20px;
+	background: transparent;
+}
+#left_col {
+	margin-left:40px;
+	margin-right:40px;
+	margin-top: 60px;
+	width:200px;
+	float: left;
+}
+/*#cal_here {*/
+/*	margin-left:40px;
+margin-right:40px;
+margin-top: 59px;
+width:200px;
+float: left;
+*/
+/*}*/
+#logo_here {
+	float:left;
+	margin-top:10px;
+}	
+#resa_form_div, #details_form_div {
+	width:320px;
+	margin:auto;
+	position:absolute;
+	z-index:99999;
+	background-color:white;
+	padding:2px;
+	border-radius:5px;
+	border: 1px solid #A6C9E2;
+	color: #222222;
+}
+/*#resa_form_div form {*/
+/*padding:20px;*/
+/*}*/
+#eventStartDate, #u_eventStartDate {
+	border: 1px solid #b5b3b4;
+	border-width: 1px 0;
+	border-top: 1px solid #9bd2ee;
+	background: #0c5fa3 url(../images/old-browsers-bg/block-header-bg.png) repeat-x top;
+	-webkit-background-size: 100% 100%;
+	-moz-background-size: 100% 100%;
+	-o-background-size: 100% 100%;
+	background-size: 100% 100%;
+	background: -moz-linear-gradient(top,#6dc3e6,#0c5fa3);
+	background: -webkit-gradient(linear,left top, left bottom,from(#6dc3e6),to(#0c5fa3));
+	text-align: center;
+	height: 45px;
+	line-height: 45px;
+	margin: -2px;
+	font-weight:bold;
+	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+	color:white;
+}
+
+#eventType {
+	border: 1px solid #b5b3b4;
+	border-width: 1px 0;
+	border-top: 1px solid #9bd2ee;
+	background: #0c5fa3 url(../images/old-browsers-bg/block-header-bg.png) repeat-x top;
+	-webkit-background-size: 100% 100%;
+	-moz-background-size: 100% 100%;
+	-o-background-size: 100% 100%;
+	background-size: 100% 100%;
+	background: -moz-linear-gradient(top,#6dc3e6,#0c5fa3);
+	background: -webkit-gradient(linear,left top, left bottom,from(#6dc3e6),to(#0c5fa3));
+	text-align: center;
+	height: 30px;
+	line-height: 30px;
+	margin: -2px;
+	font-weight:bold;
+	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+	color:white;
+}
+
+.radios {
+	margin-left:20px;
+	margin-bottom:10px;
+}
+.radios input {
+	margin-left:2px;
+	margin-right:2px;
+	vertical-align:baseline;
+}
+.nbTrousSpan {
+	margin:auto;
+	margin-left:10px;
+	font-size:0.9em;
+	/*color:grey;*/
+}
+.nbTrousSpan input {
+	vertical-align:baseline;
+	margin-right:2px;
+	margin-left:2px;
+}
+.submit_div {
+	margin-top:20px;
+	margin-bottom:10px;
+	text-align:center;
+}
+.annuler {
+	float:right;
+}
+.reserver {
+	float:left;
+}
+.big {
+	font-weight:bold;
+	font-size:1.1em;
+}
+#loading_div, #u_loading_div{
+	text-align:center;
+	padding: 20px;
+}
+#loading_div p {
+	position:absolute;
+	top:50%;
+}
+.guest_checkbox, .visiteur_checkbox {
+	vertical-align:baseline;
+}
+.guest_span, .visiteur_span {
+	float: right;
+	height: 20px;
+	margin-top: -22px;
+	margin-left: 20px;
+	vertical-align: middle;
+}
+.action_span {
+	display:block;
+	margin:auto;
+	margin-top:4px;
+	margin-right:5px;
+}
+.leave_button {
+	display:block;
+	width:20px;
+	height:20px;
+	line-height:20px;
+	background:url("/assets/images/delete.png") no-repeat;
+	cursor:pointer;
+	margin-top:-4px;
+}
+.options input {
+	vertical-align:baseline;
+	margin-left:12px;
+	margin-right:1px;
+}
+.joueur_pair {
+	padding:10px;
+	padding-left: 20px;
+	background-color:#F6FCFF;
+	border-top:1px solid #E6E6E6;
+	border-bottom:1px solid #E6E6E6;
+	margin:-1px;
+}
+.joueur_impair {
+	padding: 10px;
+	padding-left: 20px;
+	border-top:1px solid #E6E6E6;
+	border-bottom:1px solid #E6E6E6;
+	margin:-1px;
+}
+.other_reservation {
+	color:grey !Important;
+	background-color:#DDDDDD !Important;
+}
+h1.reservation_title {
+	float:left;
+	margin-top:-14px;
+	margin-left:5px;
+	z-index: 100;
+	-moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+	-moz-border-radius: 0.278em;
+	-webkit-border-radius: 0.278em;
+	-webkit-background-clip: padding-box;
+	border-radius: 0.278em;
+	color: white;
+	font-size: 1.1em;
+	font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Sans", Arial, Helvetica, sans-serif;
+	border: 1px solid;
+	border-color: #50a3c8 #297cb4 #083f6f;
+	background: #0c5fa5 url(../images/old-browsers-bg/title-bg.png) repeat-x top;
+	-webkit-background-size: 100% 100%;
+	-moz-background-size: 100% 100%;
+	-o-background-size: 100% 100%;
+	background-size: 100% 100%;
+	background: -moz-linear-gradient(top, white, #72c6e4 4%, #0c5fa5);
+	background: -webkit-gradient(linear, left top, left bottom, from(white), to(#0c5fa5), color-stop(0.03, #72c6e4));
+	-moz-text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.2);
+	-webkit-text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.2);
+	text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.2);
+	padding: 6px;
+	line-height:100%;
+	width:96px;
+	height:18px;
+	position:absolute;
+	text-align:center;
+}
+input.joueur_input {
+	height:30px;
+	width:220px;
+}
+input[disabled], select[disabled], textarea[disabled], input[readonly], select[readonly], textarea[readonly] {
+	cursor: not-allowed;
+	background-color: #eeeeee;
+	color: grey !important;
+}
+/*	cesar*/
+ul.ui-autocomplete.ui-menu {
+	z-index: 1000;
+}

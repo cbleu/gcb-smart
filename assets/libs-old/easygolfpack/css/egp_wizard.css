@@ -1,0 +1,221 @@
+
+/**
+* Wizard styles
+*/
+body {
+/*	padding-top: 0px;		/* cesar: permet au menu de ne pas recouvrir la div content*/*/
+/*	padding-bottom: 40px;*/
+}
+.footer-container{
+	padding-left: 40px;
+}
+.navbar-form{
+	margin-top: 12px;
+}
+.number {
+	display: block;
+	float: left;
+	min-width: 1em;
+	padding: 7px;
+	font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Sans", Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: white;
+	text-align: center;
+	-moz-border-radius: 0.25em;
+	-webkit-border-radius: 0.25em;
+	-webkit-background-clip: padding-box;
+	border-radius: 0.25em;
+	margin-right: 0.5em;
+	background: #3399cc;
+	width:30px;
+/*		height:30px;*/
+	line-height:30px;
+	vertical-align: baseline;
+}
+
+.container_wizard {
+	width:746px;
+	margin:auto;
+	margin-top:40px;
+}
+.form-horizontal .controls {
+margin-left: 160px !important;
+}
+
+/*.wizard-steps {
+	height: 72px;
+	width:100%;
+	margin:0;
+}
+*/
+li.step {
+	line-height:72px;
+	font-size:24px;
+}
+
+/*.wizard-steps li .number {
+/*		height:16px;*/
+}
+*/
+.bigger {
+	font-size: 2.5em;
+}
+
+h1.wizard_title {
+	float:left;
+	margin-top:-110px;
+	margin-left:10px;
+	z-index: 100;
+	-moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+	-moz-border-radius: 0.278em;
+	-webkit-border-radius: 0.278em;
+	-webkit-background-clip: padding-box;
+	border-radius: 0.278em;
+	color: white;
+	font-size: 1.3em;
+	font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Sans", Arial, Helvetica, sans-serif;
+	border: 1px solid;
+	border-color: #50a3c8 #297cb4 #083f6f;
+	background: #0c5fa5 url(../images/old-browsers-bg/title-bg.png) repeat-x top;
+	-webkit-background-size: 100% 100%;
+	-moz-background-size: 100% 100%;
+	-o-background-size: 100% 100%;
+	background-size: 100% 100%;
+	background: -moz-linear-gradient(top, white, #72c6e4 4%, #0c5fa5);
+	background: -webkit-gradient(linear, left top, left bottom, from(white), to(#0c5fa5), color-stop(0.03, #72c6e4));
+	-moz-text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.2);
+	-webkit-text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.2);
+	text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.2);
+	padding: 0.278em 0.444em 0.389em;
+	line-height:100%;
+/*		width:99px;*/
+/*		height:18px;*/
+}
+
+small {
+	color: #808080;
+	font-size: 10px;
+	text-transform: uppercase;
+	font-weight: normal;
+	line-height:9px;
+}
+
+h2.bigger {
+	color: #3399cc;
+	font-size: 30px;
+	line-height: 24px;
+	margin-bottom: 28px;
+	margin-top:0px;
+	font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Sans", Arial, Helvetica, sans-serif;
+	
+}
+
+#wizard_form {
+	width:100%;
+	height:520px;
+	-moz-box-shadow: 0 0 0.8em rgba(255, 255, 255, 0.5);
+	-webkit-box-shadow: 0 0 0.8em rgba(255, 255, 255, 0.5);
+	box-shadow: 0 0 0.8em rgba(255, 255, 255, 0.5);
+	border: 1px solid #999999;
+	-moz-border-radius: 0.25em;
+	-webkit-border-radius: 0.25em;
+	-webkit-background-clip: padding-box;
+	border-radius: 0.25em;
+	background: white;
+	-moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+	box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+	position:relative;
+}
+
+/*fieldset.sectionwrap {
+	border-width: 0;
+	padding: 20px;
+}
+*/
+
+label.big {
+	font-size:18px;
+	font-weight:bold;
+}
+
+div.formpaginate {
+	
+}
+
+input.joueur_input {
+	width:250px;
+}
+
+.guest_span {
+	vertical-align: middle;
+}
+
+#datepicker {
+	margin-top:10px;
+	margin-left : -40px;
+	margin-bottom: 20px;
+	width:100px;
+	height:250px;
+}
+
+#heure {
+	float:left;
+	width:280px;
+}
+
+#nb_trous_selector {
+/*		float:left;*/
+	margin-left:10px;
+	width: 460px;
+}
+
+/****************** Switches ********************/
+.switch-replace {
+	display: inline-block;
+	width: 70px;
+	height: 30px;
+	background: url(/assets/images/switch-bg.png) no-repeat 0 -34px;
+	vertical-align: middle;
+	cursor: pointer;
+}
+.switch:checked + .switch-replace {
+	background-position: 0 0;
+}
+.switch:disabled + .switch-replace {
+	background-position: 0 -68px;
+}
+/** IE class **/
+.switch-replace-checked {
+	background-position: 0 0;
+}
+.switch-replace-disabled {
+	background-position: 0 -68px;
+}
+
+#confirmation_status {
+	margin-left: 60px;
+	height:250px;
+}
+
+#confirmation_div {
+	font-size:18px;
+}
+
+.info_supl_span {
+	float:none;
+	color:grey;
+	margin:auto;
+	font-size:14px;
+	font-style:italic;
+}
+
+.ul_confirmation {
+	margin-left:60px;
+}
+
+.ul_confirmation li {
+	margin-top:5px;
+}

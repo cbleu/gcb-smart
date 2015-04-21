@@ -1,0 +1,60 @@
+/*
+ * It is advised not to edit the smartadmin_production.css
+ * as this will override any changes you make in the 
+ * later versions of this theme. 
+ * 
+ * We advise that you use use this CSS to override 
+ * SmartAdmin styles. 
+ * 
+ * Rename the stylesheet to whatever your liking so it will stay
+ * unique to you with each update of SmartAdmin.
+ */
+
+/*
+ * INDEX
+ * 
+ * - HTML
+ * - BODY
+ * - CUSTOM STYLES
+ */
+
+
+.onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-switch:before {
+  content: "\f00c";
+  color: #57889c;
+}
+.onoffswitch-checkbox+.onoffswitch-label .onoffswitch-switch:before,
+.onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-switch:before {
+/*  content: "\f00d";*/
+    content: "\f0ec" !important;
+  color: #a90329;
+  display: block;
+  text-align: center;
+  line-height: 19px;
+  font-size: 10px;
+  text-shadow: 0 -1px 0 #fff;
+  font-weight: 700;
+  font-family: FontAwesome;
+}
+wizardmedia="screen"
+.onoffswitch-checkbox+.onoffswitch-label .onoffswitch-switch:before,
+.onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-switch:before {
+/*  content: "\f00d";*/
+  content: "\f0ec" !important;
+  color: #a90329;
+  display: block;
+  text-align: center;
+  line-height: 19px;
+  font-size: 10px;
+  text-shadow: 0 -1px 0 #fff;
+  font-weight: 700;
+  font-family: FontAwesome;
+}
+wizardmedia="screen"
+*, :after, :before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+

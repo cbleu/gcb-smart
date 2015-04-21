@@ -1,0 +1,62 @@
+
+/**
+* Wizard styles
+*/
+media="screen"
+body {
+/*	padding-top: 0px;		/* cesar: permet au menu de ne pas recouvrir la div content*/*/
+/*	padding-bottom: 40px;*/
+}
+
+#datepicker-container{
+  text-align:center;
+}
+#datepicker-center{
+  display:inline-block;
+  margin:0 auto;
+}
+
+
+/* SmartAdmin*/
+
+media="screen"
+.onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-switch:before {
+  content: "\f00c";
+  color: #57889c;
+}
+wizardmedia="screen"
+.onoffswitch-checkbox+.onoffswitch-label .onoffswitch-switch:before,
+.onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-switch:before {
+/*  content: "\f00d";*/
+    content: "\f0ec" !important;
+  color: #a90329;
+  display: block;
+  text-align: center;
+  line-height: 19px;
+  font-size: 10px;
+  text-shadow: 0 -1px 0 #fff;
+  font-weight: 700;
+  font-family: FontAwesome;
+}
+wizardmedia="screen"
+.onoffswitch-checkbox+.onoffswitch-label .onoffswitch-switch:before,
+.onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-switch:before {
+/*  content: "\f00d";*/
+  content: "\f0ec" !important;
+  color: #a90329;
+  display: block;
+  text-align: center;
+  line-height: 19px;
+  font-size: 10px;
+  text-shadow: 0 -1px 0 #fff;
+  font-weight: 700;
+  font-family: FontAwesome;
+}
+wizardmedia="screen"
+*, :after, :before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+
