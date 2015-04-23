@@ -23,6 +23,8 @@
 
 
 		<link rel="stylesheet" type="text/css" media="screen" href="<?php echo ASSETS_URL; ?>/css/responsive-bootstrap-toolkit.css">
+		<!-- <link rel="stylesheet" type="text/css" media="screen" href="<?php echo ASSETS_URL; ?>/css/bootstrap-toggle.min.css"> -->
+		<link rel="stylesheet" type="text/css" media="screen" href="<?php echo ASSETS_URL; ?>/css/bootstrap-switch.min.css">
 
 		<!-- SmartAdmin RTL Support is under construction-->
 		<!-- <link rel="stylesheet" type="text/css" media="screen" href="<?php echo ASSETS_URL; ?>/css/smartadmin-rtl.min.css"> -->

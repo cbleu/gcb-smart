@@ -16,6 +16,11 @@ body {
   margin:0 auto;
 }
 
+#progress-wizard{
+	padding:0px;
+	border: none;
+}
+
 
 /* SmartAdmin*/
 

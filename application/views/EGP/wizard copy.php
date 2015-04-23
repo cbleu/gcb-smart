@@ -8,14 +8,14 @@
 <div id="content" style="opacity:1;">
 	<div class="row">
 		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-			<h1 class="page-title txt-color-blueDark"><i class="fa fa-pencil-square-o fa-fw "></i> Réservation <span>>
+			<br>
+			<!-- <h1 class="page-title txt-color-blueDark"><i class="fa fa-pencil-square-o fa-fw "></i> Réservations <span>> Assistant </span></h1> -->
 			<!-- <h1 class="page-title txt-color-blueDark">
 				<span class="fa-stack fa-lg">
 				  <i class="fa fa-square-o fa-stack-2x"></i>
 				  <i class="fa fa-magic fa-stack-1x"></i>
 				</span>
-				Assistant <span>> -->
-				Assistant </span></h1>
+				Réservations <span>> Assistant </span></h1>-->
 		</div>
 	</div><!--end row-->
 
@@ -72,12 +72,12 @@
 											<div class="tab-pane active" id="tab1">
 												<br>
 												<h3><strong>Etape 1 </strong> - Le Jour</h3>
-												<div class="row">
+												<div class="row row-centered">
 													<!-- <div class="col-sm-3">
 													</div> -->
-													<div class="col-md-6 col-md-offset-3 col-centered">
+													<div class="col-xs-8 col-sm-6 col-md-6 col-centered">
 														<div class="form-group">
-															<div class="input-group col-centered">
+															<div class="input-group">
 																<span class="input-group-addon"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
 																<input type="text" id="date_resa" name="date_resa" readonly placeholder="Choisir une date" class="form-control input-lg serialize"/>
 																<!-- <input class="form-control input-lg" placeholder="email@address.com" type="text" name="email" id="email"> -->
@@ -87,10 +87,10 @@
 													<!-- <div class="col-sm-3">
 													</div> -->
 												</div><!--end row-->
-												<div class="row">
+												<div class="row row-centered">
 													<!-- <div class="col-sm-3">
 													</div> -->
-													<div class="col-md-6 col-md-offset-3 col-centered">
+													<div class="col-12 col-centered">
 														<!-- <div class="form-group"> -->
 															<!-- <div class="input-group"> -->
 																<!-- <span class="input-group-addon"><i class="fa fa-lg fa-fw"></i></span> -->

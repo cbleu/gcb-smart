@@ -24,7 +24,7 @@ class Controller_EGP_App extends Controller_EGP_Main
 		// $this->template->scripts = View::factory('inc/scripts');
 		// $this->template->ga = View::factory('inc/google-analytics');
 		 
-		// Helpers_Stylesheet::add('/css/egp-main.css');
+		Helpers_Stylesheet::add('/assets/css/easygolfpack/egp_main.css');
 
 	}	// before
 	
@@ -419,7 +419,7 @@ class Controller_EGP_App extends Controller_EGP_Main
 		$success = false;
 		$message = "";
 		
-		// cesar: construction du tableau des slots horaires
+		// Construction du tableau des slots horaires
 		$timeStr = "";
 		while($beginTime <= $endTime) {
 			$timeStr .= ' "'.$beginTime->format('H:i').'",';
@@ -429,6 +429,7 @@ class Controller_EGP_App extends Controller_EGP_Main
 		}
 		$timeStr = substr($timeStr, 0, -1);
 		
+		// Initialisation de la date maximum de résa pour les membres
 		$currentDateTime = new DateTime();
 		$maxDateTime = new DateTime();
 		$maxDateTime->setTimestamp(strtotime("+3 days 4 hours"));
@@ -448,6 +449,10 @@ class Controller_EGP_App extends Controller_EGP_Main
 			}
 		}
 		
+		// Set active page in menu
+		$this->pages["resa"]["sub"]["wizard"]["active"] = true;
+		$this->pageTitle = "Assistant";
+
 		$this->template->title = 'Assistant de réservation - Golf Club de Bourbon';
 		$this->template->content = View::factory( '/EGP/wizard');
 		$this->template->content->logged_in_user 		= $this->user;

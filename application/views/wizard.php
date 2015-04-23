@@ -588,7 +588,19 @@ include("inc/nav.php");
 		
 								<div class="wizard">
 									<ul class="steps">
-										<li data-target="#step1" class="active">
+												<li class="active" data-target="#step1">
+													<a href="#tab1" data-toggle="tab"> <span class="step">1</span> <span class="title">Date</span> </a>
+												</li>
+												<li data-target="#step2">
+													<a href="#tab2" data-toggle="tab"> <span class="step">2</span> <span class="title">Heure</span> </a>
+												</li>
+												<li data-target="#step3">
+													<a href="#tab3" data-toggle="tab"> <span class="step">3</span> <span class="title">Joueurs</span> </a>
+												</li>
+												<li data-target="#step4">
+													<a href="#tab4" data-toggle="tab"> <span class="step">4</span> <span class="title">Récapitulatif</span> </a>
+												</li>
+										<!-- <li data-target="#step1" class="active">
 											<span class="badge badge-info">1</span>Step 1<span class="chevron"></span>
 										</li>
 										<li data-target="#step2">
@@ -602,7 +614,7 @@ include("inc/nav.php");
 										</li>
 										<li data-target="#step5">
 											<span class="badge">5</span>Step 5<span class="chevron"></span>
-										</li>
+										</li> -->
 									</ul>
 									<div class="actions">
 										<button type="button" class="btn btn-sm btn-primary btn-prev">

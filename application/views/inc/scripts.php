@@ -31,12 +31,6 @@
 		<!-- JARVIS WIDGETS -->
 		<script src="<?php echo ASSETS_URL; ?>/js/smartwidgets/jarvis.widget.min.js"></script>
 
-		<!-- EASY PIE CHARTS -->
-		<script src="<?php echo ASSETS_URL; ?>/js/plugin/easy-pie-chart/jquery.easy-pie-chart.min.js"></script>
-
-		<!-- SPARKLINES -->
-		<script src="<?php echo ASSETS_URL; ?>/js/plugin/sparkline/jquery.sparkline.min.js"></script>
-
 		<!-- JQUERY VALIDATE -->
 		<script src="<?php echo ASSETS_URL; ?>/js/plugin/jquery-validate/jquery.validate.min.js"></script>
 
@@ -61,31 +55,11 @@
 
 		<![endif]-->
 
-		<!-- Demo purpose only -->
-		<!-- // <script src="<?php echo ASSETS_URL; ?>/js/demo.min.js"></script> -->
 
 		<!-- MAIN APP JS FILE -->
 		<script src="<?php echo ASSETS_URL; ?>/js/app.min.js"></script>		
-
-		<!-- ENHANCEMENT PLUGINS : NOT A REQUIREMENT -->
-		<!-- Voice command : plugin -->
-		<!-- // <script src="<?php echo ASSETS_URL; ?>/js/speech/voicecommand.min.js"></script> -->
-
-		<!-- SmartChat UI : plugin -->
-		<script src="<?php echo ASSETS_URL; ?>/js/smart-chat-ui/smart.chat.ui.min.js"></script>
-		<script src="<?php echo ASSETS_URL; ?>/js/smart-chat-ui/smart.chat.manager.min.js"></script>
-		
-		<!-- // <script src="<?=ASSETS_URL?>/js/easygolfpack/egp.js"></script>
-		// <script src="<?=ASSETS_URL?>/js/dhtmlxScheduler/codebase/dhtmlxscheduler.js"></script>
-		// <script src="<?=ASSETS_URL?>/js/dhtmlxScheduler/codebase/locale/locale_fr.js"></script>
-		// <script src="<?=ASSETS_URL?>/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_units.js"></script>
-		// <script src="<?=ASSETS_URL?>/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_limit.js"></script>
-		// <script src="<?=ASSETS_URL?>/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_minical.js"></script>
-		// <script src="<?=ASSETS_URL?>/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_tooltip.js"></script>
-		// <script src="<?=ASSETS_URL?>/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_recurring.js"></script>
-		// <script src="<?=ASSETS_URL?>/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_agenda_view.js"></script>
-		// <script src="<?=ASSETS_URL?>/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_grid_view.js"></script> -->
 		
 		
 		<script src="<?php echo ASSETS_URL; ?>/js/responsive-bootstrap-toolkit/bootstrap-toolkit.min.js"></script>
-		
+		<!-- // <script src="<?php echo ASSETS_URL; ?>/js/bootstrap-toggle-master/bootstrap-toggle.min.js"></script> -->
+		<script src="<?php echo ASSETS_URL; ?>/js/bootstrap-switch/bootstrap-switch.min.js"></script>
