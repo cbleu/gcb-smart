@@ -16,13 +16,6 @@ class Controller_EGP_App extends Controller_EGP_Main
 		parent::before();	// execute before for parent Class
 		
 		$this->template = View::factory('EGP/egp_template');		// Set the template as /views/public.php
-		// $this->template->init_smartadmin = View::factory('inc/init_smartadmin');
-		// $this->template->header = View::factory('inc/header');
-		// $this->template->nav = View::factory('inc/nav');
-		// $this->template->ribbon = View::factory('inc/ribbon');
-		// $this->template->footer = View::factory('inc/footer');
-		// $this->template->scripts = View::factory('inc/scripts');
-		// $this->template->ga = View::factory('inc/google-analytics');
 		 
 		Helpers_Stylesheet::add('/assets/css/easygolfpack/egp_main.css');
 
@@ -50,16 +43,33 @@ class Controller_EGP_App extends Controller_EGP_Main
 		}
 		// If the login form was posted...
 		$post = $this->request->post();
-		if (isset($post['login'])) {
+		if (isset($post['username'])) {
 			// Try to login
 			if (Auth::instance()->login($post['username'], $post['password'])) {
-				HTTP::redirect('/');
+				
+				$this->isLogged 		= Auth::instance()->logged_in();
+				$this->isAdmin 			= Auth::instance()->logged_in('admin');
+				$this->user 			= Auth::instance()->get_user();
+
+				$enable_status = DB_SQL::select('default')
+					->from('user_status')
+						->where('status', '=', 'enable')
+							->query();
+					
+				if($this->user->id_status != $enable_status[0]['id']) {
+					Auth::instance()->logout();
+					$error = 'Utilisateur désactivé.';
+					Notify::msg($error, 'error');
+				}
 			} else {
 				Notify::msg('Problème de login', 'error');
+				HTTP::redirect('/');
 			}
 		}
-		$this->template->content = View::factory('account/auth/loginpublic');
-		$this->template->title = 'Vous devez vous connecter';
+		HTTP::redirect('/');		
+		// $this->pages["egp"]["active"] = true;
+		// $this->template->content = View::factory('account/auth/loginpublic');
+		// $this->template->title = 'Vous devez vous connecter';
 	}	// action_login
 	
 	public function action_inscription()	// cesar: est utilisé
@@ -69,33 +79,28 @@ class Controller_EGP_App extends Controller_EGP_Main
 			->query();
 		
 		$this->template->title = 'Golf Club de Bourbon - Inscription';
-		$this->template->content = View::factory( 'public/user/new');
+		$this->template->content = View::factory( '/EGP/user/new');
 		$this->template->content->pays = $pays;
 	}	// action_inscription
 	
 	public function action_informations()	// cesar: est utilisé
 	{
-		if (!Auth::instance()->logged_in()) {
+		if(!$this->isLogged){
 			HTTP::redirect('login');
 		}
-		$logged_in_user = Auth::instance()->get_user();
-		$user = DB_ORM::model('users');
-		$user->id = $logged_in_user->id;
-		$user->load();
 		
 		// récup liste des pays
 		$pays = DB_ORM::select('Pays')
 			->query();
 			
-					
 		$this->template->title = 'Golf Club de Bourbon - Mes Informations';
-		$this->template->content = View::factory( 'public/user/info');
+		$this->template->content = View::factory( '/EGP/user/info');
 		$this->template->content->pays = $pays;
-		$this->template->content->user = $user;
+		$this->template->content->user = $this->user;
 		
 	}	// action_informations
 	
-	public function action_updateuser()	// cesar: est utilisé
+	public function action_updateuser_OLD()	// cesar: est utilisé
 	{
 		if (!Auth::instance()->logged_in()) {
 			HTTP::redirect('login');
@@ -148,9 +153,9 @@ class Controller_EGP_App extends Controller_EGP_Main
 		end:
 		
 		$this->template->title = 'Golf Club de Bourbon - Mes Informations';
-		$this->template->content = View::factory( 'public/user/valide');
+		$this->template->content = View::factory( '/EGP/user/info');
 		$this->template->content->texte = $error_message;
-	}	// action_updateuser
+	}	// action_updateuser_OLD
 	
 	public function action_passwordforgot()
 	{
@@ -432,7 +437,15 @@ class Controller_EGP_App extends Controller_EGP_Main
 		// Initialisation de la date maximum de résa pour les membres
 		$currentDateTime = new DateTime();
 		$maxDateTime = new DateTime();
-		$maxDateTime->setTimestamp(strtotime("+3 days 4 hours"));
+		if($this->isLogged){
+			if($this->isAdmin){
+				$maxDateTime->setTimestamp(strtotime("+90 days 4 hours"));	// Max resa date for admin
+			}else{
+				$maxDateTime->setTimestamp(strtotime("+3 days 4 hours"));	// Max resa date for users
+			}
+		}else{
+			$maxDateTime->setTimestamp(strtotime("+30 days 4 hours"));		// Max resa date for visitors
+		}
 		$maxDateTime->setTime(23,59,59);
 		$maxDate = $maxDateTime->diff($currentDateTime)->format("%a");
 		
@@ -479,7 +492,7 @@ class Controller_EGP_App extends Controller_EGP_Main
 		// Helper to add js file
 		// Helpers_Javascript::add('/assets/wizard/formwizard.js');
 		Helpers_Javascript::add('/assets/js/plugin/jquery-form/jquery-form.min.js');
-		// Helpers_Javascript::add('/assets/libs/jquery/jquery-plugins/jquery.form.min.js');
+		Helpers_Javascript::add('/assets/js/plugin/knob/jquery.knob.min.js"');
 		// Helpers_Javascript::add('/assets/wizard/jquery.ui.datepicker-fr.js');
 		// load main App Module JS
 		Helpers_Javascript::add('/assets/js/easygolfpack/egp.js');

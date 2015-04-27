@@ -50,8 +50,8 @@
 		<!-- <link rel="stylesheet" type="text/css" media="screen" href="<?php echo ASSETS_URL; ?>/css/demo.min.css"> -->
 
 		<!-- FAVICONS -->
-		<link rel="shortcut icon" href="<?php echo ASSETS_URL; ?>/img/favicon/favicon.ico" type="image/x-icon">
-		<link rel="icon" href="<?php echo ASSETS_URL; ?>/img/favicon/favicon.ico" type="image/x-icon">
+		<link rel="shortcut icon" href="<?php echo ASSETS_URL; ?>/img/favicon/favicon_48x48.ico" type="image/x-icon">
+		<link rel="icon" href="<?php echo ASSETS_URL; ?>/img/favicon/favicon_48x48.ico" type="image/x-icon">
 
 		<!-- GOOGLE FONT -->
 		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700">
@@ -104,7 +104,7 @@
 					<div id="logo-group">
 
 						<!-- PLACE YOUR LOGO HERE -->
-						<span id="logo"> <img src="<?php echo ASSETS_URL; ?>/img/EGP/logo.png" alt="SmartAdmin"> </span>
+						<span id="logo"> <img src="<?php echo ASSETS_URL; ?>/img/EGP/logo.png" alt="EasyGolfPack"> </span>
 						<!-- END LOGO PLACEHOLDER -->
 
 						<!-- Note: The activity badge color changes when clicked and resets the number to 0

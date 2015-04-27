@@ -139,6 +139,7 @@ Kohana::modules(array(
 	'crud'			=> MODPATH.'crud',
 	'mobile'		=> MODPATH.'mobile',
 	'menu'			=> MODPATH.'menu',
+	'notify'		=> MODPATH.'notify',
 ));
 
 /*for cookies signature*/
@@ -152,8 +153,11 @@ Cookie::$salt = 'mdlsdjnsdl';
 // login
 Route::set('login', 'login')
 	->defaults(array(
-		'directory'  => 'account',
-		'controller' => 'auth',
+		// 'directory'  => 'account',
+		// 'controller' => 'auth',
+		// 'action'     => 'login',
+		'directory'  => 'EGP',
+		'controller' => 'app',
 		'action'     => 'login',
 	));
 

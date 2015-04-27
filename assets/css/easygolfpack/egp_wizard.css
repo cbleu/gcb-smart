@@ -2,11 +2,6 @@
 /**
 * Wizard styles
 */
-media="screen"
-body {
-/*	padding-top: 0px;		/* cesar: permet au menu de ne pas recouvrir la div content*/*/
-/*	padding-bottom: 40px;*/
-}
 
 #datepicker-container{
   text-align:center;
@@ -21,10 +16,17 @@ body {
 	border: none;
 }
 
+.tab-content{
+	margin-top: 50px;
+}
+/* Wizard tab fixed height */
+.tab-content>.active {
+	height: 420px;
+}
 
 /* SmartAdmin*/
 
-media="screen"
+/*media="screen"
 .onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-switch:before {
   content: "\f00c";
   color: #57889c;
@@ -32,7 +34,6 @@ media="screen"
 wizardmedia="screen"
 .onoffswitch-checkbox+.onoffswitch-label .onoffswitch-switch:before,
 .onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-switch:before {
-/*  content: "\f00d";*/
     content: "\f0ec" !important;
   color: #a90329;
   display: block;
@@ -46,7 +47,6 @@ wizardmedia="screen"
 wizardmedia="screen"
 .onoffswitch-checkbox+.onoffswitch-label .onoffswitch-switch:before,
 .onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-switch:before {
-/*  content: "\f00d";*/
   content: "\f0ec" !important;
   color: #a90329;
   display: block;
@@ -63,5 +63,5 @@ wizardmedia="screen"
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-
+*/
 

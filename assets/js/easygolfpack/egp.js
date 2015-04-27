@@ -33,9 +33,11 @@ var table_length = function(obj){
 /////////////////////////////////////////////////////////////////////////////////
 
 
-;(function($, document, window, viewport){
+;(function($, document, window, viewport)
+{
 	'use strict';
 
+	
 	// Code exécuté après chargement complet du DOM
 	$(document).ready(function(){
 		console.log( 'doc.ready current breakpoint:', viewport.current() );
@@ -100,172 +102,114 @@ function initWizard()
 
 	init_Intervals();
 	
-	// Initialisation du wizard (formwizard.js)
-
-	// var myform=new formtowizard({
-	// 	formid: 'wizard_form',
-	// 	persistsection: false,
-	// 	revealfx: ['slide', 500],
-	// 	onpagechangestart:function($, i, $fieldset){
-	// 		setTimeout(function() {
-	// 			// //////////////////////////////////////////////////////
-	// 			// // ECRAN DATE ////////////////////////////////////////
-	// 			if($("#date_fieldset").attr("style").indexOf("visible") !== -1) {	// affichage de l'écran de parcours et horaire
-	// 				console.log("date_fieldset");
-	// 				// $("#date").trigger("change");
-	// 				// update the date
-	// 				$("#date_resa").val($('#datepicker').datepicker({dateFormat:'dd/mm/yy'}).val());
-	// 			}// ECRAN DATE
-	//
-	// 			//////////////////////////////////////////////////////
-	// 			// ECRAN PARCOURS ////////////////////////////////////
-	// 			if($("#parcours_fieldset").attr("style").indexOf("visible") !== -1) {	// affichage de l'écran de parcours et horaire
-	// 				load_user_available_Intervals();
-	// 				if($("#nb_trous").val() == 18){
-	// 					fill_DOM_with_Intervals(lastStartFor18hole);
-	// 				}
-	// 				// restrict_end_of_day_Intervals();
-	// 				// setTimeout(restrict_user_nb, 1000);	// TODO a integrer dans la req ajax precedente
-	// 			}// ECRAN PARCOURS
-	//
-	// 			//////////////////////////////////////////////////////
-	// 			// ECRAN JOUEURS /////////////////////////////////////
-	// 			if($("#players_fieldset").attr("style").indexOf("visible") !== -1) {	// affichage de l'écran des joueurs
-	// 				// console.log("players_fieldset");
-	// 				update_joueurs_presents();
-	// 				CreateResaProvi($("#wizard_form .serialize"));
-	// 			}// ECRAN JOUEURS
-	//
-	// 			//////////////////////////////////////////////////////
-	// 			// ECRAN RESUME //////////////////////////////////////
-	// 			if($("#confirmation_fieldset").attr("style").indexOf("visible") !== -1) {	// affichage de l'écran de resumé
-	// 				DisplayDigest();
-	// 			}// ECRAN RESUME
-	// 		}, 600);
-	// 	}
-	// });
-	//
-
 	////////////////////////////////
 	// DOM FUNCS ///////////////////
 	////////////////////////////////
 	
-	var $validator = $("#wizard_form").validate({
-		
-		rules: {
-			date_resa: {
-				required: true,
-				// date_resa: "Your email address must be in the format of name@domain.com"
-			},
-			heure_resa: {
-				required: true,
-			},
-			client_name:{
-				required:true,
-			},
-			client_firstname:{
-				required:true,
-			},
-			client_email:{
-				required:true,
-				email: "l'Email doit être au format name@domain.com"
-			},
-		},
-		
-		messages: {
-			heure_resa: "Please specify your First name",
-			client_email: {
-				required: "We need your email address to contact you",
-				email: "l'Email doit être au format name@domain.com"
-			}
-		},
-		
-		highlight: function (element) {
-			$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-		},
-		unhighlight: function (element) {
-			$(element).closest('.form-group').removeClass('has-error').addClass('has-success');
-		},
-		errorElement: 'span',
-		errorClass: 'help-block',
-		errorPlacement: function (error, element) {
-			if (element.parent('.input-group').length) {
-				error.insertAfter(element.parent());
-			} else {
-				error.insertAfter(element);
+	// Init Knob plugin
+	$(".dial").knob({
+		// 'fgColor': '#b9e672',
+		'bgColor': '#888888',
+		'displayPrevious' : true,
+		// 'dynamicDraw': true,
+		// 'thickness': 0.6,
+		// 'lineCap' : 'round',
+		// 'tickColorizeValues': true,
+	});
+
+	$('#wizard_form_DOM .finish').click(function() {
+		// alert('Finished!, Starting over!');
+		// $('#wizard_form_DOM').find("a[href*='tab1']").trigger('click');
+
+		var parentdiv = document.getElementById('isFormValid');
+		var nbj = parseInt($("#nb_joueurs").val());
+		console.log("nb_joueurs: ", nbj);
+		if(!validate_form()) {
+			message_erreur = "Un probleme dans le formulaire ne permet pas de faire la réservation ! Veuillez vérifier.";
+			// return false;
+		}else{
+			if(vars.isLogged){
+				if(!nbj || !parentdiv) {
+					message_erreur = "ERREUR dans la structure du formulaire !";
+				}else{
+					// for (var i=1; i<=nbj; i++){
+					// 	$("#nbTrousJ" + i).val($("#nb_trous").val());
+					// }
+				}
+			}else{
+				// nbj = $("input[name=nb_joueurs]:checked").val();
+				// var reg = new RegExp('^[a-z0-9]+([_|\.|-]{1}[a-z0-9]+)*@[a-z0-9]+([_|\.|-]{1}[a-z0-9]+)*[\.]{1}[a-z]{2,6}$', 'i');
+				// if($("#client_name").val().length < 2) {
+				// 	message_erreur = "Erreur ! Veuillez saisir votre nom";
+				// }else if($("#client_firstname").val().length < 2) {
+				// 	message_erreur = "Erreur ! Veuillez saisir votre prénom";
+				// }else if(!reg.test($("#client_email").val())) {
+				// 	message_erreur = "Erreur ! Veuillez saisir une addresse E-mail valide";
+				// }
+				if(!nbj || !parentdiv) {
+					message_erreur = "ERREUR dans la structure du formulaire !";
+				}else{
+					for (var i=2; i<=nbj; i++){
+						var input = document.createElement("input");
+						input.type = "hidden";
+						input.className = "serialize";
+						input.name = "id_joueur" + i;
+						input.id = "id_joueur" + i;
+						input.value = "1";
+						parentdiv.appendChild(input);
+					}
+					for (var i=1; i<=nbj; i++){
+						var input = document.createElement("input");
+						input.type = "hidden";
+						input.className ="serialize";
+						input.name = "nbTrousJ" + i;
+						input.id = "nbTrousJ" + i;
+						input.value = $("#nb_trous").val();
+						parentdiv.appendChild(input);
+					}
+				}
 			}
 		}
-	});
-	
-	//   	$('#wizard_form_DOM').bootstrapWizard({
-	// 	onTabShow: function(tab, navigation, index) {
-	// 		var $total = navigation.find('li').length;
-	// 		var $current = index+1;
-	// 		var $percent = ($current/$total) * 100;
-	// 		$('#rootwizard').find('.bar').css({width:$percent+'%'});
-	//
-	// 		// If it's the last tab then hide the last button and show the finish instead
-	// 		if($current >= $total) {
-	// 			$('#rootwizard').find('.pager .next').hide();
-	// 			$('#rootwizard').find('.pager .finish').show();
-	// 			$('#rootwizard').find('.pager .finish').removeClass('disabled');
-	// 		} else {
-	// 			$('#rootwizard').find('.pager .next').show();
-	// 			$('#rootwizard').find('.pager .finish').hide();
-	// 		}
-	// 	}
-	// });
-	
-	$('#wizard_form_DOM .finish').click(function() {
-		alert('Finished!, Starting over!');
-		$('#wizard_form_DOM').find("a[href*='tab1']").trigger('click');
+
+		$.ajax({
+			async: true,
+			type: "POST",
+			url: "/resajax/add",
+			dataType: "json",
+			data: $("#wizard_form .serialize").serialize(),
+			success: function(data) {
+				// $("#confirmation_div").hide();
+				// $("#reservation_done").show();
+				console.log(data);
+				// var resp = jQuery.parseJSON(data);
+				if(!data.valid) {
+					alert(data.message);
+					return false;
+				}
+			},
+		});
 	});
 
 	$('#wizard_form').bootstrapWizard({
 		'tabClass': 'form-wizard',
-		'onNext': function (tab, navigation, index) {
-			console.log("Index:", index);
-			var $valid = $("#wizard_form").valid();
-			if (!$valid) {
-				$validator.focusInvalid();
+		onNext: function (tab, navigation, index) {
+			if(!validate_form_wizard(index-1)){
 				return false;
-			} else {
-				$('#wizard_form_DOM').find('.form-wizard').children('li').eq(index - 1).addClass('complete');
-				$('#wizard_form_DOM').find('.form-wizard').children('li').eq(index - 1).find('.step')
-					.html('<i class="fa fa-check"></i>');
 			}
-			//////////////////////////////////////////////////////
-			// ECRAN PARCOURS ////////////////////////////////////
-			if(index == 1) {	// affichage de l'écran de parcours et horaire
-				load_user_available_Intervals();
-				if($("#nb_trous").val() == 18){
-					fill_DOM_with_Intervals(lastStartFor18hole);
-				}
-				// restrict_end_of_day_Intervals();
-				// setTimeout(restrict_user_nb, 1000);	// TODO a integrer dans la req ajax precedente
-			}// ECRAN PARCOURS
-
-			//////////////////////////////////////////////////////
-			// ECRAN JOUEURS /////////////////////////////////////
-			if(index == 2) {	// affichage de l'écran des joueurs
-				update_joueurs_presents();
-				CreateResaProvi($("#wizard_form .serialize"));
-			}// ECRAN JOUEURS
-
-			//////////////////////////////////////////////////////
-			// ECRAN RESUME //////////////////////////////////////
-			if(index == 3) {	// affichage de l'écran de resumé
-				DisplayDigest();
-			}// ECRAN RESUME
+			step_form_action(tab,navigation,index);
+		},
+		onTabClick: function(tab, navigation, index){
+			if(!validate_form_wizard(index)){
+				return false;
+			}
 		},
 		onTabShow: function(tab, navigation, index) {
+			console.log("onTabShow Index:", index);
 			var $total = navigation.find('li').length;
 			var $current = index+1;
 			var $percent = ($current/$total) * 100;
-			// $('#wizard_form_DOM').find('.progress-bar').css({width:$percent+'%'});
-			// $('#wizard_form_DOM').find('.bar').css({width:$percent+'%'});
 			$('#progress-wizard').find('.bar').css({width:$percent+'%'});
-		
+			
 			// If it's the last tab then hide the last button and show the finish instead
 			if($current >= $total) {
 				$('#wizard_form_DOM').find('.pager .next').hide();
@@ -275,7 +219,13 @@ function initWizard()
 				$('#wizard_form_DOM').find('.pager .next').show();
 				$('#wizard_form_DOM').find('.pager .finish').hide();
 			}
-		}
+			
+			step_form_action(tab,navigation,index);
+			
+		},
+		// onFinish:function(){
+		// 	alert('Finished!, Starting over!');
+		// }
 	});
 
 
@@ -284,78 +234,17 @@ function initWizard()
 		minDate: 0,
 		maxDate: vars['maxDate'],
 		numberOfMonths: 2,
-		// showOtherMonths: true,
-		// selectOtherMonths: true,
-		// showMonthAfterYear: true,
-		// beforeShow: function(input, inst) {
-		// 	console.log("datepicker beforeShow");
-		// 	if ($(window).width() < 760) {
-		// 	// if ($(window).width() < 480) {
-		// 	    // do something for small screens
-		// 		$("#date_resa").val($('#datepicker').datepicker({ numberOfMonths: [2, 1] }) );
-		// 		console.log("datepicker in XS format!");
-		// 	}
-		// },
 		onSelect: function(dateText, inst) {
 			$("#date_resa").val($('#datepicker').datepicker().val());
-			// $("#date_resa").val($('#datepicker').datepicker({dateFormat:'dd/mm/yy'}).val());
-			// $("#date_resa").val(dateText).trigger('change');	// met à jour le champ date en fonction du datepicker
 		}
 	});	// TODO : se baser sur l'heure serveur pour restreindre
 	
-	// $("#datepicker").change(function(){
-	// 	ReleaseResaProvi($("#wizard_form .serialize"));
-	// 	init_Intervals();
-	// 	load_user_available_Intervals();
-	// 	setTimeout(restrict_user_nb, 1000);	// TODO a integrer dans la req ajax precedente
-	//
-	// });
 
 	// Set the field date to the datpicker default date
 	$("#date_resa").val($('#datepicker').datepicker({dateFormat:'dd/mm/yy'}).val());
-	// if ($(window).width() < 760) {
-	// // if ($(window).width() < 480) {
-	//     // do something for small screens
-	// 	$("#date_resa").val($('#datepicker').datepicker( "option", "numberOfMonths", 1 ));
-	// 	// $("#date_resa").val($('#datepicker').datepicker({ numberOfMonths: 1 }) );
-	// 	// $("#date_resa").val($('#datepicker').datepicker( "option", "numberOfMonths", 2 ));
-	// 	console.log("change datepicker in XS format!");
-	// }else{
-	// 	var numberOfMonths = $("#date_resa").val($('#datepicker').datepicker( "option", "numberOfMonths" ));
-	// 	// $("#date_resa").val($('#datepicker').datepicker({ numberOfMonths: 2 }) );
-	// 	$("#date_resa").val($('#datepicker').datepicker( "option", "numberOfMonths", 2 ));
-	// 	// $("#date_resa").val($('#datepicker').datepicker({ numberOfMonths: 2 }) );
-	// 	console.log("change datepicker in XL format!");
-	// }
-	
-
-	// Input switches
-	$('input[type=radio].switch, input[type=checkbox].switch').hide().after('<span class="switch-replace"></span>').next().click(function() {
-		$(this).prev().click();
-	}).prev('.with-tip').next().addClass('with-tip').each(function(){
-		$(this).attr('title', $(this).prev().attr('title'));
-	});
 	
 	$("#date_resa").change(function(){
 		var currentDate = new Date();
-		var maxDate = new Date();
-		// maxDate.setDate(currentDate.getDate() + $("#datepicker").datepicker( "option", "maxDate" ));
-
-		// var textfield_date = $.datepicker.parseDate("dd/mm/yy", $(this).val());
-
-		// if(textfield_date < currentDate) {
-			// $( "#datepicker" ).datepicker( "setDate", currentDate );
-			// $(this).val($.datepicker.formatDate('dd/mm/yy', currentDate));
-		// }else if(textfield_date > maxDate){
-			// $( "#datepicker" ).datepicker( "setDate", maxDate );
-			// $(this).val($.datepicker.formatDate('dd/mm/yy', maxDate));
-		// }
-		
-		// if($(this).val() == "") {
-		// 	$("#heure_resa").prop('disabled', true);
-		// 	return;
-		// }
-		// $("#heure_resa").prop('disabled', false);
 		
 		ReleaseResaProvi($("#wizard_form .serialize"));
 		// init_Intervals();
@@ -373,46 +262,30 @@ function initWizard()
 	$('#nb_trous_sw').bootstrapSwitch();
 
 	$('input[name="nb_trous_sw"]').on('switchChange.bootstrapSwitch', function(event, state) {
-	  console.log(this); // DOM element
-	  console.log(event); // jQuery event
-	  console.log(state); // true | false
-	if(state) {
-		// $("#nb_trous_sw").bootstrapSwitch('on');
-		$("#nb_trous").val(18);
-		fill_DOM_with_Intervals(lastStartFor18hole);
-	}else {
-		// $("#nb_trous_sw").bootstrapSwitch('off');
-		$("#nb_trous").val(9);
-		fill_DOM_with_Intervals();
-	}
-	$("#nb_trous_optgroup").attr("label", $("#nb_trous").val() + " Trous");
+		if(state) {
+			$("#nb_trous").val(18);
+			fill_DOM_with_Intervals(lastStartFor18hole);
+		}else {
+			$("#nb_trous").val(9);
+			fill_DOM_with_Intervals();
+		}
+		$("#nb_trous_optgroup").attr("label", $("#nb_trous").val() + " Trous");
 	});
-	
-	// $('#nb_trous_sw').change(function() {
-	// 	if(this.checked) {
-	// 		// $("#nb_trous_sw").bootstrapSwitch('on');
-	// 		fill_DOM_with_Intervals(lastStartFor18hole);
-	// 	}else {
-	// 		// $("#nb_trous_sw").bootstrapSwitch('off');
-	// 		fill_DOM_with_Intervals();
-	// 	}
-	// 	$("#nb_trous_optgroup").attr("label", $("#nb_trous").val() + " Trous");
-	// 	console.log('Toggle: ' + $(this).prop('checked'));
-	// })
 
-	// $("#nb_trous_sw").click(function(){
-	// 	if(this.checked) {
-	// 		$("#nb_trous").bootstrapToggle('on')
-	// 		// $("#nb_trous").val(18);
-	// 		fill_DOM_with_Intervals(lastStartFor18hole);
-	// 	}else {
-	// 		$("#nb_trous").bootstrapToggle('off')
-	// 		// $("#nb_trous").val(9);
-	// 		fill_DOM_with_Intervals();
-	// 	}
-	// 	$("#nb_trous_optgroup").attr("label", $("#nb_trous").val() + " Trous")
+	// $(".dial").knob({
+	// 	'change' : function (v) { console.log(v); }
 	// });
-
+	// $('.dial').trigger(
+	// 	'configure',
+	// 	{
+	// 		'displayPrevious' : true,
+	// 		'linecap' : 'round',
+	// 		'thickness' : '.4',
+	// 		// "fgColor":"#FF0000",
+	// 		// "cursor":true
+	// 	}
+	// );
+	
 	$("#joueur1, #joueur2, #joueur3, #joueur4").focus(function(){
 		lastNameValue = $(this).val();
 		$(this).css('color', 'black');
@@ -553,13 +426,101 @@ function initWizard()
 /////////////////////////////////////////////////////////////////////////////////
 // WIZARD FUNCTIONS
 
+function validate_form_wizard(index)
+{
+	var $validator = $("#wizard_form").validate({
+	
+		rules: {
+			date_resa: {
+				required: true,
+			},
+			heure_resa: {
+				required: true,
+			},
+			client_name:{
+				required:true,
+			},
+			client_firstname:{
+				required:true,
+			},
+			client_email:{
+				required:true,
+				email: "l'Email doit être au format name@domain.com"
+			},
+		},
+	
+		messages: {
+			heure_resa: "Please specify your First name",
+			client_email: {
+				required: "We need your email address to contact you",
+				email: "l'Email doit être au format name@domain.com"
+			}
+		},
+	
+		highlight: function (element) {
+			$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+		},
+		unhighlight: function (element) {
+			$(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+		},
+		errorElement: 'span',
+		errorClass: 'help-block',
+		errorPlacement: function (error, element) {
+			if (element.parent('.input-group').length) {
+				error.insertAfter(element.parent());
+			} else {
+				error.insertAfter(element);
+			}
+		}
+	});
+
+	var $valid = $("#wizard_form").valid();
+	if (!$valid) {
+		$validator.focusInvalid();
+		return false;
+	} else {
+		$('#wizard_form_DOM').find('.form-wizard').children('li').eq(index).addClass('complete');
+		$('#wizard_form_DOM').find('.form-wizard').children('li').eq(index).find('.step')
+			.html('<i class="fa fa-check"></i>');
+	}
+	return true;
+}
+
+function step_form_action(tab, navigation,index)
+{
+	//////////////////////////////////////////////////////
+	// ECRAN PARCOURS ////////////////////////////////////
+	if(index == 1) {	// affichage de l'écran de parcours et horaire
+		load_user_available_Intervals();
+		if($("#nb_trous").val() == 18){
+			fill_DOM_with_Intervals(lastStartFor18hole);
+		}
+		// restrict_end_of_day_Intervals();
+		// setTimeout(restrict_user_nb, 1000);	// TODO a integrer dans la req ajax precedente
+	}// ECRAN PARCOURS
+
+	//////////////////////////////////////////////////////
+	// ECRAN JOUEURS /////////////////////////////////////
+	if(index == 2) {	// affichage de l'écran des joueurs
+		update_joueurs_presents();
+		CreateResaProvi($("#wizard_form .serialize"));
+	}// ECRAN JOUEURS
+
+	//////////////////////////////////////////////////////
+	// ECRAN RESUME //////////////////////////////////////
+	if(index == 3) {	// affichage de l'écran de resumé
+		DisplayDigest();
+	}// ECRAN RESUME
+}
+
 function init_Intervals()	// initialise les intervalles depuis ceux du serveur
 {
 	hoursIntervals.length = 0;
 	hoursPlayers.length = 0;
 	for(var i = 0; i < serverIntervals.length; i++) {
 		hoursIntervals.push(serverIntervals[i]);
-		hoursPlayers.push(max_joueurs);
+		// hoursPlayers.push(max_joueurs + " places");
+		hoursPlayers.push("");
 	}
 	console.log("init_Intervals: ", hoursIntervals.length);
 }	// init_Intervals
@@ -602,7 +563,18 @@ function fill_DOM_with_Intervals(lastslot)	// rempli les slots horaires du DOM a
 		var hm = hoursIntervals[i].split(':');
 		thattime.setHours(hm[0],hm[1],0);
 		if (thattime < thattimelast){
-			$("#heure_resa optgroup#nb_trous_optgroup").append('<option value="' + hoursIntervals[i] + '">' + hoursIntervals[i] + " " + hoursPlayers[i] + '</otpion>');
+			// switch(hoursPlayers[i]){
+			// case 0:
+			// 	$("#heure_resa optgroup#nb_trous_optgroup").append('<option class="columns" value="' + hoursIntervals[i] + '">' + hoursIntervals[i] + " Plus de place disponible !" + '</option>');
+			// 	break;
+			// case 1:
+			// 	$("#heure_resa optgroup#nb_trous_optgroup").append('<option class="columns" value="' + hoursIntervals[i] + '">' + hoursIntervals[i] + " " + hoursPlayers[i] + ' place disponible</option>');
+			// 	break;
+			// default:
+			// 	$("#heure_resa optgroup#nb_trous_optgroup").append('<option class="columns" value="' + hoursIntervals[i] + '">' + hoursIntervals[i] + " " + hoursPlayers[i] + ' places disponibles</option>');
+			//
+			// }
+			$("#heure_resa optgroup#nb_trous_optgroup").append('<option class="columns" value="' + hoursIntervals[i] + '">' + hoursIntervals[i] + " " + hoursPlayers[i] + '</option>');
 		}
 	}
 	// On préselectionne le premier créneau horaire
@@ -662,13 +634,15 @@ function load_user_available_Intervals()	// ajax: slots dispo pour ce joueur à 
 								hoursIntervals.splice(len,1);
 								hoursPlayers.splice(len,1);
 							}else if(horaires_reserves[i][1] == 1) {// 1 place
-								hoursPlayers[len] = " (dernière place disponible)";
+								hoursPlayers[len] = "1 -> (dernière place disponible)";
 								console.log("dernière place:", hoursIntervals[len]);
 							}else {									// x places
 								hoursPlayers[len] = " (" + horaires_reserves[i][1] + " places disponibles)";
 								console.log("places disponibles:", hoursIntervals[len]);
 							}
-						}
+						}// else{
+// 							hoursPlayers[len] = " (4 places disponibles)";
+// 						}
 					}	// while hoursIntervals
 				}	// for horaires_reserves
 				console.log("load_user_available_Intervals:retrievedate", hoursIntervals.length);
@@ -765,7 +739,8 @@ function update_joueurs()
 	console.log("update_joueurs: ", $("#nb_joueurs").val());
 }	// update_joueurs
 
-function DisplayDigest(){
+function DisplayDigest()
+{
 	$.ajax(		// requete ajax pour afficher le résumé
 	{
 		type: "POST",
@@ -819,7 +794,8 @@ function DisplayDigest(){
 // CALENDRIER
 /////////////////////////////////////////////////////////////////////////////////
 
-function initCalendrier(){
+function initCalendrier()
+{
 	
 	resize_calendar();
 	initScheduler();
@@ -1107,7 +1083,8 @@ function initCalendrier(){
 		
 }	// initCalendrier
 
-function initScheduler(){
+function initScheduler()
+{
 	var sections=[{key:1, label:"Trou 1"},{key:10, label:"Trou 10"}];
 	var step = 10;	// 10 minutes par slot pour le découpage du scheduler
 	var click_disabled = false;

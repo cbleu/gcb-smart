@@ -33,8 +33,13 @@
 	</form>
 </div>
 
+<?php
+	// Return the number of messages
+	echo Notify::count(); // 3
+	Notify::render();
+?>
 
-<?//include left panel (navigation)
+<?php //include left panel (navigation)
 	//follow the tree in inc/config.ui.php
 	// $page_nav["misc"]["sub"]["blank"]["active"] = true;
 	// echo $kpage_nav;
@@ -83,14 +88,6 @@
 <?php foreach(Helpers_Javascript::get() as $javascript) { ?>
 	<script src="<?= $javascript ?>" type="text/javascript" charset="utf-8"></script>
 <?php } ?>
-
-<script>
-
-	$(document).ready(function() {
-		// PAGE RELATED SCRIPTS
-	})
-
-</script>
 
 <?php 
 	//include footer
