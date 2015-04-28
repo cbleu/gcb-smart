@@ -53,6 +53,12 @@
 		// include("inc/ribbon.php");
 		include(APPPATH."views/inc/ribbon.php");
 	?>
+	
+	<?php
+		// Print var to the page
+		
+		// plog(Helpers_InputForJs::get());
+	?>
 
 	<?= $konotif; ?>
 

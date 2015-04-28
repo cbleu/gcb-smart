@@ -241,69 +241,6 @@
 							<span> <a href="javascript:void(0);" title="Full Screen" data-action="launchFullscreen"><i class="fa fa-arrows-alt"></i></a> </span>
 						</div>
 						<!-- end fullscreen button -->
-						
-						<!-- #Voice Command: Start Speech -->
-						<!-- <div id="speech-btn" class="btn-header transparent pull-right hidden-sm hidden-xs">
-							<div>
-								<a href="javascript:void(0)" title="Voice Command" data-action="voiceCommand"><i class="fa fa-microphone"></i></a>
-								<div class="popover bottom"><div class="arrow"></div>
-									<div class="popover-content">
-										<h4 class="vc-title">Voice command activated <br><small>Please speak clearly into the mic</small></h4>
-										<h4 class="vc-title-error text-center">
-											<i class="fa fa-microphone-slash"></i> Voice command failed
-											<br><small class="txt-color-red">Must <strong>"Allow"</strong> Microphone</small>
-											<br><small class="txt-color-red">Must have <strong>Internet Connection</strong></small>
-										</h4>
-										<a href="javascript:void(0);" class="btn btn-success" onclick="commands.help()">See Commands</a>
-										<a href="javascript:void(0);" class="btn bg-color-purple txt-color-white" onclick="$('#speech-btn .popover').fadeOut(50);">Close Popup</a>
-									</div>
-								</div>
-							</div>
-						</div> -->
-						<!-- end voice command -->
-						
-						<!-- multiple lang dropdown : find all flags in the flags page -->
-
-<!--						<ul class="header-dropdown-list hidden-xs">
-							<li>
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-									<img src="<?php echo ASSETS_URL; ?>/img/blank.gif" class="flag flag-us" alt="United States"> <span> English (US) </span> <i class="fa fa-angle-down"></i> </a>
-								<ul class="dropdown-menu pull-right">
-									<li class="active">
-										<a href="javascript:void(0);"><img src="<?php echo ASSETS_URL; ?>/img/blank.gif" class="flag flag-us" alt="United States"> English (US)</a>
-									</li>
-									<li>
-										<a href="javascript:void(0);"><img src="<?php echo ASSETS_URL; ?>/img/blank.gif" class="flag flag-fr" alt="France"> Français</a>
-									</li>
-									<li>
-										<a href="javascript:void(0);"><img src="<?php echo ASSETS_URL; ?>/img/blank.gif" class="flag flag-es" alt="Spanish"> Español</a>
-									</li>
-									<li>
-										<a href="javascript:void(0);"><img src="<?php echo ASSETS_URL; ?>/img/blank.gif" class="flag flag-de" alt="German"> Deutsch</a>
-									</li>
-									<li>
-										<a href="javascript:void(0);"><img src="<?php echo ASSETS_URL; ?>/img/blank.gif" class="flag flag-jp" alt="Japan"> 日本語</a>
-									</li>
-									<li>
-										<a href="javascript:void(0);"><img src="<?php echo ASSETS_URL; ?>/img/blank.gif" class="flag flag-cn" alt="China"> 中文</a>
-									</li>
-									<li>
-										<a href="javascript:void(0);"><img src="<?php echo ASSETS_URL; ?>/img/blank.gif" class="flag flag-it" alt="Italy"> Italiano</a>
-									</li>
-									<li>
-										<a href="javascript:void(0);"><img src="<?php echo ASSETS_URL; ?>/img/blank.gif" class="flag flag-pt" alt="Portugal"> Portugal</a>
-									</li>
-									<li>
-										<a href="javascript:void(0);"><img src="<?php echo ASSETS_URL; ?>/img/blank.gif" class="flag flag-ru" alt="Russia"> Русский язык</a>
-									</li>
-									<li>
-										<a href="javascript:void(0);"><img src="<?php echo ASSETS_URL; ?>/img/blank.gif" class="flag flag-kr" alt="Korea"> 한국어</a>
-									</li>
-								</ul>
-							</li>
-						</ul>
-						 -->
-						<!-- end multiple lang -->
 
 					</div>
 					<!-- end pulled right: nav area -->
@@ -317,13 +254,16 @@
 				-->
 				<div id="shortcut">
 					<ul>
-						<li>
+						<!-- <li>
 							<a href="<?php echo APP_URL; ?>/inbox.php" class="jarvismetro-tile big-cubes bg-color-blue"> <span class="iconbox"> <i class="fa fa-envelope fa-4x"></i> <span>Mail <span class="label pull-right bg-color-darken">14</span></span> </span> </a>
+						</li> -->
+						<li>
+							<a href="<?php echo APP_URL; ?>app/calendrier" class="jarvismetro-tile big-cubes bg-color-blue"> <span class="iconbox"> <i class="fa fa-calendar fa-4x"></i> <span>Calendrier</span> </span> </a>
 						</li>
 						<li>
-							<a href="<?php echo APP_URL; ?>/calendar.php" class="jarvismetro-tile big-cubes bg-color-orangeDark"> <span class="iconbox"> <i class="fa fa-calendar fa-4x"></i> <span>Calendar</span> </span> </a>
+							<a href="<?php echo APP_URL; ?>app/wizard" class="jarvismetro-tile big-cubes bg-color-green"> <span class="iconbox"> <i class="fa fa-magic fa-4x"></i> <span>Assistant</span> </span> </a>
 						</li>
-						<li>
+						<!-- <li>
 							<a href="<?php echo APP_URL; ?>/gmap-xml.php" class="jarvismetro-tile big-cubes bg-color-purple"> <span class="iconbox"> <i class="fa fa-map-marker fa-4x"></i> <span>Maps</span> </span> </a>
 						</li>
 						<li>
@@ -331,9 +271,9 @@
 						</li>
 						<li>
 							<a href="<?php echo APP_URL; ?>/gallery.php" class="jarvismetro-tile big-cubes bg-color-greenLight"> <span class="iconbox"> <i class="fa fa-picture-o fa-4x"></i> <span>Gallery </span> </span> </a>
-						</li>
+						</li> -->
 						<li>
-							<a href="<?php echo APP_URL; ?>/profile.php" class="jarvismetro-tile big-cubes selected bg-color-pinkDark"> <span class="iconbox"> <i class="fa fa-user fa-4x"></i> <span>My Profile </span> </span> </a>
+							<a href="<?php echo APP_URL; ?>app/informations" class="jarvismetro-tile big-cubes selected bg-color-blueLight"> <span class="iconbox"> <i class="fa fa-user fa-4x"></i> <span>Mes informations</span> </span> </a>
 						</li>
 					</ul>
 				</div>

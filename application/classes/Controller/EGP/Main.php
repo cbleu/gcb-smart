@@ -45,7 +45,7 @@ abstract class Controller_EGP_Main extends Controller_Template
 			"resa" => array(
 				"title" => "Réservations",
 				// "url" => "/app/calendrier",
-				"icon" => "fa-calendar txt-color-blue",
+				"icon" => "fa-calendar txt-color-greenLight",
 				"sub" => array(
 					"calendrier" => array(
 						"title" => "Calendrier des départs",
@@ -57,28 +57,13 @@ abstract class Controller_EGP_Main extends Controller_Template
 					),
 				),
 			),
-			// "user" => array(
-			// 	"title" => "Mes Informations",
-			// 	"url" => '/app/informations'
-			// ),
-			// "administration" => array(
-			// 	'title' => 'Administration',
-			// 	'icon' => 'fa-folder-open',
-			// 	'sub' => array(
-			// 		'alert' => array(
-			// 			'title' => 'Alerts',
-			// 		),
-			// 		'progress' => array(
-			// 			'title' => 'Progress',
-			// 		),
-			// 	),
-			// ),
 		);
 		
 		if($this->isLogged){
 			$this->pages["user"] = array(
 				"title" => "Mes Informations",
-				"url" => '/app/informations'
+				"url" => '/app/informations',
+				"icon" => "fa-user txt-color-blueLight",
 			);
 			if($this->isAdmin){
 				$this->pages["administration"] = array(

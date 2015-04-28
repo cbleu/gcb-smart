@@ -31,7 +31,6 @@ class Controller_EGP_App extends Controller_EGP_Main
 	{
 		// Set active page in menu
 		$this->pages["egp"]["active"] = true;
-		// $this->pageBreadcrumbs["Accueil"] = "";
 		$this->pageTitle = "Easy Golf Pack";
 		Helpers_Stylesheet::add('/assets/css/carousel.css');
 
@@ -380,7 +379,7 @@ class Controller_EGP_App extends Controller_EGP_Main
 		$block_time_after_start = date("Y-m-d 23:59:59", 	strtotime("+3 days 4 hours"));	// Deblocage du jour suivant à 20h00
 		$block_time_after_end = date("Y-m-d H:i:s", strtotime("+2 years"));
 		
-		$this->template->title = 'Réservation - Golf Club de Bourbon';
+		// $this->template->title = 'Réservation - Golf Club de Bourbon';
 		$this->template->content = View::factory('EGP/calendrier');
 		$this->template->content->ressources	= $this->ressources;
 		$this->template->content->parcours		= $this->parcours;
@@ -395,7 +394,7 @@ class Controller_EGP_App extends Controller_EGP_Main
 		// Set active page in menu
 		$this->pages["resa"]["sub"]["calendrier"]["active"] = true;
 		$this->pageTitle = "Calendrier";
-		// $this->pageBreadcrumbs["Calendrier"] = "/app/calendrier";
+		$this->pageBreadcrumbs["Calendrier"] = "/app/calendrier";
 		
 		// Helper to add css file
 		Helpers_Stylesheet::add('/assets/js/dhtmlxScheduler/codebase/dhtmlxscheduler.css');
