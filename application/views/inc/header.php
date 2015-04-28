@@ -220,28 +220,12 @@
 
 						<!-- logout button -->
 						<div id="logout" class="btn-header transparent pull-right">
-							<!-- <span> <a href="<?php echo APP_URL; ?>/login.php" title="Sign Out" data-action="userLogout" data-logout-msg="You can improve your security further after logging out by closing this opened browser"><i class="fa fa-sign-out"></i></a> </span> -->
-							<span> <a href="/logout" title="Deconnexion" data-action="userLogout" data-logout-msg="Vous pouvez renforcer votre sécurité en fermant la fenetre de ce navigateur si vous n'êtes pas sur votre propre ordinateur."><i class="fa fa-sign-out"></i></a> </span>
+							<span> <a href="/app/logout" title="Deconnexion" data-action="userLogout" data-logout-msg="Vous pouvez renforcer votre sécurité en fermant la fenetre de ce navigateur si vous n'êtes pas sur votre propre ordinateur."><i class="fa fa-sign-out"></i></a> </span>
 						</div>
 						<!-- end logout button -->
 
-						<!-- search mobile button (this is hidden till mobile view port) -->
-						<!-- <div id="search-mobile" class="btn-header transparent pull-right">
-							<span> <a href="javascript:void(0)" title="Search"><i class="fa fa-search"></i></a> </span>
-						</div> -->
-						<!-- end search mobile button -->
-
-						<!-- input: search field -->
-						<!-- <form action="<?php echo APP_URL; ?>/search.php" class="header-search pull-right">
-							<input type="text" name="param" placeholder="Find reports and more" id="search-fld">
-							<button type="submit">
-								<i class="fa fa-search"></i>
-							</button>
-							<a href="javascript:void(0);" id="cancel-search-js" title="Cancel Search"><i class="fa fa-times"></i></a>
-						</form> -->
-						<!-- end input: search field -->
 						<?php if(!$isLogged){?>
-							<form class="navbar-form navbar-right" name="login-form" id="login-form" method="post" action="/login">
+							<form class="navbar-form navbar-right" name="login-form" id="login-form" method="post" action="/app/login">
 								<div class="form-group">
 									<input class="input-medium thin" type="email" placeholder="Email" name="username">
 									<input class="input-small thin" type="password" placeholder="Password" name="password">

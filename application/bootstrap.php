@@ -108,6 +108,7 @@ if (isset($_SERVER['KOHANA_ENV']))
  */
 Kohana::init(array(
 	'base_url'   => '/',
+    'index_file' => FALSE,
 ));
 
 /**
@@ -150,24 +151,24 @@ Cookie::$salt = 'mdlsdjnsdl';
  * defaults for the URI.
  */
 
-// login
-Route::set('login', 'login')
-	->defaults(array(
-		// 'directory'  => 'account',
-		// 'controller' => 'auth',
-		// 'action'     => 'login',
-		'directory'  => 'EGP',
-		'controller' => 'app',
-		'action'     => 'login',
-	));
+// // login
+// Route::set('login', 'login')
+// 	->defaults(array(
+// 		// 'directory'  => 'account',
+// 		// 'controller' => 'auth',
+// 		// 'action'     => 'login',
+// 		'directory'  => 'EGP',
+// 		'controller' => 'app',
+// 		'action'     => 'login',
+// 	));
 
-// login/logout
-Route::set('logout', 'logout')
-	->defaults(array(
-		'directory'  => 'account',
-		'controller' => 'auth',
-		'action'     => 'logout',
-	));
+// // login/logout
+// Route::set('logout', 'logout')
+// 	->defaults(array(
+// 		'directory'  => 'EGP',
+// 		'controller' => 'app',
+// 		'action'     => 'logout',
+// 	));
 
 
 // Resa

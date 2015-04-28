@@ -16,6 +16,8 @@ class Controller_EGP_App extends Controller_EGP_Main
 		parent::before();	// execute before for parent Class
 		
 		$this->template = View::factory('EGP/egp_template');		// Set the template as /views/public.php
+
+		$this->template->konotif = Notify::render();
 		 
 		Helpers_Stylesheet::add('/assets/css/easygolfpack/egp_main.css');
 
@@ -25,14 +27,15 @@ class Controller_EGP_App extends Controller_EGP_Main
 	// ACTION FUNCS ////////////////
 	////////////////////////////////
 	
-	public function action_index()		// cesar: empty !!!
+	public function action_index()
 	{
 		// Set active page in menu
 		$this->pages["egp"]["active"] = true;
 		// $this->pageBreadcrumbs["Accueil"] = "";
 		$this->pageTitle = "Easy Golf Pack";
 		Helpers_Stylesheet::add('/assets/css/carousel.css');
-		$this->template->content = View::factory('GCB/home');  // Loads default index file from our views folder 
+
+		$this->template->content = View::factory('GCB/home');  // Loads default index file from our views folder
 	}	// action_index
 	
 	public function action_login()	//cesar: est utilisé
@@ -71,6 +74,11 @@ class Controller_EGP_App extends Controller_EGP_Main
 		// $this->template->content = View::factory('account/auth/loginpublic');
 		// $this->template->title = 'Vous devez vous connecter';
 	}	// action_login
+
+	public function action_logout() {
+		Auth::instance()->logout();
+		HTTP::redirect('/');
+	}
 	
 	public function action_inscription()	// cesar: est utilisé
 	{
@@ -86,7 +94,8 @@ class Controller_EGP_App extends Controller_EGP_Main
 	public function action_informations()	// cesar: est utilisé
 	{
 		if(!$this->isLogged){
-			HTTP::redirect('login');
+			Notify::msg("Vous devez être connecté !", 'info');
+			HTTP::redirect('/');
 		}
 		
 		// récup liste des pays

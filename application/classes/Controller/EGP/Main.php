@@ -57,23 +57,44 @@ abstract class Controller_EGP_Main extends Controller_Template
 					),
 				),
 			),
-			"user" => array(
+			// "user" => array(
+			// 	"title" => "Mes Informations",
+			// 	"url" => '/app/informations'
+			// ),
+			// "administration" => array(
+			// 	'title' => 'Administration',
+			// 	'icon' => 'fa-folder-open',
+			// 	'sub' => array(
+			// 		'alert' => array(
+			// 			'title' => 'Alerts',
+			// 		),
+			// 		'progress' => array(
+			// 			'title' => 'Progress',
+			// 		),
+			// 	),
+			// ),
+		);
+		
+		if($this->isLogged){
+			$this->pages["user"] = array(
 				"title" => "Mes Informations",
 				"url" => '/app/informations'
-			),
-			"administration" => array(
-				'title' => 'Administration',
-				'icon' => 'fa-folder-open',
-				'sub' => array(
-					'alert' => array(
-						'title' => 'Alerts',
+			);
+			if($this->isAdmin){
+				$this->pages["administration"] = array(
+					'title' => 'Administration',
+					'icon' => 'fa-folder-open',
+					'sub' => array(
+						'alert' => array(
+							'title' => 'Alerts',
+						),
+						'progress' => array(
+							'title' => 'Progress',
+						),
 					),
-					'progress' => array(
-						'title' => 'Progress',
-					),
-				),
-			),
-		);
+				);
+			}
+		}
 
 		$this->pageBreadcrumbs = array(
 			"Accueil" => "/",

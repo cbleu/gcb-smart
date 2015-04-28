@@ -33,11 +33,6 @@
 	</form>
 </div>
 
-<?php
-	// Return the number of messages
-	echo Notify::count(); // 3
-	Notify::render();
-?>
 
 <?php //include left panel (navigation)
 	//follow the tree in inc/config.ui.php
@@ -58,6 +53,8 @@
 		// include("inc/ribbon.php");
 		include(APPPATH."views/inc/ribbon.php");
 	?>
+
+	<?= $konotif; ?>
 
 	<!-- MAIN CONTENT -->
 	<?= $content; ?>
@@ -82,6 +79,25 @@
 	//include required scripts
 	include(APPPATH."views/inc/scripts.php"); 
 ?>
+
+// <script type="text/javascript">
+//
+// 	// DO NOT REMOVE : GLOBAL FUNCTIONS!
+//
+// 	$(document).ready(function() {
+// 		$('#eg6').click(function() {
+// 			$.smallBox({
+// 				title : "Big Information box",
+// 				content : "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
+// 				color : "#5384AF",
+// 				//timeout: 8000,
+// 				// icon : "fa fa-bell"
+// 				icon : "fa fa-bell swing animated"
+// 			});
+// 		})
+// 	})
+//
+// </script>
 
 
 <!-- JS INCLUDES -->
