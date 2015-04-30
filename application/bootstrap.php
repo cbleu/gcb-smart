@@ -177,26 +177,26 @@ Cookie::$salt = 'mdlsdjnsdl';
 
 // Resa
 // Route::set('resajax', 'resajax(/<action>(/<id>(/<param1>(/<param2>(/<param3>(/<param4>(/<param5>(/<param6>))))))))')
-Route::set('resajax', 'resajax(/<action>(/<id>))')
-	->defaults(array(
-		'directory'  => 'EGP',
-		'controller' => 'resajax',
-		'action'     => 'index',
-	));
-
-Route::set('golf', 'golf(/<controller>(/<action>(/<id>)))')
-	->defaults(array(
-		'directory'  => 'golf',
-		//'controller' => 'parcours',
-		'action'     => 'index',
-	));
-
-// Route::set('egp', 'egp(/<controller>(/<action>(/<id>)))')
+// Route::set('resajax', 'resajax(/<action>(/<id>))')
 // 	->defaults(array(
 // 		'directory'  => 'EGP',
+// 		'controller' => 'resajax',
+// 		'action'     => 'index',
+// 	));
+
+// Route::set('app', 'app(/<controller>(/<action>(/<id>)))')
+// 	->defaults(array(
+// 		'directory'  => 'golf',
 // 		//'controller' => 'parcours',
 // 		'action'     => 'index',
-// ));
+// 	));
+
+Route::set('admin', 'admin(/<controller>(/<action>(/<id>)))')
+	->defaults(array(
+		'directory'  => 'Golf',
+		'controller' => 'Admin',
+		'action'     => 'index',
+));
 
 // Route::set('default', '(<controller>(/<action>(/<id>)))')
 // 	->defaults(array(
@@ -211,4 +211,4 @@ Route::set('default', '(<controller>(/<action>(/<id>)))')
 		'action'     => 'index',
 	));
 
-Log::$write_on_add=FALSE;
+Log::$write_on_add=TRUE;

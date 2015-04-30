@@ -30,6 +30,7 @@
 				</ul>
 			</div>
 		</div>
+
 		<!-- widget grid -->
 		<section id="widget-grid" class="">
 

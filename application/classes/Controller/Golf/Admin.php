@@ -6,7 +6,7 @@
 */
 class Controller_Golf_Admin extends Controller_Golf_Main
 {
-	public $template = '/templates/egp_template';	// Default template
+	public $template = 'egp_template';	// Default template
 	////////////////////////////////
 	// PUBLIC FUNCS ////////////////
 	////////////////////////////////
@@ -20,7 +20,7 @@ class Controller_Golf_Admin extends Controller_Golf_Main
 			HTTP::redirect('/');
 		}
 
-		$this->template = View::factory('/templates/egp_template');
+		$this->template = View::factory('egp_template');
 
 		$this->template->konotif = Notify::render();
 		 
@@ -40,7 +40,7 @@ class Controller_Golf_Admin extends Controller_Golf_Main
 		$this->pages['admin']['sub']['dashboard']["active"] = true;
 		$this->pageTitle = "Dashboard";
 
-		$this->template->content = View::factory('/fragments/admin_dashboard');
+		$this->template->content = View::factory('/fragments/admin/admin_dashboard');
 	}	// action_index
 	
 

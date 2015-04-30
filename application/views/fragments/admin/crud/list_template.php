@@ -1,27 +1,17 @@
 
-<script type='text/javascript'>
-var base_url = '<?php echo URL::base('http', TRUE);?>';
 
-var subject = '<?php echo $subject?>';
-var ajax_list_info_url = '<?php echo $ajax_list_info_url?>';
-var unique_hash = '<?php echo $unique_hash; ?>';
+<link href="/assets/css/flexigrid/flexigrid.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/flexigrid/jquery.fancybox.css">
 
-var message_alert_delete = "<?php echo __('alert_delete'); ?>";
+<script src="/assets/js/flexigrid/cookies.js"></script>
+<script src="/assets/js/flexigrid/flexigrid.js"></script>
+<script src="/assets/js/flexigrid/jquery.form.js"></script>
+<script src="/assets/js/flexigrid/jquery.printElement.js"></script>
 
-</script>
-
-<link href="/assets/oscrud/themes/flexigrid/css/flexigrid.css" rel="stylesheet" type="text/css">
-<link href="/assets/oscrud/css/jquery_plugins/fancybox/jquery.fancybox.css">
-
-<script src="/assets/oscrud/themes/flexigrid/js/cookies.js"></script>
-<script src="/assets/oscrud/themes/flexigrid/js/flexigrid.js"></script>
-<script src="/assets/oscrud/themes/flexigrid/js/jquery.form.js"></script>
-<script src="/assets/oscrud/themes/flexigrid/js/jquery.printElement.js"></script>
-
-<script src="/assets/oscrud/js/jquery_plugins/jquery.fancybox.pack.js"></script>
+<script src="/assets/js/flexigrid/jquery.fancybox.pack.js"></script>
 <!-- <script src="/assets/oscrud/js/jquery_plugins/jquery.easing-1.3.pack.js"></script> -->
 
-<script src="/assets/oscrud/js/jquery_plugins/jquery.numeric.min.js"></script>
+<script src="/assets/js/flexigrid/jquery.numeric.min.js"></script>
 
 	
 <?php if(isset($before_list_div)) {
@@ -248,3 +238,12 @@ var message_alert_delete = "<?php echo __('alert_delete'); ?>";
 </div>
 <!-- ****************************** -->
 
+<script type='text/javascript'>
+	var base_url = '<?php echo URL::base('http', TRUE);?>';
+
+	var subject = '<?php echo $subject?>';
+	var ajax_list_info_url = '<?php echo $ajax_list_info_url?>';
+	var unique_hash = '<?php echo $unique_hash; ?>';
+
+	var message_alert_delete = "<?= __('alert_delete'); ?>";
+</script>

@@ -6,7 +6,7 @@
 */
 class Controller_Golf_App extends Controller_Golf_Main
 {
-	public $template = '/templates/egp_template';	// Default template
+	public $template = 'egp_template';	// Default template
 	////////////////////////////////
 	// PUBLIC FUNCS ////////////////
 	////////////////////////////////
@@ -15,7 +15,7 @@ class Controller_Golf_App extends Controller_Golf_Main
 	{		
 		parent::before();	// execute before for parent Class
 		
-		$this->template = View::factory('/templates/egp_template');		// Set the template as /views/public.php
+		$this->template = View::factory('egp_template');		// Set the template as /views/public.php
 
 		$this->template->konotif = Notify::render();
 		 
@@ -35,7 +35,7 @@ class Controller_Golf_App extends Controller_Golf_Main
 
 		Helpers_Stylesheet::add('/assets/css/carousel.css');
 
-		$this->template->content = View::factory('/templates/GCB/home');  // Loads default index file from our views folder
+		$this->template->content = View::factory('/fragments/GCB/home');  // Loads default index file from our views folder
 	}	// action_index
 	
 	public function action_login()	//cesar: est utilisé

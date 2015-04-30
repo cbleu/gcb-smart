@@ -88,7 +88,7 @@ class Oscrud_Core_States extends Oscrud_Core_Layout
 		//print_r($route);
 		//echo '<br/>';
 		// modif olivier changer index.php
-		$url = $route."golf/".Request::current()->controller().'/'.$url;
+		$url = $route."admin/".Request::current()->controller().'/'.$url;
 		//echo 'action='.Request::current()->action()." controller=".Request::current()->controller();
 		//print_r($url);
 		//echo '<br/>';

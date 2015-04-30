@@ -2,7 +2,7 @@
 
 
 // class Controller_Golf_Resajax extends Controller
-class Controller_EGP_ResAjax extends Controller_EGP_Main
+class Controller_Golf_ResAjax extends Controller_Golf_Main
 {
 	////////////////////////////////
 	// PUBLIC FUNCS ////////////////

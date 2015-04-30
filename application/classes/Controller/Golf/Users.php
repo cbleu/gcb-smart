@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 
-class Controller_EGP_Users extends Controller_EGP_Main
+class Controller_Golf_Users extends Controller_Golf_Main
 {
 	protected $crud = null;
 	public $template = null;
@@ -10,25 +10,33 @@ class Controller_EGP_Users extends Controller_EGP_Main
 	public function before()
 	{
 	
+		// ------------------------------------------------------------------------------
 		parent::before();
+		// ------------------------------------------------------------------------------
 
+		// Admin controller only for admin users !
 		if(!$this->isAdmin){
-			Notify::msg("Vous devez être administrateur !", 'warning');
+			Notify::msg("Vous devez être administrateur !", 'error');
 			HTTP::redirect('/');
 		}
 		
-		// $this->pageBreadcrumbs = array(
-		// 	"Accueil" => "/",
-		// );
-		// ------------------------------------------------------------------------------
 		// ------------------------------------------------------------------------------
 		// ------------------------------------------------------------------------------
 
-		$this->template = View::factory('/templates/egp_template');
+		$this->template = View::factory('egp_template');
 
 		$this->template->konotif = Notify::render();
 		 
 		Helpers_Stylesheet::add('/assets/css/easygolfpack/egp_main.css');
+
+		// Set active page in menu
+		$this->pages["admin"]["active"] = true;
+		$this->pageTitle = "Administration";
+		// Set breadcrumbs links
+		$this->pageBreadcrumbs = array(
+			"Accueil" => "/",
+			"Admin" => "/admin",
+		);
 
 				
 		$this->crud = new Oscrud();
@@ -44,7 +52,6 @@ class Controller_EGP_Users extends Controller_EGP_Main
 		
 		$this->crud->change_field_type('password','password');
 		
-		
 		$this->crud
 			->display_as('firstname','Prénom')
 				->display_as('lastname','Nom')
@@ -58,7 +65,7 @@ class Controller_EGP_Users extends Controller_EGP_Main
 		$this->crud->callback_before_update(array($this,'encrypt_password_callback'));
 		$this->crud->callback_before_insert(array($this,'encrypt_password_callback'));
 		
-		$this->crud->where('users.id','>','1');
+		$this->crud->where('users.id','>','9');
 		
 		$this->crud->set_relation('id_status', 'user_status', 'status');
 		$this->crud->where('status', '=', 'enable');
@@ -75,7 +82,7 @@ class Controller_EGP_Users extends Controller_EGP_Main
 		// Set active page in menu
 		$this->pages["admin"]["sub"]["users"]['sub']['members']["active"] = true;
 		$this->pageTitle = "Liste des usagers";
-
+		// Set breadcrumbs links
 		$this->pageBreadcrumbs["admin"]["sub"]["users"]['sub']['members'] = "/admin/users";
 		$this->pageBreadcrumbs = array(
 			"Accueil" => "/",
@@ -84,7 +91,7 @@ class Controller_EGP_Users extends Controller_EGP_Main
 		);
 
 		$data = (array)parent::action_list();
-				
+
 		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
 		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 	}
