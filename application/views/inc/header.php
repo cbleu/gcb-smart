@@ -151,39 +151,45 @@
 						<!-- END AJAX-DROPDOWN -->
 					</div>
 
-					<!-- projects dropdown -->
-					<div class="project-context hidden-xs">
+					<?php if($isAdmin){?>
+						<!-- projects dropdown -->
+						<div class="project-context hidden-xs">
 
-						<span class="label">Réservations en attente:</span>
-						<span id="project-selector" class="popover-trigger-element dropdown-toggle" data-toggle="dropdown">Recent projects <i class="fa fa-angle-down"></i></span>
+							<span class="label">Réservations en attente:</span>
+							<span id="project-selector" class="popover-trigger-element dropdown-toggle" data-toggle="dropdown">Demandes visiteurs<i class="fa fa-angle-down"></i></span>
 
-						<!-- Suggestion: populate this list with fetch and push technique -->
-						<ul class="dropdown-menu">
-							<li>
-								<a href="javascript:void(0);">Online e-merchant management system - attaching integration with the iOS</a>
-							</li>
-							<li>
-								<a href="javascript:void(0);">Notes on pipeline upgradee</a>
-							</li>
-							<li>
-								<a href="javascript:void(0);">Assesment Report for merchant account</a>
-							</li>
-							<li class="divider"></li>
-							<li>
-								<a href="javascript:void(0);"><i class="fa fa-power-off"></i> Clear</a>
-							</li>
-						</ul>
-						<!-- end dropdown-menu-->
+							<!-- Suggestion: populate this list with fetch and push technique -->
+							<ul class="dropdown-menu">
+								<li>
+									<a href="javascript:void(0);">04/05/2015 à 8h30 pour 4 joueurs 9 trous</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">14/05/2015 à 10h30 pour 2 joueurs 18 trous</a>
+								</li>
+								<li>
+									<a href="javascript:void(0);">16/05/2015 à 9h30 pour 3 joueurs 18 trous</a>
+								</li>
+								<li class="divider"></li>
+								<li>
+									<a href="javascript:void(0);"><i class="fa fa-power-off"></i> Clear</a>
+								</li>
+							</ul>
+							<!-- end dropdown-menu-->
 
-					</div>
-					<!-- end projects dropdown -->
-
+						</div>
+						<!-- end projects dropdown -->
+					<?}?>
 					<!-- pulled right: nav area -->
 					<div class="pull-right">
 
 						<!-- collapse menu button -->
 						<div id="hide-menu" class="btn-header pull-right">
-							<span> <a href="javascript:void(0);" title="Collapse Menu" data-action="toggleMenu"><i class="fa fa-reorder"></i></a> </span>
+							<span rel="tooltip" data-placement="bottom" data-original-title="<i class='text-info fa fa-info fa-2x'></i>&nbsp; Cacher le menu" data-html="true">
+								<a href="javascript:void(0);" data-action="toggleMenu" >
+									<i class="fa fa-reorder"></i>
+								</a>
+							</span> 
+							<!-- <span> <a href="javascript:void(0);" title="Collapse Menu" data-action="toggleMenu"><i class="fa fa-reorder"></i></a> </span> -->
 						</div>
 						<!-- end collapse menu -->
 
@@ -220,7 +226,12 @@
 
 						<!-- logout button -->
 						<div id="logout" class="btn-header transparent pull-right">
-							<span> <a href="/app/logout" title="Deconnexion" data-action="userLogout" data-logout-msg="Vous pouvez renforcer votre sécurité en fermant la fenetre de ce navigateur si vous n'êtes pas sur votre propre ordinateur."><i class="fa fa-sign-out"></i></a> </span>
+							<span data-title="Deconnexion" rel="tooltip" data-placement="bottom" data-original-title="<i class='text-danger fa fa-warning fa-2x'></i>&nbsp; Déconnexion" data-html="true">
+								<a href="/app/logout" title="Deconnexion" data-action="userLogout" data-logout-msg="Vous pouvez renforcer votre sécurité en fermant la fenetre de ce navigateur si vous n'êtes pas sur votre propre ordinateur.">
+									<i class="fa fa-sign-out"></i>
+								</a>
+							</span> 
+							<!-- <span> <a href="/app/logout" title="Deconnexion" data-action="userLogout" data-logout-msg="Vous pouvez renforcer votre sécurité en fermant la fenetre de ce navigateur si vous n'êtes pas sur votre propre ordinateur."><i class="fa fa-sign-out"></i></a> </span> -->
 						</div>
 						<!-- end logout button -->
 
@@ -238,7 +249,12 @@
 
 						<!-- fullscreen button -->
 						<div id="fullscreen" class="btn-header transparent pull-right">
-							<span> <a href="javascript:void(0);" title="Full Screen" data-action="launchFullscreen"><i class="fa fa-arrows-alt"></i></a> </span>
+							<span data-title="Deconnexion" rel="tooltip" data-placement="bottom" data-original-title="<i class='text-info fa fa-info fa-2x'></i>&nbsp; Plein Ecran" data-html="true">
+								<a href="javascript:void(0);" data-action="launchFullscreen" >
+									<i class="fa fa-arrows-alt"></i>
+								</a>
+							</span> 
+							<!-- <span> <a href="javascript:void(0);" title="Full Screen" data-action="launchFullscreen"><i class="fa fa-arrows-alt"></i></a> </span> -->
 						</div>
 						<!-- end fullscreen button -->
 

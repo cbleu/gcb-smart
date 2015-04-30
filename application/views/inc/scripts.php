@@ -31,6 +31,12 @@
 		<!-- JARVIS WIDGETS -->
 		<script src="<?php echo ASSETS_URL; ?>/js/smartwidgets/jarvis.widget.min.js"></script>
 
+		<!-- EASY PIE CHARTS -->
+		<script src="<?php echo ASSETS_URL; ?>/js/plugin/easy-pie-chart/jquery.easy-pie-chart.min.js"></script>
+
+		<!-- SPARKLINES -->
+		<script src="<?php echo ASSETS_URL; ?>/js/plugin/sparkline/jquery.sparkline.min.js"></script>
+
 		<!-- JQUERY VALIDATE -->
 		<script src="<?php echo ASSETS_URL; ?>/js/plugin/jquery-validate/jquery.validate.min.js"></script>
 
@@ -61,5 +67,5 @@
 		
 		
 		<script src="<?php echo ASSETS_URL; ?>/js/responsive-bootstrap-toolkit/bootstrap-toolkit.min.js"></script>
-		<!-- // <script src="<?php echo ASSETS_URL; ?>/js/bootstrap-toggle-master/bootstrap-toggle.min.js"></script> -->
+		<!-- <script src="<?php echo ASSETS_URL; ?>/js/bootstrap-toggle-master/bootstrap-toggle.min.js"></script> -->
 		<script src="<?php echo ASSETS_URL; ?>/js/bootstrap-switch/bootstrap-switch.min.js"></script>

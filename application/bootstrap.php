@@ -137,10 +137,14 @@ Kohana::modules(array(
 	//--------------------------------------------------------------------------
 	'leap'			=> MODPATH.'leap',		// Leap Object Relationship Mapping
 	'formo'			=> MODPATH.'formo',
-	'crud'			=> MODPATH.'crud',
+	// 'crud'			=> MODPATH.'crud',
 	'mobile'		=> MODPATH.'mobile',
-	'menu'			=> MODPATH.'menu',
+	// 'menu'			=> MODPATH.'menu',
 	'notify'		=> MODPATH.'notify',
+	'oscrud'		=> MODPATH.'oscrud',
+	// 'paginate'		=> MODPATH.'kohana-paginate',
+	// 'datatables'	=> MODPATH.'kohana-datatables',
+	// 'datatable'		=> MODPATH.'happyDemon-dataTable'
 ));
 
 /*for cookies signature*/
@@ -172,13 +176,27 @@ Cookie::$salt = 'mdlsdjnsdl';
 
 
 // Resa
-Route::set('resajax', 'resajax(/<action>(/<id>(/<param1>(/<param2>(/<param3>(/<param4>(/<param5>(/<param6>))))))))')
+// Route::set('resajax', 'resajax(/<action>(/<id>(/<param1>(/<param2>(/<param3>(/<param4>(/<param5>(/<param6>))))))))')
+Route::set('resajax', 'resajax(/<action>(/<id>))')
 	->defaults(array(
 		'directory'  => 'EGP',
 		'controller' => 'resajax',
 		'action'     => 'index',
 	));
 
+Route::set('golf', 'golf(/<controller>(/<action>(/<id>)))')
+	->defaults(array(
+		'directory'  => 'golf',
+		//'controller' => 'parcours',
+		'action'     => 'index',
+	));
+
+// Route::set('egp', 'egp(/<controller>(/<action>(/<id>)))')
+// 	->defaults(array(
+// 		'directory'  => 'EGP',
+// 		//'controller' => 'parcours',
+// 		'action'     => 'index',
+// ));
 
 // Route::set('default', '(<controller>(/<action>(/<id>)))')
 // 	->defaults(array(
@@ -188,9 +206,9 @@ Route::set('resajax', 'resajax(/<action>(/<id>(/<param1>(/<param2>(/<param3>(/<p
 
 Route::set('default', '(<controller>(/<action>(/<id>)))')
 	->defaults(array(
-		'directory'  => 'EGP',
+		'directory'  => 'golf',
 		'controller' => 'app',
 		'action'     => 'index',
 	));
 
-Log::$write_on_add=TRUE;
+Log::$write_on_add=FALSE;

@@ -1,8 +1,0 @@
-<?php defined('SYSPATH') OR die('No direct script access.'); ?>
-
-2015-04-23 13:27:48 --- NOTICE: GameReservation::CheckPostDateAndTime: ERREUR : Désolé vous ne pouvez pas réserver à cette date ! in /Users/cesar/Documents/DEV/GIT/gcb-smart/application/classes/EGP/GameReservation.php:468
-2015-04-23 13:28:03 --- NOTICE: GameReservation::CheckPostDateAndTime: ERREUR : Désolé vous ne pouvez pas réserver à cette date ! in /Users/cesar/Documents/DEV/GIT/gcb-smart/application/classes/EGP/GameReservation.php:468
-2015-04-23 22:46:50 --- NOTICE: GameReservation::preCheckPostedValues: ERREUR : Paramètres manquants ou inattendus lors de la réservation. Parcours NON réservé ! in /Users/cesar/Documents/DEV/GIT/gcb-smart/application/classes/EGP/GameReservation.php:454
-2015-04-23 22:46:50 --- NOTICE: GameReservation::preCheckPostedValues: ERREUR : Paramètres manquants ou inattendus lors de la réservation. Parcours NON réservé ! in /Users/cesar/Documents/DEV/GIT/gcb-smart/application/classes/EGP/GameReservation.php:454
-2015-04-23 22:46:55 --- NOTICE: GameReservation::preCheckPostedValues: ERREUR : Paramètres manquants ou inattendus lors de la réservation. Parcours NON réservé ! in /Users/cesar/Documents/DEV/GIT/gcb-smart/application/classes/EGP/GameReservation.php:454
-2015-04-23 22:46:55 --- NOTICE: GameReservation::preCheckPostedValues: ERREUR : Paramètres manquants ou inattendus lors de la réservation. Parcours NON réservé ! in /Users/cesar/Documents/DEV/GIT/gcb-smart/application/classes/EGP/GameReservation.php:454
