@@ -34,8 +34,8 @@ class Controller_Golf_Events extends Controller_Oscrudc {
 
 		$data = (array)parent::action_list();
 		//print_r($data);
-		$this->template->content							= View::factory('/admin/crud/list_template',$data);
-		$this->template->content->list_view 				= View::factory('/admin/crud/list',$data);
+		$this->template->content							= View::factory('/fragments/admin/crud/list_template',$data);
+		$this->template->content->list_view 				= View::factory('/fragments/admin/crud/list',$data);
 		$this->template->content->header_nav 				= View::factory( '/admin/header_nav');
 		$this->template->content->header_nav->breadcrumb 	= $this->get_breadcrumbs();
 		$this->template->content->header_nav->home			=	0;
@@ -55,7 +55,7 @@ class Controller_Golf_Events extends Controller_Oscrudc {
 
 		$data = (array)parent::action_ajax_list();
 
-		echo View::factory('/admin/crud/list',$data);
+		echo View::factory('/fragments/admin/crud/list',$data);
 	}
 	
 	public function action_ajax_list_info(){

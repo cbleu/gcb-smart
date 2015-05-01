@@ -1,26 +1,26 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Handles login/logout.
- * Notice that this is the only controller not extending Controller_Main
- * since this is the only page not requiring being logged in
+ * Handles Roles
+ *
  */
-class Controller_Golf_Rolesusers extends Controller_Oscrudc
+class Controller_Golf_Rolesusers extends Controller_Golf_Admin
 {
-	protected $crud = null;
-	public $template = null;
-
 	
-	public function before() {
-		
-		if (!Auth::instance()->logged_in()) {
-			HTTP::redirect('login');
-       	}
+	public function before()
+	{
+		//////////////////////////////////////////////////////////
+		// Parent Creator call									//
+		parent::before();		// execute before for parent Class
+		//////////////////////////////////////////////////////////
 
-		$this->template = 'admin';
+		//////////////////////////////////////////////////////////
+		// Set active page in menu								//
+		$this->pages["admin"]['sub']['users']["active"] = true;
+		$this->pageTitle = "Gestion des roles";
 
-        parent::before();
-				
+		//////////////////////////////////////////////////////////
+		// Init crud object
 		$this->crud = new Oscrud();
 		$this->crud->set_table('user_roles');
 		$this->crud->set_subject('Groupes Utilisateurs');
@@ -29,42 +29,44 @@ class Controller_Golf_Rolesusers extends Controller_Oscrudc
 		$this->crud->required_fields('role_id','user_id');
 
 		$this->crud
-			->display_as('user_id','Utilisateurs')
-			->display_as('role_id','Groupes');
+			->display_as('user_id','Utilisateur')
+				->display_as('role_id','Role');
 			
 		$this->crud->set_relation('user_id','users','email');	
 		$this->crud->set_relation('role_id','roles','description');	
-		
-		$this->crud->where('role_id', '=', '14');
+		//////////////////////////////////////////////////////////
+	}
 
-    }
-
-	public function action_index() {
-        $this->template->title = 'Dashboard';
+	public function action_index()
+	{
+		// Set active page in menu
+		$this->pages["admin"]['sub']['users']['sub']['roles-set']["active"] = true;
+		$this->pageTitle = "Roles des usagers";
+		// Set breadcrumbs links
+		$this->pageBreadcrumbs = array(
+			"Accueil" => "/",
+			"Admin" => "/admin",
+			"users" => "/admin/users",
+		);
 
 		$data = (array)parent::action_list();
-		//print_r($data);
-		$this->template->content= View::factory('/admin/crud/list_template',$data);
-		$this->template->content->list_view = View::factory('/admin/crud/list',$data);
-		$this->template->content->header_nav = View::factory( '/admin/header_nav');
-		$this->template->content->header_nav->breadcrumb = $this->get_breadcrumbs();
-		$this->template->content->header_nav->home			=	0;
-		$this->template->content->header_nav->users			=	0;
-		$this->template->content->header_nav->reservation	=	0;
-		$this->template->content->header_nav->competition	=	0;
-		$this->template->content->header_nav->settings		=	1;
+
+		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
+		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 	}
 	
-	public function action_delete() {
-		
+	public function action_delete()
+	{
 		//disable auto rendering if requested using ajax
-        if($this->request->is_ajax()){
-            $this->auto_render = FALSE;
-        }
+		if($this->request->is_ajax()){
+			$this->auto_render = FALSE;
+		}
 		
 		$data = (array)parent::action_delete();
-		$this->template = View::factory('admin/ajax');
-		$this->template->content= View::factory('/admin/crud/delete');
+
+		HTTP::redirect('/admin/users/');
+		
+		$data = (array)parent::action_delete();
 	}
 	
 	public function action_add() {
@@ -72,14 +74,7 @@ class Controller_Golf_Rolesusers extends Controller_Oscrudc
 		
 		$data = (array)parent::action_add();
 		
-		$this->template->content= View::factory('/admin/crud/add',$data);
-		$this->template->content->header_nav = View::factory( '/admin/header_nav');
-		$this->template->content->header_nav->breadcrumb = $this->get_breadcrumbs();
-		$this->template->content->header_nav->home			=	0;
-		$this->template->content->header_nav->users			=	0;
-		$this->template->content->header_nav->reservation	=	0;
-		$this->template->content->header_nav->competition	=	0;
-		$this->template->content->header_nav->settings		=	1;
+		$this->template->content= View::factory('/fragments/admin/crud/add-edit',$data);
 	}
 	
 	public function action_edit() {
@@ -87,64 +82,40 @@ class Controller_Golf_Rolesusers extends Controller_Oscrudc
 		
 		$data = (array)parent::action_edit();
 
-		$this->template->content= View::factory('/admin/crud/edit',$data);
-		$this->template->content->header_nav = View::factory( '/admin/header_nav');
-		$this->template->content->header_nav->breadcrumb = $this->get_breadcrumbs();
-		$this->template->content->header_nav->home			=	0;
-		$this->template->content->header_nav->users			=	0;
-		$this->template->content->header_nav->reservation	=	0;
-		$this->template->content->header_nav->competition	=	0;
-		$this->template->content->header_nav->settings		=	1;
+		$this->template->content= View::factory('/fragments/admin/crud/add-edit',$data);
 	}
 	
 	public function action_list() {
 
-        $this->template->title = 'Dashboard';
+		// Set active page in menu
+		$this->pages["admin"]['sub']['Role']["active"] = true;
+		$this->pageTitle = "Roles des usagers";
 
 		$data = (array)parent::action_list();
-		//print_r($data);
 
-		$this->template->content= View::factory('/admin/crud/list_template',$data);
-		$this->template->content->list_view = View::factory('/admin/crud/list',$data);
-		$this->template->content->header_nav = View::factory( '/admin/header_nav');
-		$this->template->content->header_nav->breadcrumb = $this->get_breadcrumbs();
-		$this->template->content->header_nav->home			=	0;
-		$this->template->content->header_nav->users			=	0;
-		$this->template->content->header_nav->reservation	=	0;
-		$this->template->content->header_nav->competition	=	0;
-		$this->template->content->header_nav->settings		=	1;
-	
+		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
+		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 	}
-	public function action_success() {
-
-        $this->template->title = 'Dashboard';
+	public function action_success()
+	{
 
 		$data = (array)parent::action_list();
 		//print_r($data);
 
-		$this->template->content= View::factory('/admin/crud/list_template',$data);
-		$this->template->content->list_view = View::factory('/admin/crud/list',$data);
-		$this->template->content->header_nav = View::factory( '/admin/header_nav');
-		$this->template->content->header_nav->breadcrumb = $this->get_breadcrumbs();
-		$this->template->content->header_nav->home			=	0;
-		$this->template->content->header_nav->users			=	0;
-		$this->template->content->header_nav->reservation	=	0;
-		$this->template->content->header_nav->competition	=	0;
-		$this->template->content->header_nav->settings		=	1;
-	
+		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
+		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 	}
 	
 	public function action_ajax_list() {
 
 		//disable auto rendering if requested using ajax
-        if($this->request->is_ajax()){
-            $this->auto_render = FALSE;
-        }
+		if($this->request->is_ajax()){
+			$this->auto_render = FALSE;
+		}
 
 		$data = (array)parent::action_ajax_list();
-		//print_r($data);
-		//echo 'toto';
-		echo View::factory('/admin/crud/list',$data);
+
+		echo View::factory('/fragments/admin/crud/list',$data);
 		
 	}
 	
@@ -152,9 +123,9 @@ class Controller_Golf_Rolesusers extends Controller_Oscrudc
 		//echo 'ajax_list_info';
 		//print_r($_POST);
 		//disable auto rendering if requested using ajax
-        if($this->request->is_ajax()){
-            $this->auto_render = FALSE;
-        }
+		if($this->request->is_ajax()){
+			$this->auto_render = FALSE;
+		}
 		
 		$data = parent::action_ajax_list_info();
 		//print_r($data);
@@ -165,40 +136,32 @@ class Controller_Golf_Rolesusers extends Controller_Oscrudc
 	public function action_update() {
 
 		//disable auto rendering if requested using ajax
-        if($this->request->is_ajax()){
-            $this->auto_render = FALSE;
-        }
+		if($this->request->is_ajax()){
+			$this->auto_render = FALSE;
+		}
 		$data = (array)parent::action_update();
-		$this->template->content= View::factory('/admin/crud/update',$data);
 		
-		$this->template->content->header_nav = View::factory( '/admin/header_nav');
-		$this->template->content->header_nav->breadcrumb = $this->get_breadcrumbs();
-		$this->template->content->header_nav->home			=	0;
-		$this->template->content->header_nav->users			=	0;
-		$this->template->content->header_nav->reservation	=	0;
-		$this->template->content->header_nav->competition	=	0;
-		$this->template->content->header_nav->settings		=	1;
-		
+		$this->template->content= View::factory('/fragments/admin/crud/update',$data);
 	}
 	
 	public function action_insert() {
 
 		//disable auto rendering if requested using ajax
-        if($this->request->is_ajax()){
-            $this->auto_render = FALSE;
-        }
+		if($this->request->is_ajax()){
+			$this->auto_render = FALSE;
+		}
 		$data = (array)parent::action_insert();
-		$this->template->content= View::factory('/admin/crud/insert',$data);
+		$this->template->content= View::factory('/fragments/admin/crud/insert',$data);
 	}
 	
 	public function action_insert_validation() {
 
 		//disable auto rendering if requested using ajax
-        if($this->request->is_ajax()){
-            $this->auto_render = FALSE;
-        }
+		if($this->request->is_ajax()){
+			$this->auto_render = FALSE;
+		}
 		$data = (array)parent::action_insert_validation();
-		$this->template->content= View::factory('/admin/crud/insert',$data);
+		$this->template->content= View::factory('/fragments/admin/crud/insert',$data);
 	}
 	
 }

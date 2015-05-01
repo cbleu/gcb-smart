@@ -143,8 +143,8 @@ class Controller_Golf_Membresdesactive extends Controller_Oscrudc
 		
 		//echo "menu=".$this->menu;
 		
-		$this->template->content= View::factory('/admin/crud/list_template',$data);
-		$this->template->content->list_view = View::factory('/admin/crud/list_',$data);
+		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
+		$this->template->content->list_view = View::factory('/fragments/admin/crud/list_',$data);
 		$this->template->content->header_nav = View::factory( '/admin/header_nav');
 		$this->template->content->header_nav->breadcrumb = $this->get_breadcrumbs();
 		$this->template->content->header_nav->home			=	0;
@@ -161,8 +161,8 @@ class Controller_Golf_Membresdesactive extends Controller_Oscrudc
 
 		$data = (array)parent::action_list();
 		
-		$this->template->content= View::factory('/admin/crud/list_template',$data);
-		$this->template->content->list_view = View::factory('/admin/crud/list_',$data);
+		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
+		$this->template->content->list_view = View::factory('/fragments/admin/crud/list_',$data);
 		$this->template->content->header_nav = View::factory( '/admin/header_nav');
 		$this->template->content->header_nav->breadcrumb = $this->get_breadcrumbs();
 		$this->template->content->header_nav->home			=	0;
@@ -184,7 +184,7 @@ class Controller_Golf_Membresdesactive extends Controller_Oscrudc
 		$data = (array)parent::action_ajax_list();
 		//print_r($data);
 		//echo 'toto';
-		echo View::factory('/admin/crud/list_',$data);
+		echo View::factory('/fragments/admin/crud/list_',$data);
 		
 	}
 	
@@ -209,7 +209,7 @@ class Controller_Golf_Membresdesactive extends Controller_Oscrudc
             $this->auto_render = FALSE;
         }
 		$data = (array)parent::action_update();
-		$this->template->content= View::factory('/admin/crud/update',$data);
+		$this->template->content= View::factory('/fragments/admin/crud/update',$data);
 	}
 	
 	public function action_insert() {
@@ -222,7 +222,7 @@ class Controller_Golf_Membresdesactive extends Controller_Oscrudc
 		
 		print_r($data);
 		
-		$this->template->content= View::factory('/admin/crud/insert',$data);
+		$this->template->content= View::factory('/fragments/admin/crud/insert',$data);
 	}
 	
 	public function action_success() {
@@ -231,8 +231,8 @@ class Controller_Golf_Membresdesactive extends Controller_Oscrudc
 
 		$data = (array)parent::action_list();
 		
-		$this->template->content= View::factory('/admin/crud/list_template',$data);
-		$this->template->content->list_view = View::factory('/admin/crud/list_',$data);
+		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
+		$this->template->content->list_view = View::factory('/fragments/admin/crud/list_',$data);
 		$this->template->content->header_nav = View::factory( '/admin/header_nav');
 		$this->template->content->header_nav->breadcrumb = $this->get_breadcrumbs();
 		$this->template->content->header_nav->home			=	0;

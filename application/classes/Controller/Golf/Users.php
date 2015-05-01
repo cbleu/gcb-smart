@@ -1,34 +1,17 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 
-class Controller_Golf_Users extends Controller_Golf_Main
+class Controller_Golf_Users extends Controller_Golf_Admin
 {
-	protected $crud = null;
-	public $template = null;
-	
 
 	public function before()
 	{
-	
-		// ------------------------------------------------------------------------------
-		parent::before();
-		// ------------------------------------------------------------------------------
+		//////////////////////////////////////////////////////////
+		// Parent Creator call									//
+		parent::before();		// execute before for parent Class
+		//////////////////////////////////////////////////////////
 
-		// Admin controller only for admin users !
-		if(!$this->isAdmin){
-			Notify::msg("Vous devez être administrateur !", 'error');
-			HTTP::redirect('/');
-		}
-		
-		// ------------------------------------------------------------------------------
-		// ------------------------------------------------------------------------------
-
-		$this->template = View::factory('egp_template');
-
-		$this->template->konotif = Notify::render();
-		 
-		Helpers_Stylesheet::add('/assets/css/easygolfpack/egp_main.css');
-
+		//////////////////////////////////////////////////////////
 		// Set active page in menu
 		$this->pages["admin"]["active"] = true;
 		$this->pageTitle = "Administration";
@@ -37,8 +20,10 @@ class Controller_Golf_Users extends Controller_Golf_Main
 			"Accueil" => "/",
 			"Admin" => "/admin",
 		);
+		//////////////////////////////////////////////////////////
 
-				
+		//////////////////////////////////////////////////////////
+		// CRUD Management										//
 		$this->crud = new Oscrud();
 		$this->crud->set_table('users');
 		$this->crud->set_subject('Membres');
@@ -225,8 +210,8 @@ class Controller_Golf_Users extends Controller_Golf_Main
 
 		// $data = (array)parent::action_list();
 		//
-		// $this->template->content= View::factory('/admin/crud/list_template',$data);
-		// $this->template->content->list_view = View::factory('/admin/crud/list',$data);
+		// $this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
+		// $this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 	}
 
 	function encrypt_password_callback($post_array, $primary_key = null) {

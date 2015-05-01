@@ -34,8 +34,8 @@ class Controller_Golf_Pays extends Controller_Oscrudc
 		$data = (array)parent::action_list();
 		//print_r($data);
 
-		$this->template->content= View::factory('/admin/crud/list_template',$data);
-		$this->template->content->list_view = View::factory('/admin/crud/list',$data);
+		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
+		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 		$this->template->content->header_nav = View::factory( '/admin/header_nav');
 		$this->template->content->header_nav->breadcrumb = $this->get_breadcrumbs();
 		$this->template->content->header_nav->home			=	0;
@@ -50,7 +50,7 @@ class Controller_Golf_Pays extends Controller_Oscrudc
 		
 		$data = (array)parent::action_add();
 		
-		$this->template->content= View::factory('/admin/crud/add',$data);
+		$this->template->content= View::factory('/fragments/admin/crud/add',$data);
 		$this->template->content->header_nav = View::factory( '/admin/header_nav');
 		$this->template->content->header_nav->breadcrumb = $this->get_breadcrumbs();
 		$this->template->content->header_nav->home			=	0;
@@ -66,7 +66,7 @@ class Controller_Golf_Pays extends Controller_Oscrudc
 		$data = (array)parent::action_edit();
 		//print_r($data);
 		
-		$this->template->content= View::factory('/admin/crud/edit',$data);
+		$this->template->content= View::factory('/fragments/admin/crud/edit',$data);
 		$this->template->content->header_nav = View::factory( '/admin/header_nav');
 		$this->template->content->header_nav->breadcrumb = $this->get_breadcrumbs();
 		$this->template->content->header_nav->home			=	0;
@@ -84,8 +84,8 @@ class Controller_Golf_Pays extends Controller_Oscrudc
 		$data = (array)parent::action_list();
 		//print_r($data);
 
-		$this->template->content= View::factory('/admin/crud/list_template',$data);
-		$this->template->content->list_view = View::factory('/admin/crud/list',$data);
+		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
+		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 		$this->template->content->header_nav = View::factory( '/admin/header_nav');
 		$this->template->content->header_nav->breadcrumb = $this->get_breadcrumbs();
 		$this->template->content->header_nav->home			=	0;
@@ -107,7 +107,7 @@ class Controller_Golf_Pays extends Controller_Oscrudc
 		$data = (array)parent::action_ajax_list();
 		//print_r($data);
 		//echo 'toto';
-		echo View::factory('/admin/crud/list',$data);
+		echo View::factory('/fragments/admin/crud/list',$data);
 		
 	}
 	
@@ -132,7 +132,7 @@ class Controller_Golf_Pays extends Controller_Oscrudc
             $this->auto_render = FALSE;
         }
 		$data = (array)parent::action_update();
-		$this->template->content= View::factory('/admin/crud/update',$data);
+		$this->template->content= View::factory('/fragments/admin/crud/update',$data);
 	}
 	
 	public function action_insert() {
@@ -142,6 +142,6 @@ class Controller_Golf_Pays extends Controller_Oscrudc
             $this->auto_render = FALSE;
         }
 		$data = (array)parent::action_update();
-		$this->template->content= View::factory('/admin/crud/insert',$data);
+		$this->template->content= View::factory('/fragments/admin/crud/insert',$data);
 	}
 }

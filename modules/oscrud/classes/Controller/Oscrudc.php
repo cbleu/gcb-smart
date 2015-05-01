@@ -6,7 +6,7 @@ class Controller_Oscrudc extends Controller_Template {
 	 * @var $_table name
 	 */
 	protected $_table_model = '';
-	public $template = 'admin';
+	public $template = 'empty';
 
 	/*
 	 * @var $_route_name Route to be used for actions (default: crud)

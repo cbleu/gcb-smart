@@ -1,37 +1,42 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-/**
-* Dashboard controller.
-* Handles posting and viewing of past posts
-*/
-class Controller_Golf_Admin extends Controller_Golf_Main
+
+class Controller_Golf_Admin extends Controller_Golf_App
 {
-	public $template = 'egp_template';	// Default template
-	////////////////////////////////
+	//////////////////////////////////////////////////////////
 	// PUBLIC FUNCS ////////////////
-	////////////////////////////////
+	//////////////////////////////////////////////////////////
 	
 	public function before()
-	{		
-		parent::before();	// execute before for parent Class
-		
+	{
+		//////////////////////////////////////////////////////////
+		// Parent Creator call									//
+		parent::before();		// execute before for parent Class
+		//////////////////////////////////////////////////////////
+
+		//////////////////////////////////////////////////////////
+		// Admin controller only for admin users ! 				//
 		if(!$this->isAdmin){
-			Notify::msg("Vous devez être administrateur !", 'warning');
+			Notify::msg("Vous devez être administrateur !", 'error');
 			HTTP::redirect('/');
 		}
+		//////////////////////////////////////////////////////////
 
-		$this->template = View::factory('egp_template');
-
-		$this->template->konotif = Notify::render();
-		 
-		Helpers_Stylesheet::add('/assets/css/easygolfpack/egp_main.css');
-		
-
+		//////////////////////////////////////////////////////////
+		// Set active page in menu								//
+		$this->pages["admin"]["active"] = true;
+		$this->pageTitle = "Administration";
+		// Set breadcrumbs links
+		$this->pageBreadcrumbs = array(
+			"Accueil" => "/",
+			"Admin" => "/admin",
+		);
+		//////////////////////////////////////////////////////////
 	}	// before
 	
-	////////////////////////////////
+	//////////////////////////////////////////////////////////
 	// ACTION FUNCS ////////////////
-	////////////////////////////////
+	//////////////////////////////////////////////////////////
 	
 	public function action_index()
 	{

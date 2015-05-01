@@ -77,8 +77,8 @@ class Controller_Golf_Membres extends Controller_EGP_Main
  
 		$data = (array)parent::action_list();
 				
-		$this->template->content= View::factory('/admin/crud/list_template',$data);
-		$this->template->content->list_view = View::factory('/admin/crud/list',$data);
+		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
+		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 	}
 	
 	public function action_add() {
@@ -95,7 +95,7 @@ class Controller_Golf_Membres extends Controller_EGP_Main
 		
 		$data = (array)parent::action_add();
 		
-		$this->template->content = View::factory('/admin/crud/add-edit', $data);
+		$this->template->content = View::factory('/fragments/admin/crud/add-edit', $data);
 	}
 	
 	public function action_edit() {
@@ -110,7 +110,7 @@ class Controller_Golf_Membres extends Controller_EGP_Main
 
 		$data = (array)parent::action_edit();
 
-		$this->template->content = View::factory('/admin/crud/add-edit',$data);
+		$this->template->content = View::factory('/fragments/admin/crud/add-edit',$data);
 	}
 	
 	public function action_list()
@@ -118,8 +118,8 @@ class Controller_Golf_Membres extends Controller_EGP_Main
 
 		$data = (array)parent::action_list();
 
-		$this->template->content= View::factory('/admin/crud/list_template',$data);
-		$this->template->content->list_view = View::factory('/admin/crud/list',$data);
+		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
+		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 	
 	}
 	
@@ -148,8 +148,8 @@ class Controller_Golf_Membres extends Controller_EGP_Main
 		$data = (array)parent::action_delete();
 		
 		$this->template = View::factory('admin/ajax');
-		$this->template->content = View::factory('/admin/crud/list_template',$data);
-		$this->template->content->list_view = View::factory('/admin/crud/list',$data);
+		$this->template->content = View::factory('/fragments/admin/crud/list_template',$data);
+		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 	}
 	
 	public function action_valide() {
@@ -158,8 +158,8 @@ class Controller_Golf_Membres extends Controller_EGP_Main
 
 		$data = (array)parent::action_list();
 
-		$this->template->content = View::factory('/admin/crud/list_template',$data);
-		$this->template->content->list_view = View::factory('/admin/crud/list',$data);
+		$this->template->content = View::factory('/fragments/admin/crud/list_template',$data);
+		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 	}
 	
 	public function action_ajax_list() {
@@ -172,7 +172,7 @@ class Controller_Golf_Membres extends Controller_EGP_Main
 		$data = (array)parent::action_ajax_list();
 		//print_r($data);
 		//echo 'toto';
-		echo View::factory('/admin/crud/list',$data);
+		echo View::factory('/fragments/admin/crud/list',$data);
 		
 	}
 	
@@ -210,8 +210,8 @@ class Controller_Golf_Membres extends Controller_EGP_Main
 
 		// $data = (array)parent::action_list();
 		//
-		// $this->template->content= View::factory('/admin/crud/list_template',$data);
-		// $this->template->content->list_view = View::factory('/admin/crud/list',$data);
+		// $this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
+		// $this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 	}
 
 	function encrypt_password_callback($post_array, $primary_key = null) {

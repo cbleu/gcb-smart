@@ -133,8 +133,8 @@ class Controller_Golf_Membresvalide extends Controller_Oscrudc
 		$data = (array)parent::action_list();
 		//print_r($data);
 
-		$this->template->content= View::factory('/admin/crud/list_template',$data);
-		$this->template->content->list_view = View::factory('/admin/crud/list_',$data);
+		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
+		$this->template->content->list_view = View::factory('/fragments/admin/crud/list_',$data);
 		$this->template->content->list_view->unset_edit = $this->crud->unset_edit;
 		
 		$this->template->content->header_nav = View::factory( '/admin/header_nav');
@@ -226,7 +226,7 @@ class Controller_Golf_Membresvalide extends Controller_Oscrudc
 		$data = (array)parent::action_ajax_list();
 		//print_r($data);
 		//echo 'toto';
-		echo View::factory('/admin/crud/list_',$data);
+		echo View::factory('/fragments/admin/crud/list_',$data);
 		
 	}
 	
