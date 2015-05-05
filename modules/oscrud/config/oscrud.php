@@ -20,7 +20,7 @@ return array
 	'oscrud_text_editor_type' 	=> 'full', 
 	
 	//The character limiter at the list page, zero(0) value if you don't want character limiter at your list page
-	'oscrud_character_limiter' 	=> 30,
+	'oscrud_character_limiter' 	=> 50,
 	
 	'language_alias' => array(
 		'afrikaans'		=> 'af',

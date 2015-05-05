@@ -69,7 +69,7 @@
 										<div title="<?= __('minimize_maximize')?>" class="ptogtitle"><span class="fa"></span></div>
 										<div class="ftitle">
 											<form action="<?= $ajax_list_url;?>" method="post" id="filtering_form" autocomplete = "off">
-												<?php //echo form_open( $ajax_list_url, 'method="post" id="filtering_form" autocomplete = "off"'); ?>
+												<!-- <?php //echo form_open( $ajax_list_url, 'method="post" id="filtering_form" autocomplete = "off"'); ?> -->
 
 												<div class="sDiv" id='quickSearchBox'>
 													<div class="sDiv2">

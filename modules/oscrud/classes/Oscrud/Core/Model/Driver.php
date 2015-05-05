@@ -33,9 +33,11 @@ class Oscrud_Core_Model_Driver extends Oscrud_Core_Field_Types
 		//echo 'debut total';
 		//print_r($this);
 		//echo 'fin total';
-		if(!empty($this->where))
-			foreach($this->where as $where)
+		if(!empty($this->where)){
+			foreach($this->where as $where){
 				$this->basic_model->where($where[0],$where[1],$where[2]);
+			}
+		}
 
 		if(!empty($this->or_where))
 			foreach($this->or_where as $or_where)

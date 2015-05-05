@@ -6,7 +6,7 @@
 * since this is the only page not requiring being logged in
 */
 // class Controller_Golf_Membres extends Controller_Oscrudc
-class Controller_Golf_Membres extends Controller_EGP_Main
+class Controller_Golf_Membres extends Controller_Golf_Main
 {
 	protected $crud = null;
 	public $template = null;
@@ -26,7 +26,7 @@ class Controller_Golf_Membres extends Controller_EGP_Main
 		// ------------------------------------------------------------------------------
 		// ------------------------------------------------------------------------------
 
-		$this->template = View::factory('EGP/egp_template');		// Set the template as /views/public.php
+		$this->template = View::factory('egp_template');		// Set the template as /views/public.php
 
 		$this->template->konotif = Notify::render();
 		 
@@ -42,7 +42,7 @@ class Controller_Golf_Membres extends Controller_EGP_Main
 		$this->crud->fields('firstname','lastname','email','password','adresse','cp','ville','id_pays','indgolf','telephone', 'id_status');
 		$this->crud->required_fields('firstname','lastname','email','password');
 		
-		$this->crud->set_relation('id_pays','pays','nom');
+		// $this->crud->set_relation('id_pays','pays','nom');
 		
 		$this->crud->change_field_type('password','password');
 		

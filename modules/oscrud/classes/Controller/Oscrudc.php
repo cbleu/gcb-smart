@@ -1,50 +1,34 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Oscrudc extends Controller_Template {
+class Controller_Oscrudc extends Controller_Template
+{
 	
 	/*
-	 * @var $_table name
-	 */
+	* @var $_table name
+	*/
 	protected $_table_model = '';
 	public $template = 'empty';
 
 	/*
-	 * @var $_route_name Route to be used for actions (default: crud)
-	 */
+	* @var $_route_name Route to be used for actions (default: crud)
+	*/
 	protected $_route_name = 'oscrudc';
 	
-	public function before() {
-		// controle si acces depuis un mobile
-		// $this->is_mobile = Mobile::getInstance()->isMobile();
-		// if($this->is_mobile ){
-		// 	// Set a local template variable to what template the controller wants to use, by default 'template'
-		// 	        $template = 'mobile';
-		// 	echo 'site mobile';
-		// }
-		// else{
-		// 	// Set a local template variable to what template the controller wants to use, by default 'template'
-		// 	        $template = $this->template;
-		// 	//echo 'site normal';
-		// }
-        // This is important and for abstraction, since we're extending a class and its functions we need to make sure we still execute its before(); function
-        // This will load the view you need from /views/template.php or /views/template2.php depending on what your controller specifies into $this->template
-        parent::before();
-
-        // $this->template->header = View::factory('admin/header');  // Loads default header file from our views folder /views/admin/header.php
-        // $this->template->content = View::factory('admin/content');  // Loads default index file from our views folder
-        // $this->template->footer = View::factory('admin/footer');  // Loads default footer file from our views folder
+	public function before()
+	{
+		parent::before();
 	
 	}
 	
 	public function get_breadcrumbs($pages = array()){
-    	foreach($segments = explode('/', $this->request->uri()) as $key => $page){
-    		$pages[] = array(
-    			'title' => $page,
-    			'url' => URL::site(join('/', array_slice($segments, 0, ($key + 1))))
-    		);
-    	}
-    	return View::factory('admin/breadcrumbs')->set('pages', $pages);
-    }
+		foreach($segments = explode('/', $this->request->uri()) as $key => $page){
+			$pages[] = array(
+				'title' => $page,
+				'url' => URL::site(join('/', array_slice($segments, 0, ($key + 1))))
+			);
+		}
+		return View::factory('admin/breadcrumbs')->set('pages', $pages);
+	}
 
 	public function action_index()
 	{
@@ -57,15 +41,15 @@ class Controller_Oscrudc extends Controller_Template {
 		//print_r($state_info);
 		$this->crud->set_ajax_list_queries($state_info);
 		$data = $this->crud->showList(true);
-		//print_r($data);
+		// echo($data);
 		return $data;
 	}
 	
 	public function action_ajax_list(){
 		
 		if($this->request->is_ajax()){
-            $this->auto_render = FALSE;
-        }
+			$this->auto_render = FALSE;
+		}
 
 		$this->crud->pre_render();
 		
@@ -76,7 +60,20 @@ class Controller_Oscrudc extends Controller_Template {
 		//print_r($state_info);
 		$this->crud->set_ajax_list_queries($state_info);
 		$data = $this->crud->showList(true);
-		//print_r($data);
+		// print_r($data);
+		return $data;
+	}
+	
+	public function action_ajax_list_info(){
+		$this->crud->pre_render();
+		
+		$first_parameter = $this->request->param('id');
+		$second_parameter = $this->request->param('param');
+		$state_info = $this->crud->getStateInfo($first_parameter,$second_parameter);
+		$this->crud->set_ajax_list_queries($state_info);
+
+		$data = $this->crud->showListInfo();
+
 		return $data;
 	}
 	
@@ -201,19 +198,6 @@ class Controller_Oscrudc extends Controller_Template {
 		$state_info = $this->crud->getStateInfo($first_parameter,$second_parameter);
 		
 		$data = $this->crud->showList(false,$state_info);
-		return $data;
-	}
-	
-	public function action_ajax_list_info(){
-		$this->crud->pre_render();
-		
-		$first_parameter = $this->request->param('id');
-		$second_parameter = $this->request->param('param');
-		$state_info = $this->crud->getStateInfo($first_parameter,$second_parameter);
-		$this->crud->set_ajax_list_queries($state_info);				
-
-		$data = $this->crud->showListInfo();
-
 		return $data;
 	}
 	

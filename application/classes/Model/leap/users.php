@@ -90,8 +90,12 @@ class Model_Leap_Users extends DB_ORM_Model
 				'max_length' => 100,
 				'nullable' => TRUE,
 			)),
-			'id_pays' => new DB_ORM_Field_Integer($this, array(
-				'max_length' => 11,
+			// 'id_pays' => new DB_ORM_Field_Integer($this, array(
+			// 	'max_length' => 11,
+			// 	'nullable' => TRUE,
+			// )),
+			'id_pays' => new DB_ORM_Field_String($this, array(
+				'max_length' => 2,
 				'nullable' => TRUE,
 			)),
 			'telephone' => new DB_ORM_Field_String($this, array(

@@ -22,45 +22,53 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 		);
 		//////////////////////////////////////////////////////////
 
+		$this->init_crud();
+	}
+
+	function init_crud()
+	{
 		//////////////////////////////////////////////////////////
 		// CRUD Management										//
 		$this->crud = new Oscrud();
 		$this->crud->set_table('users');
-		$this->crud->set_subject('Membres');
-
-		$this->crud->columns('firstname','lastname','email','id_pays', 'id_status');
-		
 		$this->crud->fields('firstname','lastname','email','password','adresse','cp','ville','id_pays','indgolf','telephone', 'id_status');
 		$this->crud->required_fields('firstname','lastname','email','password');
-		
-		$this->crud->set_relation('id_pays','pays','nom');
-		
+
+		$this->crud->set_relation('id_pays','country','nom');
+		$this->crud->set_relation('id_status', 'user_status', 'status');
+
+		$this->crud->callback_before_update(array($this,'encrypt_password_callback'));
+		$this->crud->callback_before_insert(array($this,'encrypt_password_callback'));
+	}
+
+	function make_crud()
+	{
+		//////////////////////////////////////////////////////////
+		// CRUD Management										//
+
 		$this->crud->change_field_type('password','password');
-		
+
+		$this->crud->columns('firstname','lastname','email','id_pays', 'id_status');
+		$this->crud->set_subject('Membres');		
 		$this->crud
 			->display_as('firstname','Prénom')
 				->display_as('lastname','Nom')
 					->display_as('email','Courriel')
 						->display_as('password','Mot de passe')
 							->display_as('id_pays','Pays')
-								->display_as('id_status','Status')
-									->display_as('activated','Activé')
-										->display_as('cp','Code Postal');
+								->display_as('cp','Code Postal')
+									->display_as('indgolf','Index')
+										->display_as('id_status','Status');
+											// ->display_as('activated','Activé');
 		
-		$this->crud->callback_before_update(array($this,'encrypt_password_callback'));
-		$this->crud->callback_before_insert(array($this,'encrypt_password_callback'));
 		
-		$this->crud->where('users.id','>','9');
-		
-		$this->crud->set_relation('id_status', 'user_status', 'status');
-		$this->crud->where('status', '=', 'enable');
 		
 		$this->crud->unset_delete();
+		// $this->crud->add_action('Activer', 'fa fa-play txt-color-blue','', 'with-tip', array($this,'activate_user'));
 		$this->crud->add_action('Editer', 'fa fa-pencil txt-color-green','', 'with-tip', array($this,'edit_user'));
 		$this->crud->add_action('Supprimer', 'fa fa-times txt-color-red', '', 'with-tip', array($this,'delete_user'));
-		
-	}
 
+	}
 
 	public function action_index() {
  
@@ -75,23 +83,73 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 			"Users" => "/admin/users",
 		);
 
+		$this->make_crud();
+
+		$this->crud->where('users.id','>','9');
+		$this->crud->where('status', '=', 'enable');
+
 		$data = (array)parent::action_list();
 
 		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
 		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 	}
+
+	public function action_disabled() {
+ 
+		// Set active page in menu
+		$this->pages["admin"]["sub"]["users"]['sub']['disabled']["active"] = true;
+		$this->pageTitle = "Liste des usagers désactivés";
+		// Set breadcrumbs links
+		$this->pageBreadcrumbs["admin"]["sub"]["users"]['sub']['members'] = "/admin/users";
+		$this->pageBreadcrumbs = array(
+			"Accueil" => "/",
+			"Admin" => "/admin",
+			"Users" => "/admin/users",
+		);
+
+		$this->make_crud();
+		$this->crud->where('status', '=', 'disable');
+		$data = (array)parent::action_list();
+
+		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
+		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
+	}
+
+	public function action_active()
+	{
+		$id_user = $this->request->param('id');
+		
+		$status = DB_SQL::select('default')
+			->from('user_status')
+				->where('status', '=', 'enable')
+					->query();
+						
+		$enable_status_id = $status[0]['id'];
+		
+		$user = DB_ORM::model('users');
+		$user->id = $id_user;
+		$user->load();
+	
+		if($user->is_loaded()){
+			$user->id_status = $enable_status_id;
+			$user->save(true);
+		}
+		
+		HTTP::redirect('/admin/users//membresdesactive/');
+	}
 	
 	public function action_add() {
 		
-		$this->crud->set_relation('id_pays','pays','nom');
-		$this->crud->set_relation('id_status', 'user_status', 'name');
+		$this->make_crud();
 
-		$this->crud->fields('firstname','lastname','email','password','adresse','cp','ville','id_pays','indgolf', 'id_status');
+		// $this->crud->set_relation('id_pays','pays','nom');
+		// $this->crud->set_relation('id_status', 'user_status', 'name');
 
-		$this->crud->display_as('id_pays','Pays');
-		$this->crud->display_as('cp','Code Postal');
-		$this->crud->display_as('indgolf','Index');
-		
+		$this->crud->fields('firstname','lastname','email','password','adresse','cp','ville','id_pays','telephone', 'indgolf', 'id_status');
+
+		// $this->crud->display_as('id_pays','Pays');
+		// $this->crud->display_as('cp','Code Postal');
+		// $this->crud->display_as('indgolf','Index');
 		
 		$data = (array)parent::action_add();
 		
@@ -100,13 +158,18 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 	
 	public function action_edit() {
 		
-		$this->crud->set_relation('id_pays','pays','nom');	
+		$this->make_crud();
 
-		$this->crud->fields('firstname','lastname','email','indgolf','adresse','cp','ville','id_pays','telephone');
+		// $this->crud->set_relation('id_pays','pays','nom');
+		// $this->crud->set_relation('id_status', 'user_status', 'name');
 
-		$this->crud->display_as('id_pays','Pays');
-		$this->crud->display_as('cp','Code Postal');
-		$this->crud->display_as('indgolf','Index');
+		// $this->crud->fields('firstname','lastname','email','indgolf','adresse','cp','ville','id_pays','telephone');
+		// $this->crud->fields('firstname','lastname','email',			'adresse','cp','ville','id_pays','telephone', 'indgolf', 'id_status');
+		$this->crud->fields('firstname','lastname','email','password','adresse','cp','ville','id_pays','telephone', 'indgolf', 'id_status');
+
+		// $this->crud->display_as('id_pays','Pays');
+		// $this->crud->display_as('cp','Code Postal');
+		// $this->crud->display_as('indgolf','Index');
 
 		$data = (array)parent::action_edit();
 
@@ -115,6 +178,10 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 	
 	public function action_list()
 	{
+		$this->make_crud();
+
+		$this->crud->where('users.id','>','9');
+		$this->crud->where('status', '=', 'enable');
 
 		$data = (array)parent::action_list();
 
@@ -169,6 +236,13 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 			$this->auto_render = FALSE;
 		}
 
+		// $search_text = $this->request->param('search_text');
+
+		$this->make_crud();
+
+		$this->crud->where('users.id','>','9');
+		$this->crud->where('status', '=', 'enable');
+
 		$data = (array)parent::action_ajax_list();
 		//print_r($data);
 		//echo 'toto';
@@ -184,6 +258,11 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 			$this->auto_render = FALSE;
 		}
 		
+		$this->make_crud();
+
+		$this->crud->where('users.id','>','9');
+		$this->crud->where('status', '=', 'enable');
+
 		$data = parent::action_ajax_list_info();
 		//print_r($data);
 		echo json_encode($data);
@@ -208,10 +287,12 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 
 		HTTP::redirect('/admin/users/');
 
-		// $data = (array)parent::action_list();
-		//
-		// $this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
-		// $this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
+	}
+
+	public function action_activate() {
+
+		HTTP::redirect('/admin/users/');
+
 	}
 
 	function encrypt_password_callback($post_array, $primary_key = null) {
@@ -229,6 +310,12 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 		return $post_array;
 	}
 	
+	// function activate_user($primary_key , $row)
+	// {
+	// 	$url = "/admin/users/activate/".$primary_key;
+	// 	return $url;
+	// }
+		
 	function edit_user($primary_key , $row)
 	{
 		$url = "/admin/users/edit/".$primary_key;

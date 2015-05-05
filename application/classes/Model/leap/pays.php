@@ -7,18 +7,26 @@ class Model_Leap_Pays extends DB_ORM_Model
 
 		$this->fields = array
 		(
-			'id' => new DB_ORM_Field_Integer($this, array(
-				'max_length' => 11,
+			'id' => new DB_ORM_Field_String($this, array(
+				'max_length' => 2,
 				'nullable' => FALSE,
 			)),
 			'nom' => new DB_ORM_Field_String($this, array(
-				'max_length' => 145,
-				'nullable' => TRUE,
+				'max_length' => 64,
+				'nullable' => FALSE,
 			)),
-			'code' => new DB_ORM_Field_String($this, array(
-				'max_length' => 5,
-				'nullable' => TRUE,
-			)),
+			// 'id' => new DB_ORM_Field_Integer($this, array(
+			// 	'max_length' => 11,
+			// 	'nullable' => FALSE,
+			// )),
+			// 'nom' => new DB_ORM_Field_String($this, array(
+			// 	'max_length' => 145,
+			// 	'nullable' => TRUE,
+			// )),
+			// 'code' => new DB_ORM_Field_String($this, array(
+			// 	'max_length' => 5,
+			// 	'nullable' => TRUE,
+			// )),
 		);
 
 		$this->relations = array
@@ -31,7 +39,8 @@ class Model_Leap_Pays extends DB_ORM_Model
 	}
 
 	public static function table() {
-		return 'pays';
+		// return 'pays';
+		return 'country';
 	}
 
 	public static function primary_key() {

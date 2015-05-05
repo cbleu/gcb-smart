@@ -1,4 +1,5 @@
-<script src="/assets/oscrud/themes/flexigrid/js/flexigrid-add.js"></script>
+<script src="/assets/js/flexigrid/flexigrid-add.js"></script>
+<script src="/assets/js/flexigrid/jquery.form.js"></script>
 
 
 <div id="content" style="opacity:1;">

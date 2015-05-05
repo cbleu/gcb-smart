@@ -24,7 +24,7 @@
 					<? }?>
 
 					<? if(!$unset_delete || !$unset_edit || !empty($actions)){?>
-						<th align="center" abbr="tools" axis="col1" class="table-actions" width='5%'>
+						<th align="center" abbr="tools" axis="col1" class="table-actions" width='<?= count($actions) * 3?>%'>
 							<div class="text-center">
 								<?= __('list_actions'); ?>
 							</div>
@@ -56,7 +56,6 @@
 											foreach($row->action_urls as $action_unique_id => $action_url){
 												$action = $actions[$action_unique_id];
 												if(!empty($action->image_url)){
-													// $imgaction = '<img src="' .$action->image_url .'" alt="' .$action->label .'" />';
 													$imgaction = '<i class="' .$action->image_url .'"></i>';
 												}
 												echo '

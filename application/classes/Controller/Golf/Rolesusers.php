@@ -23,11 +23,11 @@ class Controller_Golf_Rolesusers extends Controller_Golf_Admin
 		// Init crud object
 		$this->crud = new Oscrud();
 		$this->crud->set_table('user_roles');
-		$this->crud->set_subject('Groupes Utilisateurs');
-		$this->crud->columns('role_id','user_id');
+		$this->crud->set_subject('Affectation des roles');
 		$this->crud->fields('role_id','user_id');
 		$this->crud->required_fields('role_id','user_id');
 
+		$this->crud->columns('role_id','user_id');
 		$this->crud
 			->display_as('user_id','Utilisateur')
 				->display_as('role_id','Role');
@@ -55,6 +55,46 @@ class Controller_Golf_Rolesusers extends Controller_Golf_Admin
 		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 	}
 	
+	public function action_list()
+	{
+		// Set active page in menu
+		$this->pages["admin"]['sub']['Role']["active"] = true;
+		$this->pageTitle = "Roles des usagers";
+
+		$data = (array)parent::action_list();
+
+		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
+		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
+	}
+
+	public function action_ajax_list()
+	{
+		$this->template = View::factory('empty');
+
+		//disable auto rendering if requested using ajax
+		if($this->request->is_ajax()){
+			$this->auto_render = FALSE;
+		}
+
+		$data = (array)parent::action_ajax_list();
+		// echo json_encode($data);
+		echo View::factory('/fragments/admin/crud/list',$data);
+	}
+	
+	public function action_ajax_list_info(){
+		//echo 'ajax_list_info';
+		//print_r($_POST);
+		//disable auto rendering if requested using ajax
+		if($this->request->is_ajax()){
+			$this->auto_render = FALSE;
+		}
+		
+		$data = parent::action_ajax_list_info();
+		//print_r($data);
+		echo json_encode($data);
+
+	}
+	
 	public function action_delete()
 	{
 		//disable auto rendering if requested using ajax
@@ -64,7 +104,7 @@ class Controller_Golf_Rolesusers extends Controller_Golf_Admin
 		
 		$data = (array)parent::action_delete();
 
-		HTTP::redirect('/admin/users/');
+		HTTP::redirect('/admin/rolesusers/');
 		
 		$data = (array)parent::action_delete();
 	}
@@ -85,17 +125,6 @@ class Controller_Golf_Rolesusers extends Controller_Golf_Admin
 		$this->template->content= View::factory('/fragments/admin/crud/add-edit',$data);
 	}
 	
-	public function action_list() {
-
-		// Set active page in menu
-		$this->pages["admin"]['sub']['Role']["active"] = true;
-		$this->pageTitle = "Roles des usagers";
-
-		$data = (array)parent::action_list();
-
-		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
-		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
-	}
 	public function action_success()
 	{
 
@@ -104,33 +133,6 @@ class Controller_Golf_Rolesusers extends Controller_Golf_Admin
 
 		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
 		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
-	}
-	
-	public function action_ajax_list() {
-
-		//disable auto rendering if requested using ajax
-		if($this->request->is_ajax()){
-			$this->auto_render = FALSE;
-		}
-
-		$data = (array)parent::action_ajax_list();
-
-		echo View::factory('/fragments/admin/crud/list',$data);
-		
-	}
-	
-	public function action_ajax_list_info(){
-		//echo 'ajax_list_info';
-		//print_r($_POST);
-		//disable auto rendering if requested using ajax
-		if($this->request->is_ajax()){
-			$this->auto_render = FALSE;
-		}
-		
-		$data = parent::action_ajax_list_info();
-		//print_r($data);
-		echo json_encode($data);
-		
 	}
 	
 	public function action_update() {

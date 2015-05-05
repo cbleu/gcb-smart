@@ -162,8 +162,10 @@ abstract class Controller_Golf_Main extends Controller_Oscrudc
 		Helpers_InputForJs::add('isAdmin', $this->isAdmin);
 		View::bind_global('user', $this->user);
 		View::bind_global('thisUser', $this->user);
-		Helpers_InputForJs::add('thisUserId', $this->user->id);
-		Helpers_InputForJs::add('thisUserFullName', $this->user->firstname." ".$this->user->lastname." (".$this->user->indgolf.")" );
+		if($this->isLogged){
+			Helpers_InputForJs::add('thisUserId', $this->user->id);
+			Helpers_InputForJs::add('thisUserFullName', $this->user->firstname." ".$this->user->lastname." (".$this->user->indgolf.")" );
+		}
 		// Share pages infos
 		View::bind_global('page_css', $this->pageCSS);
 		View::bind_global('page_nav', $this->pages);
