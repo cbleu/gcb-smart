@@ -38,31 +38,17 @@ $(function(){
 		
 		var this_form = $(this);
 		
-		// $(this).ajaxSubmit({
-		// 	 url: ajax_list_info_url,
-		// 	 dataType: 'json',
-		// 	 success: function(data){
-		// 		$('#total_items').html( data.total_results);
-		// 		displaying_and_pages();
-		//
-		// 		this_form.ajaxSubmit({
-		// 			 success: function(data){
-		// 				$('#ajax_list').html(data);
-		// 				call_fancybox();
-		// 			 }
-		// 		});
-		// 	 }
-		// });
 		$(this).ajaxSubmit({
-			 success: function(data){
-				$('#ajax_list').html(data);
-				call_fancybox();
+			 url: ajax_list_info_url,
+			 dataType: 'json',
+			 success:    function(data){
+				$('#total_items').html( data.total_results);
+				displaying_and_pages();
+				
 				this_form.ajaxSubmit({
-					url: ajax_list_info_url,
-					dataType: 'json',
-					success: function(data){
-						$('#total_items').html( data.total_results);
-						displaying_and_pages();
+					 success:    function(data){
+						$('#ajax_list').html(data);
+						call_fancybox();
 					 }
 				}); 
 			 }
@@ -134,8 +120,7 @@ $(function(){
 		$('#filtering_form').trigger('submit');
 	});
 	
-	$('body').on('click','.field-sorting', function(){
-	// $('.field-sorting').live('click', function(){
+	$('.field-sorting').live('click', function(){
 		$('#hidden-sorting').val($(this).attr('rel'));
 		
 		if($(this).hasClass('asc'))
@@ -147,8 +132,7 @@ $(function(){
 		$('#filtering_form').trigger('submit');
 	});
 	
-	$('body').on('click','.delete-row', function(){
-	// $('.delete-row').live('click', function(){
+	$('.delete-row').live('click', function(){
 		var delete_url = $(this).attr('href');
 		
 		if( confirm( message_alert_delete ) )
@@ -247,7 +231,7 @@ $(function(){
 		/*if(cookie_search_text !== '')
 			$('#quickSearchButton').trigger('click');*/
 		
-		// $('#filtering_form').trigger('submit');
+		$('#filtering_form').trigger('submit');
 	}
 });
 

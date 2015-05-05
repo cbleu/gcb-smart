@@ -70,10 +70,10 @@
 										<div id='report-error' class='report-div error'></div>
 										<div id='report-success' class='report-div success'></div>
 
-										<button type="submit" id="save-and-go-back-button" class="btn btn-success" >
+										<button type="button" id="save-and-go-back-button" class="btn btn-success" >
 											<?= __('form_save_and_go_back'); ?>
 										</button>
-										<button type="button" id="save-and-go-back-button" class="btn btn-primary" >
+										<button type="button" id="save-button" class="btn btn-primary" >
 											<?= __('form_save'); ?>
 										</button>
 										<button type="button" class="btn btn-default" onclick="javascript: goToList();">

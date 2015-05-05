@@ -13,12 +13,14 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 
 		//////////////////////////////////////////////////////////
 		// Set active page in menu
-		$this->pages["admin"]["active"] = true;
-		$this->pageTitle = "Administration";
+		$this->pages["admin"]["sub"]["users"]['sub']['members']["active"] = true;
+		$this->pageTitle = "Liste des usagers";
 		// Set breadcrumbs links
+		$this->pageBreadcrumbs["admin"]["sub"]["users"]['sub']['members'] = "/admin/users";
 		$this->pageBreadcrumbs = array(
 			"Accueil" => "/",
 			"Admin" => "/admin",
+			"Users" => "/admin/users",
 		);
 		//////////////////////////////////////////////////////////
 
@@ -94,8 +96,13 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 	}
 
-	public function action_disabled() {
- 
+	public function action_list()
+	{
+		HTTP::redirect('/admin/users/');
+	}
+
+	public function action_disabled()
+	{
 		// Set active page in menu
 		$this->pages["admin"]["sub"]["users"]['sub']['disabled']["active"] = true;
 		$this->pageTitle = "Liste des usagers désactivés";
@@ -135,59 +142,29 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 			$user->save(true);
 		}
 		
-		HTTP::redirect('/admin/users//membresdesactive/');
+		HTTP::redirect('/admin/users/disabled/');
 	}
 	
-	public function action_add() {
-		
+	public function action_add()
+	{
 		$this->make_crud();
 
-		// $this->crud->set_relation('id_pays','pays','nom');
-		// $this->crud->set_relation('id_status', 'user_status', 'name');
-
 		$this->crud->fields('firstname','lastname','email','password','adresse','cp','ville','id_pays','telephone', 'indgolf', 'id_status');
-
-		// $this->crud->display_as('id_pays','Pays');
-		// $this->crud->display_as('cp','Code Postal');
-		// $this->crud->display_as('indgolf','Index');
 		
 		$data = (array)parent::action_add();
 		
 		$this->template->content = View::factory('/fragments/admin/crud/add-edit', $data);
 	}
 	
-	public function action_edit() {
-		
+	public function action_edit()
+	{
 		$this->make_crud();
 
-		// $this->crud->set_relation('id_pays','pays','nom');
-		// $this->crud->set_relation('id_status', 'user_status', 'name');
-
-		// $this->crud->fields('firstname','lastname','email','indgolf','adresse','cp','ville','id_pays','telephone');
-		// $this->crud->fields('firstname','lastname','email',			'adresse','cp','ville','id_pays','telephone', 'indgolf', 'id_status');
-		$this->crud->fields('firstname','lastname','email','password','adresse','cp','ville','id_pays','telephone', 'indgolf', 'id_status');
-
-		// $this->crud->display_as('id_pays','Pays');
-		// $this->crud->display_as('cp','Code Postal');
-		// $this->crud->display_as('indgolf','Index');
+		$this->crud->fields('firstname','lastname','email',				'adresse','cp','ville','id_pays','telephone', 'indgolf', 'id_status');
 
 		$data = (array)parent::action_edit();
 
 		$this->template->content = View::factory('/fragments/admin/crud/add-edit',$data);
-	}
-	
-	public function action_list()
-	{
-		$this->make_crud();
-
-		$this->crud->where('users.id','>','9');
-		$this->crud->where('status', '=', 'enable');
-
-		$data = (array)parent::action_list();
-
-		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
-		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
-	
 	}
 	
 	public function action_delete() {
@@ -210,33 +187,29 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 			$user->save(true);
 		}
 		
+		$data = (array)parent::action_delete();
+
 		HTTP::redirect('/admin/users/');
 		
-		$data = (array)parent::action_delete();
-		
-		$this->template = View::factory('/fragments/admin/ajax');
-		$this->template->content = View::factory('/fragments/admin/crud/list_template',$data);
-		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
+		// $this->template = View::factory('/fragments/admin/ajax');
+		// $this->template->content = View::factory('/fragments/admin/crud/list_template',$data);
+		// $this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 	}
 	
-	public function action_valide() {
-
-		$this->template->title = 'Dashboard';
-
+	public function action_valide()
+	{
 		$data = (array)parent::action_list();
 
 		$this->template->content = View::factory('/fragments/admin/crud/list_template',$data);
 		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 	}
 	
-	public function action_ajax_list() {
-
+	public function action_ajax_list()
+	{
 		//disable auto rendering if requested using ajax
 		if($this->request->is_ajax()){
 			$this->auto_render = FALSE;
 		}
-
-		// $search_text = $this->request->param('search_text');
 
 		$this->make_crud();
 
@@ -245,14 +218,12 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 
 		$data = (array)parent::action_ajax_list();
 		//print_r($data);
-		//echo 'toto';
 		echo View::factory('/fragments/admin/crud/list',$data);
 		
 	}
 	
-	public function action_ajax_list_info(){
-		//echo 'ajax_list_info';
-		//print_r($_POST);
+	public function action_ajax_list_info()
+	{
 		//disable auto rendering if requested using ajax
 		if($this->request->is_ajax()){
 			$this->auto_render = FALSE;
@@ -271,9 +242,32 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 	
 	public function action_update()
 	{
+		// if($this->request->is_ajax()){
+			// echo("ajax action_update");
+			$this->auto_render = FALSE;
+		// }
 		$data = (array)parent::action_update();
 		
-		HTTP::redirect('/admin/users/');
+		// echo json_encode($data);
+		// HTTP::redirect('/admin/users/');
+		// $this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
+		// $this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
+	}
+	public function action_update_validation()
+	{
+		// if($this->request->is_ajax()){
+			// echo("ajax action_update_validation");
+			$this->auto_render = FALSE;
+		// }
+
+		$data = (array)parent::action_update_validation();
+		// echo json_encode($data);
+
+		// HTTP::redirect('/admin/users/');
+
+		// $this->crud->pre_render();
+		// $validation_result = $this->crud->db_update_validation();
+		// $this->crud->validation_layout($validation_result);
 	}
 	
 	public function action_insert()
