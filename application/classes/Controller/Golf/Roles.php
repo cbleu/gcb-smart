@@ -9,6 +9,7 @@ class Controller_Golf_Roles extends Controller_Golf_Admin
 	
 	public function before()
 	{
+
 		//////////////////////////////////////////////////////////
 		// Parent Creator call									//
 		parent::before();		// execute before for parent Class
@@ -19,20 +20,48 @@ class Controller_Golf_Roles extends Controller_Golf_Admin
 		$this->pages["admin"]['sub']['users']["active"] = true;
 		$this->pageTitle = "Gestion des roles";
 
+		// Set breadcrumbs links
+		$this->pageBreadcrumbs["admin"]["sub"]["users"]['sub']['roles'] = "/admin/roles";
+		$this->pageBreadcrumbs = array(
+			"Accueil" => "/",
+			"Admin" => "/admin",
+			"Users" => "/admin/users",
+		);
 		//////////////////////////////////////////////////////////
-		// Init crud object
+
 		//////////////////////////////////////////////////////////
+		// Init crud object										//
+		$this->init_crud();
+		//////////////////////////////////////////////////////////
+
+	}
+
+	function init_crud()
+	{
+		//////////////////////////////////////////////////////////
+		// CRUD Management										//
 		$this->crud = new Oscrud();
 		$this->crud->set_table('roles');
-		$this->crud->set_subject('Roles');
+	}
 
+	function make_crud()
+	{
+		//////////////////////////////////////////////////////////
+		// CRUD Management										//
+
+		$this->crud->change_field_type('password','password');
+
+		$this->crud->columns('firstname','lastname','email','id_pays', 'id_status');
+		$this->crud->set_subject('Roles');
+		
+		$this->crud->unset_delete();
 		$this->crud->add_action('Editer', 'fa fa-pencil txt-color-green','', 'with-tip', array($this,'edit_path'));
 		$this->crud->add_action('Supprimer', 'fa fa-times txt-color-red', '', 'with-tip', array($this,'delete_path'));
 		//////////////////////////////////////////////////////////
 	}
 
-
-	public function action_index() {
+	public function action_index()
+	{
 		// Set active page in menu
 		$this->pages["admin"]['sub']['users']['sub']['roles-list']["active"] = true;
 		$this->pageTitle = "Listing des roles";
@@ -42,6 +71,8 @@ class Controller_Golf_Roles extends Controller_Golf_Admin
 			"Admin" => "/admin",
 			"users" => "/admin/users",
 		);
+
+		$this->make_crud();
 
 		$data = (array)parent::action_list();
 

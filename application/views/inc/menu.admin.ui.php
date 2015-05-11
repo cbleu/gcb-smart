@@ -25,9 +25,12 @@ return array(
 					// 'icon' => 'fa-users',
 					'url' => '/admin/users/',
 				),
+				'pending' => array(
+					'title' => 'Comptes à valider',
+					'url' => '/admin/users/pending',
+				),
 				'disabled' => array(
 					'title' => 'Membres désactivés',
-					// 'icon' => 'fa-users',
 					'url' => '/admin/users/disabled',
 				),
 				'roles-list' => array(

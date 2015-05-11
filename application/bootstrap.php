@@ -109,6 +109,8 @@ if (isset($_SERVER['KOHANA_ENV']))
 Kohana::init(array(
 	'base_url'   => '/',
 	'index_file' => FALSE,
+	// 'charset'   => 'iso-8859-1',
+     // 'charset'      => 'latin1',
 	'charset'	=> 'utf-8',
 ));
 
@@ -143,6 +145,7 @@ Kohana::modules(array(
 	// 'menu'			=> MODPATH.'menu',
 	'notify'		=> MODPATH.'notify',
 	'oscrud'		=> MODPATH.'oscrud',
+	'email'			=> MODPATH.'email',
 	// 'paginate'		=> MODPATH.'kohana-paginate',
 	// 'datatables'	=> MODPATH.'kohana-datatables',
 	// 'datatable'		=> MODPATH.'happyDemon-dataTable'

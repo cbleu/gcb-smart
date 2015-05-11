@@ -34,7 +34,6 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 		$this->crud = new Oscrud();
 		$this->crud->set_table('users');
 		$this->crud->fields('firstname','lastname','email','password','adresse','cp','ville','id_pays','indgolf','telephone', 'id_status');
-		$this->crud->required_fields('firstname','lastname','email','password');
 
 		$this->crud->set_relation('id_pays','country','nom');
 		$this->crud->set_relation('id_status', 'user_status', 'status');
@@ -72,8 +71,6 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 
 	}
 
-	public function action_index() {
- 
 		// Set active page in menu
 		$this->pages["admin"]["sub"]["users"]['sub']['members']["active"] = true;
 		$this->pageTitle = "Liste des usagers";
@@ -107,7 +104,6 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 		$this->pages["admin"]["sub"]["users"]['sub']['disabled']["active"] = true;
 		$this->pageTitle = "Liste des usagers désactivés";
 		// Set breadcrumbs links
-		$this->pageBreadcrumbs["admin"]["sub"]["users"]['sub']['members'] = "/admin/users";
 		$this->pageBreadcrumbs = array(
 			"Accueil" => "/",
 			"Admin" => "/admin",
@@ -160,7 +156,6 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 	{
 		$this->make_crud();
 
-		$this->crud->fields('firstname','lastname','email',				'adresse','cp','ville','id_pays','telephone', 'indgolf', 'id_status');
 
 		$data = (array)parent::action_edit();
 
@@ -173,7 +168,6 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 		
 		$status = DB_SQL::select('default')
 			->from('user_status')
-				->where('status', '=', 'disable')
 					->query();
 						
 		$disable_status_id = $status[0]['id'];
@@ -196,6 +190,7 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 		// $this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 	}
 	
+		
 	public function action_valide()
 	{
 		$data = (array)parent::action_list();
@@ -321,6 +316,4 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 		$url = "/admin/users/delete/".$primary_key;
 		return $url;
 	}
-		
-	
 }

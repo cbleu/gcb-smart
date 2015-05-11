@@ -221,7 +221,7 @@ class Controller_Golf_App extends Controller_Golf_Main
 			$user->load();
 
 			if($user->is_loaded()){
-				$user->password			= Auth::instance()->hash_password($passw);
+				$user->password = Auth::instance()->hash_password($passw);
 				$user->save(true);
 			}
 			

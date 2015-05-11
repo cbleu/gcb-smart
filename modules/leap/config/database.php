@@ -7,12 +7,12 @@ $config['default'] = array(
 	'dialect'       => 'MySQL',     // string (e.g. DB2, Drizzle, Firebird, MariaDB, MsSQL, MySQL, Oracle, PostgreSQL, or SQLite)
 	'driver'        => 'Standard',  // string (e.g. Standard, Improved, or PDO)
 	'connection'    => array(
-		'persistent'    => FALSE,       // boolean
+		'persistent'    => FALSE,		// boolean
 		'hostname'      => 'localhost', // string
-		'port'          => '',          // string
-		'database'      => 'gcb_test',          // string
-		'username'      => 'root',      // string
-		'password'      => 'root',      // string
+		'port'          => '',			// string
+		'database'      => 'gcb_test',	// string
+		'username'      => 'root',		// string
+		'password'      => 'root',		// string
 	),
 	'caching'       => FALSE,       // boolean
 	'charset'       => 'utf8',      // string

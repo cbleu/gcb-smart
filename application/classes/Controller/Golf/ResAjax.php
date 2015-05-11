@@ -775,7 +775,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		$message = "";
 		
 		// TODO : Empécher l'update si la date est déjà passé
-		$logged_in_user = Auth::instance()->get_user();
+		$logged_in_user = Auth::instance()->get_user();		// TODO: clean
 		$max_joueurs = 4;
 		$method = $_POST;
 		
