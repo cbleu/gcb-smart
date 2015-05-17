@@ -39,13 +39,13 @@ class Controller_Golf_App extends Controller_Golf_Main
 
 	}	// before
 	
-	public function after()
-	{
-		// Set the response content-type here
-		$this->response->headers('Content-Type: text/html; charset=UTF-8');
-		
-		parent::after();
-	}
+	// public function after()
+	// {
+	// 	// Set the response content-type here
+	// 	$this->response->headers('Content-Type: text/html; charset=UTF-8');
+	//
+	// 	parent::after();
+	// }
 
 	//////////////////////////////////////////////////////////
 	// ACTION FUNCS											//

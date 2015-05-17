@@ -1,17 +1,17 @@
 
 
-<link href="/assets/css/flexigrid/flexigrid.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/flexigrid/jquery.fancybox.css">
+<!-- <link href="/assets/css/flexigrid/flexigrid.css" rel="stylesheet" type="text/css"> -->
+<!-- <link href="/assets/css/flexigrid/jquery.fancybox.css"> -->
 
-<script src="/assets/js/flexigrid/cookies.js"></script>
+<!-- <script src="/assets/js/flexigrid/cookies.js"></script>
 <script src="/assets/js/flexigrid/flexigrid.js"></script>
 <script src="/assets/js/flexigrid/jquery.form.js"></script>
 <script src="/assets/js/flexigrid/jquery.printElement.js"></script>
 
-<script src="/assets/js/flexigrid/jquery.fancybox.pack.js"></script>
+<script src="/assets/js/flexigrid/jquery.fancybox.pack.js"></script> -->
 <!-- <script src="/assets/oscrud/js/jquery_plugins/jquery.easing-1.3.pack.js"></script> -->
 
-<script src="/assets/js/flexigrid/jquery.numeric.min.js"></script>
+<!-- <script src="/assets/js/flexigrid/jquery.numeric.min.js"></script> -->
 
 	
 <?php if(isset($before_list_div)) {
@@ -35,7 +35,7 @@
 			<div class="jarviswidget jarviswidget-color-darken" id="wid-id-0" data-widget-editbutton="false" data-widget-deletebutton="false">
 				<header>
 					<span class="widget-icon"> <i class="fa fa-cog"></i> </span>
-					<h2>Liste des usagers</h2>
+					<h2>Listing</h2>
 				</header>
 
 				<!-- widget div-->

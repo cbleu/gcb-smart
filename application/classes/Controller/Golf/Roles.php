@@ -21,7 +21,6 @@ class Controller_Golf_Roles extends Controller_Golf_Admin
 		$this->pageTitle = "Gestion des roles";
 
 		// Set breadcrumbs links
-		$this->pageBreadcrumbs["admin"]["sub"]["users"]['sub']['roles'] = "/admin/roles";
 		$this->pageBreadcrumbs = array(
 			"Accueil" => "/",
 			"Admin" => "/admin",
@@ -51,7 +50,7 @@ class Controller_Golf_Roles extends Controller_Golf_Admin
 
 		$this->crud->change_field_type('password','password');
 
-		$this->crud->columns('firstname','lastname','email','id_pays', 'id_status');
+		// $this->crud->columns('firstname','lastname','email','id_pays', 'id_status');
 		$this->crud->set_subject('Roles');
 		
 		$this->crud->unset_delete();
@@ -80,6 +79,11 @@ class Controller_Golf_Roles extends Controller_Golf_Admin
 		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 	}
 	
+	public function action_list()
+	{
+		HTTP::redirect('/admin/roles/');
+	}
+
 	public function action_ajax_list()
 	{
 		$this->template = View::factory('empty');
@@ -127,9 +131,11 @@ class Controller_Golf_Roles extends Controller_Golf_Admin
 
 	public function action_update()
 	{
+		$this->auto_render = FALSE;
+
 		$data = (array)parent::action_update();
 
-		HTTP::redirect('/admin/roles/');
+		// HTTP::redirect('/admin/roles/');
 	}
 
 	public function action_delete()

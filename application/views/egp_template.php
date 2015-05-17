@@ -117,6 +117,6 @@
 
 <?php 
 	//include footer
-	include(APPPATH."views/inc/google-analytics.php"); 
+	// include(APPPATH."views/inc/google-analytics.php");
 ?>
 

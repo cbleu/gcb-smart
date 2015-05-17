@@ -17,23 +17,49 @@ class Controller_Golf_Rolesusers extends Controller_Golf_Admin
 		//////////////////////////////////////////////////////////
 		// Set active page in menu								//
 		$this->pages["admin"]['sub']['users']["active"] = true;
-		$this->pageTitle = "Gestion des roles";
+		$this->pageTitle = "Gestion des administrateurs";
 
 		//////////////////////////////////////////////////////////
 		// Init crud object
 		$this->crud = new Oscrud();
 		$this->crud->set_table('user_roles');
-		$this->crud->set_subject('Affectation des roles');
-		$this->crud->fields('role_id','user_id');
-		$this->crud->required_fields('role_id','user_id');
+		$this->crud->set_subject('Affectation des administrateurs');
+		// $this->crud->fields('role_id','user_id');
+		// $this->crud->required_fields('role_id','user_id');
 
+		// $this->crud->columns('role_id','user_id');
+		// $this->crud->set_relation('user_id','users','lastname');
+		$this->crud->set_relation('user_id','users','email');
+		$this->crud->set_relation('role_id','roles','description');
+		
+		$this->crud->fields('role_id','user_id');
+		// $this->crud->add_fields('email', 'lastname', 'firstname');
 		$this->crud->columns('role_id','user_id');
 		$this->crud
-			->display_as('user_id','Utilisateur')
+			->display_as('user_id','email')
 				->display_as('role_id','Role');
 			
-		$this->crud->set_relation('user_id','users','email');	
-		$this->crud->set_relation('role_id','roles','description');	
+		// $this->crud->where('user_id','>','9');
+
+		// $status = DB_SQL::select('default')
+		// 	->from('user_status')
+		// 		->where('status', '=', 'delete')
+		// 			->query();
+		//
+		// $disable_status_id = $status[0]['id'];
+		// $this->crud->where('id_status', '=', '1');
+
+		$getadminrole = DB_SQL::select('default')
+			->from('roles')
+				->where('name', '=', 'admin')
+					->query();
+						
+		$adminrole = $getadminrole[0]['id'];
+
+		$this->crud->where('role_id', '=', $adminrole);
+
+		$this->crud->add_action('Supprimer', 'fa fa-times txt-color-red', '', 'action-delete with-tip', array($this,'delete_path'));
+
 		//////////////////////////////////////////////////////////
 	}
 
@@ -95,18 +121,23 @@ class Controller_Golf_Rolesusers extends Controller_Golf_Admin
 
 	}
 	
+	function delete_path($primary_key , $row)
+	{
+		$url = "/admin/rolesusers/delete/".$primary_key;
+		return $url;
+	}
+	
 	public function action_delete()
 	{
 		//disable auto rendering if requested using ajax
-		if($this->request->is_ajax()){
+		// if($this->request->is_ajax()){
 			$this->auto_render = FALSE;
-		}
+		// }
 		
 		$data = (array)parent::action_delete();
+		// echo json_encode($data);
 
 		HTTP::redirect('/admin/rolesusers/');
-		
-		$data = (array)parent::action_delete();
 	}
 	
 	public function action_add() {

@@ -376,7 +376,7 @@ class Oscrud_Core_Layout extends Oscrud_Core_Model_Driver
 			
 			echo json_encode(array('success' => true , 'success_message' => $success_message));
 		}
-		$this->set_echo_and_die();
+		// $this->set_echo_and_die();
 	}
 	
 	public function get_success_message_at_list($field_info = null)

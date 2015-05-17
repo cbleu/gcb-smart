@@ -24,7 +24,7 @@
 					<? }?>
 
 					<? if(!$unset_delete || !$unset_edit || !empty($actions)){?>
-						<th align="center" abbr="tools" axis="col1" class="table-actions" width='<?= count($actions) * 3?>%'>
+						<th align="center" abbr="tools" axis="col1" class="table-actions" width='<?= count($actions) * 4?>%'>
 							<div class="text-center">
 								<?= __('list_actions'); ?>
 							</div>
@@ -58,8 +58,9 @@
 												if(!empty($action->image_url)){
 													$imgaction = '<i class="' .$action->image_url .'"></i>';
 												}
+												
 												echo '
-													<div class="td-icon">
+													<div class="td-icon action-activate">
 														<a href="' .$action_url .'" class="td-icon ' .$action->css_class .'" rel="tooltip" data-placement="bottom" data-original-title="' .$action->label .'">' .$imgaction .'</a>
 													</div>
 													';

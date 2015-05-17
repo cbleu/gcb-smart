@@ -825,7 +825,8 @@ a:hover
 .small-loading
 {
 	background: url('images/load.gif') no-repeat;
-	width:16px;
+/*	width:16px;*/
+	width:auto;
 	height:15px;
 	padding-left:25px;
 	padding-top:1px;
@@ -1455,11 +1456,24 @@ input[type="submit"].btn.btn-mini {
 	float: left;
 	display: block;
 	color: inherit;
-	width: 33%;
+	width: 50%;
 	text-align: center;
 }
 .flexigrid .td-icon > a{
 	margin-left: auto;
 	margin-right: auto;
 	width: 70%;
+}
+
+.txt-color-pink{
+	color:#F46899 !important;
+}
+.txt-color-orange{
+	color:rgb(255, 69, 0) !important;
+}
+.txt-color-lime {
+	color:lime !important;
+}
+.txt-color-seagreen{
+	color:rgb(46, 139, 87) !important;
 }

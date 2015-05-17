@@ -37,7 +37,7 @@ return array(
 	'insert_success_message'	=> 'Vos données sont ajoutées à la base de données avec succès.',
 	'form_or'					=> 'ou',
 	'form_save'					=> 'Enregistrer',
-	'form_insert_loading'		=> 'En attente, entregistrement des données...',
+	'form_insert_loading'		=> 'En attente de l\'enregistrement des données...',
                               	  
 	'form_upload_a_file'		=> 'Chargement d\'un fichier',
 	'form_upload_delete'		=> 'Supprimer',

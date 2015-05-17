@@ -48,26 +48,26 @@ class Model_Leap_User_tokens extends DB_ORM_Model
 				'parent_model' => 'users',
 				'parent_key' => array('id'),
 			)),
-			'users' => new DB_ORM_Relation_BelongsTo($this, array(
-				'child_key' => array('user_id'),
-				'parent_model' => 'users',
-				'parent_key' => array('id'),
-			)),
-			'users' => new DB_ORM_Relation_BelongsTo($this, array(
-				'child_key' => array('user_id'),
-				'parent_model' => 'users',
-				'parent_key' => array('id'),
-			)),
-			'users' => new DB_ORM_Relation_BelongsTo($this, array(
-				'child_key' => array('user_id'),
-				'parent_model' => 'users',
-				'parent_key' => array('id'),
-			)),
-			'users' => new DB_ORM_Relation_BelongsTo($this, array(
-				'child_key' => array('user_id'),
-				'parent_model' => 'users',
-				'parent_key' => array('id'),
-			)),
+			// 'users' => new DB_ORM_Relation_BelongsTo($this, array(
+			// 	'child_key' => array('user_id'),
+			// 	'parent_model' => 'users',
+			// 	'parent_key' => array('id'),
+			// )),
+			// 'users' => new DB_ORM_Relation_BelongsTo($this, array(
+			// 	'child_key' => array('user_id'),
+			// 	'parent_model' => 'users',
+			// 	'parent_key' => array('id'),
+			// )),
+			// 'users' => new DB_ORM_Relation_BelongsTo($this, array(
+			// 	'child_key' => array('user_id'),
+			// 	'parent_model' => 'users',
+			// 	'parent_key' => array('id'),
+			// )),
+			// 'users' => new DB_ORM_Relation_BelongsTo($this, array(
+			// 	'child_key' => array('user_id'),
+			// 	'parent_model' => 'users',
+			// 	'parent_key' => array('id'),
+			// )),
 		);
 	}
 
