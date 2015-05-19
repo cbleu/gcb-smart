@@ -22,8 +22,8 @@ class Controller_Golf_ResaPending extends Controller_Golf_Admin
 
 		$this->crud->set_table('demande_reservation');
 		$this->crud->set_subject('Reservations visiteurs');
-		$this->crud->fields('Date', 'Trous', 'Nom', 'email', 'phone', 'nb_joueurs', 'ressources', 'Actions');
-		$this->crud->required_fields('nb_trous', 'date', 'nom', 'prenom', 'email', 'phone', 'nb_joueurs', 'ressources');
+		// $this->crud->fields('Date', 'Trous', 'Nom', 'email', 'phone', 'nb_joueurs', 'ressources', 'Actions');
+		// $this->crud->required_fields('date','nb_trous', 'nom', 'prenom', 'email', 'phone', 'nb_joueurs', 'ressources');
 
 	}
 
@@ -32,43 +32,36 @@ class Controller_Golf_ResaPending extends Controller_Golf_Admin
 		//////////////////////////////////////////////////////////
 		// CRUD Management										//
 
-		// $this->crud->callback_column("Actions", array($this, "actions_buttons"));
+		$this->crud->callback_column("Date", array($this, "date_format"));
 		$this->crud->callback_column("Nom", array($this, "fullname"));
 		$this->crud->callback_column("Trous", array($this, "trous"));
-		$this->crud->callback_column("Date", array($this, "date_format"));
+		// $this->crud->callback_column("Actions", array($this, "actions_buttons"));
 		
-		$this->crud->unset_delete();
-		$this->crud->unset_edit();
-		$this->crud->unset_add();
-		$this->crud->unset_export();
-		$this->crud->unset_print();
+		// $this->crud->unset_delete();
+		// $this->crud->unset_edit();
+		// $this->crud->unset_add();
+		// $this->crud->unset_export();
+		// $this->crud->unset_print();
 
-
-		$this->crud->columns('Date','Trous', 'Nom', 'email', 'phone', 'nb_joueurs', 'ressources', 'Actions');
 		$this->crud->order_by('Date');
+
 		// $this->crud->set_subject('Membres');
+		$this->crud->columns('Date','Trous', 'Nom', 'email', 'phone', 'nb_joueurs', 'ressources');
 		$this->crud
 			->display_as('Date','Départ demandé')
-				->display_as('Trous','Nombre de trous')
+				->display_as('Trous','Parcours')
 					->display_as('email','Courriel')
-						->display_as('password','Mot de passe')
-							->display_as('id_pays','Pays')
-								->display_as('cp','Code Postal')
-									->display_as('indgolf','Index')
-										->display_as('id_status','Status');
-											// ->display_as('activated','Activé');
+						->display_as('phone','Téléphone')
+							->display_as('nb_joueurs','Joueurs')
+								->display_as('ressources','Ressources');
 
-		//$this->crud->add_action('Confirmer', '/assets/images/validate.png', URL::base('http', FALSE).'golf/reservation/transform/', 'with-tip');
-
-		// $this->crud->add_action('Editer', 'fa fa-pencil txt-color-green','', 'with-tip', array($this,'edit_user'));
-		// $this->crud->add_action('Supprimer', 'fa fa-times txt-color-red', '', 'with-tip', array($this,'delete_user'));
 	}
 
 	public function action_index()
 	{
 
 		// Set active page in menu
-		$this->pages["admin"]["sub"]["resa"]['sub']['public']["active"] = true;
+		$this->pages["admin"]["sub"]["planning"]['sub']['resa-pending']["active"] = true;
 		$this->pageTitle = "Réservation à valider";
 
 		$this->make_crud();

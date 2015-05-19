@@ -53,8 +53,9 @@ return array(
 				'events' => array(
 					'title' => 'Evenements',
 				),
-				'visiteurs' => array(
+				'resa-pending' => array(
 					'title' => 'Demande de visiteurs',
+					'url' => '/admin/resapending',
 				),
 				'today' => array(
 					'title' => 'Départs du jour',
