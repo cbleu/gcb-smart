@@ -8,6 +8,7 @@ abstract class Controller_Golf_Main extends Controller_Oscrudc
 	
 	public $isLogged;			// global var for all views. false if not logged
 	public $isAdmin;			// global var for all views. false if not admin
+	public $isSuperAdmin;		// global var for all views. false if not superadmin
 	public $user;				// global var for all views. user object or null
 	
 	public $golf;
@@ -27,7 +28,11 @@ abstract class Controller_Golf_Main extends Controller_Oscrudc
 		//////////////////////////////////////////////////////////
 
 		$this->isLogged 		= Auth::instance()->logged_in();
-		$this->isAdmin 			= Auth::instance()->logged_in('admin');
+		// $this->isAdmin 			= Auth::instance()->logged_in('admin');
+		$this->isSuperAdmin		= Auth::instance()->logged_in('superadmin');
+		if(Auth::instance()->logged_in('admin') || Auth::instance()->logged_in('superadmin')){
+			$this->isAdmin 			= true;
+		}
 		$this->user 			= Auth::instance()->get_user();
 		
 		$this->golf 			= DB_ORM::model('Golf', array(1));
@@ -61,6 +66,14 @@ abstract class Controller_Golf_Main extends Controller_Oscrudc
 		if($this->isAdmin){
 			$this->pages['admin'] = include(APPPATH."/views/inc/menu.admin.ui.php");
 		}
+		if($this->isSuperAdmin){
+			$this->pages['admin']['sub']['settings']['sub']['superadmin'] = array(
+				'title' => 'Super Admin',
+				'icon' => 'fa-wrench txt-color-red',
+				'url' => '/admin/settings/superadmin',
+			);
+		}
+		
 		//////////////////////////////////////////////////////////
 
 		//////////////////////////////////////////////////////////

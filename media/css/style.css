@@ -1,0 +1,18 @@
+@CHARSET "UTF-8";
+
+.list thead tr th .arrow {
+	display: inline;
+	float: right;
+	width: 7px;
+	height: 4px;
+	margin-top: 7px;
+	margin-right: 3px;
+}
+
+.list thead tr th .desc {
+	background: url("icons/arrow_down_black.png") no-repeat right center;
+}
+
+.list thead tr th .asc {
+	background: url("icons/arrow_up_black.png") no-repeat right center;
+}

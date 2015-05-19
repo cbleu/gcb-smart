@@ -61,6 +61,42 @@ $(function(){
 		e.preventDefault();
 	})
 
+	$("a.action-disable").click(function(e) {
+		// console.log(e.currentTarget.baseURI);
+		follow_uri = e.currentTarget.href;
+		$.SmartMessageBox({
+			title : "Désactivation d'un compte!",
+			content : "Voulez vous désactiver ce compte ?",
+			buttons : '[Non][Oui]'
+		}, function(ButtonPressed, e) {
+			if (ButtonPressed === "Oui") {
+
+				$.smallBox({
+					title : "Confirmation ...",
+					content : "<i class='fa fa-clock-o'></i> <i>Action validé...</i>",
+					color : "#659265",
+					iconSmall : "fa fa-check fa-2x fadeInRight animated",
+					timeout : 1000
+				});
+				// window.location = e.currentTarget.baseURI;
+				window.setTimeout(function(){
+					window.location = follow_uri;
+				}, 1500);
+			}
+			if (ButtonPressed === "Non") {
+				$.smallBox({
+					title : "Annulation",
+					content : "<i class='fa fa-clock-o'></i> <i>Vous avez annulé l'action...</i>",
+					color : "#C46A69",
+					iconSmall : "fa fa-times fa-2x fadeInRight animated",
+					timeout : 2000
+				});
+			}
+
+		});
+		e.preventDefault();
+	})
+
 	$("a.action-delete").click(function(e) {
 		follow_uri = e.currentTarget.href;
 		$.SmartMessageBox({

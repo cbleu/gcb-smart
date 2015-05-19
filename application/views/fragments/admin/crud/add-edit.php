@@ -12,7 +12,7 @@
 
 			<div class="jarviswidget jarviswidget-color-darken" id="wid-id-0" data-widget-editbutton="false" data-widget-deletebutton="false">
 				<header>
-					<span class="widget-icon"> <i class="fa fa-cog"></i> </span>
+					<span class="widget-icon"> <i class="fa fa-file-text txt-color-blue"></i> </span>
 					<h2>Edition</h2>
 				</header>
 

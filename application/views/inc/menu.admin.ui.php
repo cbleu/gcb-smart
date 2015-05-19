@@ -5,6 +5,7 @@
 //////////////////////////////////////////////////////////
 // MANU ADMIN											//
 //////////////////////////////////////////////////////////
+// $this->pages['superadmin'] = array(
 
 return array(
 	'title' => 'Administration',
@@ -62,18 +63,21 @@ return array(
 
 		),// planning
 
-		'golf' => array(
-			'title' => 'Gestion du Golf',
+		'settings' => array(
+			'title' => 'Gestion du Club',
 			'icon' => 'fa-cog',
 			'sub' => array(
-				'settings' => array(
+				'club' => array(
 					'title' => 'Paramètres globaux',
+					'url' => '/admin/settings/club',
 				),
 				'parcours' => array(
 					'title' => 'Gestion du parcours',
+					'url' => '/admin/settings/parcours',
 				),
 				'display' => array(
-					'title' => 'Affichage',
+					'title' => "Paramètres d'affichage",
+					'url' => '/admin/settings/display',
 				),
 			),//sub
 
@@ -81,5 +85,6 @@ return array(
 
 	),// admin
 );
+
 
 ?>

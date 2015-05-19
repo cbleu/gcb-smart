@@ -39,7 +39,8 @@ class Model_Leap_Reservation extends DB_ORM_Model
 				'max_length' => 11,
 				'nullable' => TRUE,
 			)),
-			'depart' => new DB_ORM_Field_Integer($this, array(
+			// 'depart' => new DB_ORM_Field_Integer($this, array(
+			'confirmed' => new DB_ORM_Field_Integer($this, array(
 				'max_length' => 1,
 				'nullable' => TRUE,
 			)),
@@ -47,7 +48,8 @@ class Model_Leap_Reservation extends DB_ORM_Model
 				'max_length' => 11,
 				'nullable' => TRUE,
 			)),
-			'id_parcours' => new DB_ORM_Field_Integer($this, array(
+			// 'id_parcours' => new DB_ORM_Field_Integer($this, array(
+			'id_children' => new DB_ORM_Field_Integer($this, array(
 				'max_length' => 11,
 				'nullable' => TRUE,
 			)),

@@ -34,7 +34,7 @@
 			<!-- start jarvis widget -->
 			<div class="jarviswidget jarviswidget-color-darken" id="wid-id-0" data-widget-editbutton="false" data-widget-deletebutton="false">
 				<header>
-					<span class="widget-icon"> <i class="fa fa-cog"></i> </span>
+					<span class="widget-icon"> <i class="fa fa-list-alt"></i> </span>
 					<h2>Listing</h2>
 				</header>
 

@@ -53,11 +53,11 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 								->column('nb_joueurs')
 									->column('temp_until')
 										->column('id_parent')
-											->column('id_parcours')	// tricks to get return id (will be id_child)
+											->column('id_children')
 												->from('reservation')
 													->join(NULL, 'type_parcours')
 														->on('type_parcours.id', '=', 'reservation.id_type_parcours');
-		$builder->where('date_reservation', 'BETWEEN', array($start, $end));	//added by cesar
+		$builder->where('date_reservation', 'BETWEEN', array($start, $end));
 		$builder->where('id_evenement','IS', NULL, 'AND');
 		$builder->where('nb_joueurs',">", 0, 'AND');
 		
@@ -214,7 +214,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 			// }
 			
 			// Test si partie en 9 trous, 18T aller ou 18T retour
-			if(intval($reservations[$res]['id_parcours']) > 0){	// Il y a un retour => c'est un 18T aller
+			if(intval($reservations[$res]['id_children']) > 0){	// Il y a un retour => c'est un 18T aller
 				$game_type = 1;	// 18T Aller
 			}else if(intval($reservations[$res]['id_parent']) > 0){ // il y a un aller => c'est un 18T retour
 				$game_type = 2;	// 18T retour
@@ -241,7 +241,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 				'pay' => $payant,
  				's' => $speciaux,
 				// 'r' => intval($reservations[$res]['id_parent']),	// id de la resa de l'aller ou 0
-				// 'c' => intval($reservations[$res]['id_parcours']),	// tweak: id de la resa du retour ou 0
+				// 'c' => intval($reservations[$res]['id_children']),	// tweak: id de la resa du retour ou 0
 				'start_date' => date('Y-m-d H:i', strtotime($reservations[$res]['date_reservation'])),
 				'end_date' => date('Y-m-d H:i',strtotime($fin_reservation)),
 				// 'textColor' => 'black',

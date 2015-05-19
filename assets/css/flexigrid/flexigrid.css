@@ -856,7 +856,8 @@ ul.chzn-choices li.search-field input
 }
 textarea.texteditor, textarea.mini-texteditor
 {
-	width:750px;
+/*	width:750px;*/
+	width: 100%;
 	height: 200px;
 }
 .flexigrid .form-div{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;color: #444;}

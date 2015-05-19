@@ -128,10 +128,10 @@ Kohana::$config->attach(new Config_File);
  * Enable modules. Modules are referenced by a relative or absolute path.
  */
 Kohana::modules(array(
-	'auth'       => MODPATH.'auth',       // Basic authentication
+	'auth'			=> MODPATH.'auth',       // Basic authentication
 	// 'cache'      => MODPATH.'cache',      // Caching with multiple backends
 	// 'codebench'  => MODPATH.'codebench',  // Benchmarking tool
-	'database'   => MODPATH.'database',   // Database access
+	'database'		=> MODPATH.'database',   // Database access
 	// 'image'      => MODPATH.'image',      // Image manipulation
 	// 'minion'     => MODPATH.'minion',     // CLI Tasks
 	// 'orm'        => MODPATH.'orm',        // Object Relationship Mapping
@@ -146,6 +146,8 @@ Kohana::modules(array(
 	'notify'		=> MODPATH.'notify',
 	'oscrud'		=> MODPATH.'oscrud',
 	'email'			=> MODPATH.'email',
+	'crud'			=> MODPATH.'crud',
+	'mysqli'		=> MODPATH.'mysqli',
 	// 'paginate'		=> MODPATH.'kohana-paginate',
 	// 'datatables'	=> MODPATH.'kohana-datatables',
 	// 'datatable'		=> MODPATH.'happyDemon-dataTable'
@@ -194,6 +196,12 @@ Cookie::$salt = 'mdlsdjnsdl';
 // 		//'controller' => 'parcours',
 // 		'action'     => 'index',
 // 	));
+
+Route::set('example', 'example(/<action>(/<id>))')
+	->defaults(array(
+		'controller' => 'example',
+		'action'     => 'index',
+));
 
 Route::set('admin', 'admin(/<controller>(/<action>(/<id>)))')
 	->defaults(array(

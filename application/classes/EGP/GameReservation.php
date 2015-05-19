@@ -970,7 +970,7 @@ class EGP_GameReservation
 					->column('date_reservation', $parcours['slot']->format('Y-m-d H:i:s'))
 						->column('nb_joueurs', $parcours['nb_players'])
 							->column('id_parent', $parent)	// parent : si resa aller id=0
-								->column('id_parcours', $child)	// fille: id de la resa retour si elle existe sinon 0
+								->column('id_children', $child)	// fille: id de la resa retour si elle existe sinon 0
 									->column('date_fin', $parcours['fin']->format('Y-m-d H:i:s'))
 										->column('temp_until', $until);
 		return $reservation_insert_query->execute(TRUE);	// SQL INSERT la reservation
@@ -1007,7 +1007,7 @@ class EGP_GameReservation
 		}
 		$reservation_update_query = DB_SQL::update('default')
 			->table('reservation')
-				->set('id_parcours', intval($id_child))	// on intègre l'id de la resa de resa pour le retour
+				->set('id_children', intval($id_child))	// on intègre l'id de la resa de resa pour le retour
 						->where('id', '=', intval($this->reservations['id_reservation_aller']));	
 		$reservation_update_query->execute(TRUE);	// SQL UPDATE la reservation
 		if(!$reservation_update_query){

@@ -109,7 +109,8 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 		);
 
 		$this->make_crud();
-		$this->crud->add_action('Activer', 'fa fa-play txt-color-blue fa-2x','', 'action-active with-tip', array($this,'activate_user'));
+		$this->crud->add_action('Activer', 'fa fa-play txt-color-blue fa-fw fa-2x','', 'action-active with-tip', array($this,'activate_user'));
+		$this->crud->add_action('Supprimer', 'fa fa-times txt-color-red fa-fw', '', 'action-delete with-tip', array($this,'delete_user'));
 		
 		$this->crud->where('status', '=', 'disable');
 
@@ -142,7 +143,7 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 	
 		if($user->is_loaded()){
 			$user->id_status = $enable_status_id;
-			// $user->save(true);
+			$user->save(true);
 			Notify::msg('Membre activé avec succès !', 'success');
 		}
 		
@@ -188,6 +189,7 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 			$this->auto_render = FALSE;
 		// }
 		$data = (array)parent::action_update();
+		Notify::msg('Modifications enregistrées avec succès !', 'success');
 		
 		// echo json_encode($data);
 		// HTTP::redirect('/admin/users/');
@@ -232,7 +234,9 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 		$user->load();
 	
 		if($user->is_loaded()){
-			$user->id_status = $disable_status_id;
+			$user->email 		= $user->email."_deleted_".time();
+			$user->username 	= $user->username."_deleted_".time();
+			$user->id_status 	= $disable_status_id;
 			$user->save(true);
 			Notify::msg('Membre supprimé avec succès !', 'success');
 		}
@@ -273,7 +277,7 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 
 	function disable_path($primary_key , $row)
 	{
-		$url = "/admin/users/delete/".$primary_key;
+		$url = "/admin/users/disable/".$primary_key;
 		return $url;
 	}
 	public function action_disable()
@@ -282,7 +286,7 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 		
 		$status = DB_SQL::select('default')
 			->from('user_status')
-				->where('status', '=', 'disabled')
+				->where('status', '=', 'disable')
 					->query();
 		$disable_status_id = $status[0]['id'];
 		
