@@ -40,6 +40,7 @@
 									</div>
 									<div id="scheduler_here" class="dhx_cal_container">
 										<div class="dhx_cal_navline">
+											<input type="button" value="Programmer un évènement" id="recurring_button"/>
 											<div class="dhx_cal_prev_button">&nbsp;</div>
 											<div class="dhx_cal_next_button">&nbsp;</div>
 											<div class="dhx_cal_today_button"></div>

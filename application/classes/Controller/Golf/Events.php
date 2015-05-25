@@ -1,20 +1,11 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Golf_Events extends Controller_Oscrudc {
+class Controller_Golf_Events extends Controller_Golf_Admin
+{
 
-    public function before() {
-	
-		if (!Auth::instance()->logged_in()) {
-            HTTP::redirect('login');
-       	}
-		
-		if (!Auth::instance()->logged_in('admin')) {
-            HTTP::redirect('/');
-       	}
-	
-	 	$this->template = 'admin';
-	
-        parent::before();
+	public function before()
+	{
+		parent::before();
 
 		$this->crud = new Oscrud();
 		
@@ -27,31 +18,19 @@ class Controller_Golf_Events extends Controller_Oscrudc {
 		$this->crud->unset_export();
 		$this->crud->unset_print();
 		
-    }
+	}
 
 	public function action_list() {
-		$this->template->title = 'Dashboard';
 
 		$data = (array)parent::action_list();
-		//print_r($data);
-		$this->template->content							= View::factory('/fragments/admin/crud/list_template',$data);
-		$this->template->content->list_view 				= View::factory('/fragments/admin/crud/list',$data);
-		$this->template->content->header_nav 				= View::factory( '/admin/header_nav');
-		$this->template->content->header_nav->breadcrumb 	= $this->get_breadcrumbs();
-		$this->template->content->header_nav->home			=	0;
-		$this->template->content->header_nav->users			=	0;
-		$this->template->content->header_nav->reservation	=	1;
-		$this->template->content->header_nav->competition	=	0;
-		$this->template->content->header_nav->settings		=	0;
-		
 	}
 	
 	public function action_ajax_list() {
 
 		//disable auto rendering if requested using ajax
-        if($this->request->is_ajax()){
-            $this->auto_render = FALSE;
-        }
+		if($this->request->is_ajax()){
+			$this->auto_render = FALSE;
+		}
 
 		$data = (array)parent::action_ajax_list();
 
@@ -61,9 +40,9 @@ class Controller_Golf_Events extends Controller_Oscrudc {
 	public function action_ajax_list_info(){
 		
 		//disable auto rendering if requested using ajax
-        if($this->request->is_ajax()){
-            $this->auto_render = FALSE;
-        }
+		if($this->request->is_ajax()){
+			$this->auto_render = FALSE;
+		}
 		
 		$data = parent::action_ajax_list_info();
 		
@@ -77,10 +56,10 @@ class Controller_Golf_Events extends Controller_Oscrudc {
 		$ev = Arr::get($method, 'event');
 
 		$success = array("success" => true,
-						 "message" => "");
+		"message" => "");
 
 		if( $ev["text"] == NULL 	|| $ev["colour"] == NULL	|| $ev["start_date"] == NULL 	|| $ev["end_date"] == NULL 	||
-			$ev["text"] == ""		|| $ev["colour"] == ""		|| $ev["start_date"] == ""		|| $ev["end_date"] == "") {
+		$ev["text"] == ""		|| $ev["colour"] == ""		|| $ev["start_date"] == ""		|| $ev["end_date"] == "") {
 
 			$success["success"] = false;
 			$success["message"] = "Erreur ! Paramètre manquant";
@@ -108,7 +87,7 @@ class Controller_Golf_Events extends Controller_Oscrudc {
 
 		$evenement->save(true);
 
-	END:
+		END:
 
 		echo json_encode($success);
 
@@ -121,10 +100,10 @@ class Controller_Golf_Events extends Controller_Oscrudc {
 		$ev = Arr::get($method, 'event');
 
 		$success = array("success" => true,
-						 "message" => "");
+		"message" => "");
 
 		if( $ev["text"] == NULL 	|| $ev["colour"] == NULL	|| $ev["start_date"] == NULL 	|| $ev["end_date"] == NULL 	|| $ev["trou_depart"] == NULL ||
-			$ev["text"] == ""		|| $ev["colour"] == ""	|| $ev["start_date"] == ""		|| $ev["end_date"] == ""	|| $ev["trou_depart"] == "") {
+		$ev["text"] == ""		|| $ev["colour"] == ""	|| $ev["start_date"] == ""		|| $ev["end_date"] == ""	|| $ev["trou_depart"] == "") {
 
 			$success["success"] = false;
 			$success["message"] = "Erreur ! Paramètre manquant";
@@ -160,7 +139,7 @@ class Controller_Golf_Events extends Controller_Oscrudc {
 			$evenement->save(true);
 		}
 
-	END:
+		END:
 
 		echo json_encode($success);
 
@@ -175,19 +154,19 @@ class Controller_Golf_Events extends Controller_Oscrudc {
 	/* 
 	//If we remove OSCRUD in the future we can use this function to delete
 	public function action_delete_ajax() {
-		$this->auto_render = FALSE;
+	$this->auto_render = FALSE;
 
-		$method = $_POST;
-		$id = Arr::get($method, 'id');
+	$method = $_POST;
+	$id = Arr::get($method, 'id');
 
-		$success = array("success" => true,
-						 "message" => "");
+	$success = array("success" => true,
+	"message" => "");
 
-		$evenement = DB_ORM::model('evenements');
-		$evenement->id = $id;
-		$evenement->delete();
+	$evenement = DB_ORM::model('evenements');
+	$evenement->id = $id;
+	$evenement->delete();
 
-		echo json_encode($success);
+	echo json_encode($success);
 	}
 	*/
 	

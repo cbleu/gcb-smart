@@ -292,7 +292,6 @@
 			$(".dhx_cal_event").height(20);
 		});
 		
-				
 		scheduler.renderEvent = function(container, ev) {
 			
 			// Si c'est un evenement de plus de 10 minutes, on l'affiche à la manière classique du calendrier

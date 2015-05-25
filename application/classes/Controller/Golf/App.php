@@ -427,6 +427,8 @@ class Controller_Golf_App extends Controller_Golf_Main
 		Helpers_Stylesheet::add('/assets/js/dhtmlxScheduler/codebase/dhtmlxscheduler.css');
 		Helpers_Stylesheet::add('/assets/css/easygolfpack/egp_calendrier.css');	// en dernier pour les priorités CSS
 
+		Helpers_Stylesheet::add('/assets/css/colourPicker/jquery.colourPicker.css');
+
 		// Helper to inject vars to JS
 		Helpers_InputForJs::add('thisAction', 'calendrier');
 		Helpers_InputForJs::add('premier_depart', $premier_depart);
@@ -437,15 +439,20 @@ class Controller_Golf_App extends Controller_Golf_Main
 		Helpers_InputForJs::add('block_time_after_end', $block_time_after_end);
 		// // Helper to add js file
 		Helpers_Javascript::add('/assets/js/plugin/jquery-form/jquery-form.min.js');
+		Helpers_Javascript::add('/assets/js/plugin/colorpicker/bootstrap-colorpicker.min.js"');
 		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/dhtmlxscheduler.js');
 		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/locale/locale_fr.js');
 		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_units.js');
 		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_limit.js');
 		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_minical.js');
 		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_tooltip.js');
+		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_multiselect.js');
 		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_recurring.js');
 		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_agenda_view.js');
 		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_grid_view.js');
+
+		Helpers_Javascript::add('/assets/js/colourPicker/jquery.colourPicker.js');
+
 		// load main App Module JS
 		Helpers_Javascript::add('/assets/js/easygolfpack/egp.js');
 	}	// action_calendrier

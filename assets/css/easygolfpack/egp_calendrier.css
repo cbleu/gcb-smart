@@ -323,7 +323,7 @@ float: left;
 	width:20px;
 	height:20px;
 	line-height:20px;
-	background:url("/assets/images/delete.png") no-repeat;
+	background:url("/assets/img/delete.png") no-repeat;
 	cursor:pointer;
 	margin-top:-4px;
 }

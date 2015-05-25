@@ -796,6 +796,8 @@ function DisplayDigest()
 
 function initCalendrier()
 {
+	// To keep a reference to the default lightbox to manage recurring events
+	// var recurringLightbox;
 	
 	resize_calendar();
 	initScheduler();
@@ -1080,7 +1082,7 @@ function initCalendrier()
 			schedulerLoad();
 		},
 	});
-		
+
 }	// initCalendrier
 
 function initScheduler()
@@ -1103,8 +1105,10 @@ function initScheduler()
 	scheduler.config.xml_date = "%Y-%m-%d %H:%i";
 	scheduler.config.first_hour = vars.premier_depart;
 	scheduler.config.last_hour = vars.dernier_depart;
-	scheduler.config.multi_day = false;
-	scheduler.config.full_day = false;
+	// scheduler.config.multi_day = false;
+	scheduler.config.multi_day = true;
+	// scheduler.config.full_day = false;
+	scheduler.config.full_day  = true;
 	scheduler.config.details_on_create = true;
 	scheduler.config.details_on_dblclick = false;
 	scheduler.config.drag_create = false;
@@ -1226,9 +1230,6 @@ function initScheduler()
 	
 	scheduler.attachEvent("onBeforeDrag", function (event_id, mode, native_event_object){return false;});	// no drag
 	
-	// scheduler.attachEvent("onBeforeLightbox", function (id){return false;});	// not used
-	// scheduler.attachEvent("onAfterLightbox", function (id){console.log("onAfterLightbox: ",id);});	// not used
-		
 	scheduler.attachEvent("onBeforeEventDeleted", function (mode , date){
 		console.log("onBeforeEventDeleted", date);
 		if(date.type == "reservation")
@@ -1351,13 +1352,200 @@ function initScheduler()
 		return true;
 	};
 	
-	scheduler.showLightbox = function(id) {
-		var resa_form = document.getElementById('resa_form_div');
-		var ev = scheduler.getEvent(id);
+	scheduler.attachEvent("onBeforeLightbox", function (id){
+		return true;
+	});	// not used
+	scheduler.attachEvent("onAfterLightbox", function (id){
+		console.log("onAfterLightbox: ",id);
+	});	// not used
+		
+	// Keep a reference to the default lightbox to manage recurring events
+	var recurringLightbox =  scheduler.showLightbox;
+
+	scheduler.templates.lightbox_header = function(start, end, event){
+		return "Programmer un évènement";
+	}
+
+	// // Adding Color to lightbox
+	// scheduler.locale.labels.section_couleur = "Couleur";
+	// scheduler.config.lightbox.sections.push({
+	// 	name:"couleur",
+	// 	map_to:"colour",
+	// 	type:"select",
+	// 	height:30,
+	// 	default_value:"34cdf9",
+	// 	options:$.colourPickerBasicColors()
+	// 	// options:$.colorpicker()
+	// });
+
+	// Adding trou to lightbox
+	// scheduler.locale.labels.section_startholes = "Sur le trou de départ";
+	// scheduler.config.lightbox.sections.push({
+	// 	name:"startholes",
+	// 	map_to:"trou_depart",
+	// 	type:"multiselect",
+	// 	vertical:"false",
+	// 	height:30,
+	// 	options:sections
+	// });
+
+	scheduler.form_blocks.multiselect.set_value = function(node, value, ev)
+	{
+		for (i = 0 ; i < node.children.length; i++) {
+			// ev.type is present only if we are in update mode
+			// so in this case we disable the trou checkboxes
+			node.children[i].firstChild.disabled = (ev.type == "evenement");
+
+			// Here we check the right textbox
+			node.children[i].firstChild.checked = (ev.trou_depart == node.children[i].firstChild.value);
+		}
+	};
+
+	scheduler.locale.labels.section_couleur = "Couleur";
+	scheduler.locale.labels.section_startholes = "Départ sur";
+	scheduler.config.lightbox.sections = [
+		{
+			name:"couleur",
+			map_to:"colour",
+			type:"select",
+			height:40,
+			default_value:"34cdf9",
+			options:$.colourPickerBasicColors()
+		},
+		{
+			name:"startholes",
+			map_to:"trou_depart",
+			type:"multiselect",
+			vertical:"false",
+			height:40,
+			options:sections,
+		},
+		{ name: 'Infos', height: 40, type: 'textarea', map_to: 'n' },
+		{ name: "recurring", height: 150, type: "recurring", map_to: "rec_type", button: "recurring" },
+		{ name: 'time', height: 72, type: 'time', map_to: 'auto' },
+	];
+
+	// scheduler.locale.labels.section_template = 'Details';// sets the name of the section
+	//
+	// scheduler.config.lightbox.sections = [
+	//     { name:"text", height:50, map_to:"text", type:"textarea", focus:true},
+	//     { name:"template", height: 40, type:"template", map_to:"my_template"},
+	//     { name:"time", height:72, type:"time", map_to:"auto"}
+	// ];
+	// scheduler.attachEvent("onEventCreated", function(id, e) {
+	//     var ev = scheduler.getEvent(id);
+	//     ev.my_template = "<b>Holder:</b>"+ ev.holder+"<br><b>Room:</b>"+ ev.room;
+	// });
+	
+	
+	// make Trou Depart readonly for updates
+	// scheduler.form_blocks.multiselect.set_value = function(node, value, ev) {
+	//
+	// 	for (i = 0 ; i < node.children.length; i++) {
+	// 		// ev.type is present only if we are in update mode
+	// 		// so in this case we disable the trou checkboxes
+	// 		node.children[i].firstChild.disabled = (ev.type == "evenement");
+	//
+	// 		// Here we check the right textbox
+	// 		node.children[i].firstChild.checked = (ev.trou_depart == node.children[i].firstChild.value);
+	// 	}
+	// };
+
+	scheduler.attachEvent("onLightbox", function (id){
+
+		if ($("input.color_display").length) {
+			//$("input.color_display").val("");
+			//alert(scheduler.getEvent(id).colour);
+			//alert("a[rel='" + scheduler.getEvent(id).colour + "']");
+
+			$( "a[rel='" + scheduler.getEvent(id).colour + "']" ).click();
+		}
+		else {
+			// color select do not offer the way to specify an id so we find with specific jquery selector
+			$( "option:contains('#ffffff')" ).parent().colourPicker({
+				ico:    '/assets/admin/images/jquery.colourPicker.gif',
+				title:    false
+			});
+
+			$("input.color_display").click();
+		}
+
+	});
+
+
+	// // We configure our custom lightbox for reservations
+	// var reservationLightbox =  function(id) {
+	//
+	// 	var ev = scheduler.getEvent(id);
+	//
+	// 	var other_event_exist = false;
+	// 	var evs = scheduler.getEvents();
+	// 	for (var i = 0; i < evs.length; i++) {
+	// 		if(evs[i].id != ev.id && (evs[i].start_date + "" == ev.start_date + "") && ev.trou_depart == evs[i].trou_depart) {
+	// 			other_event_exist = true;
+	// 			break;
+	// 		}
+	// 	}
+	//
+	// 	var resa_form = document.getElementById('resa_form_div');
+	//
+	// 	// si le slot horaire contient déjà une resa on ouvre pas le formulaire d'ajout
+	// 	if(other_event_exist) {
+	// 		scheduler.deleteEvent(id);
+	// 		//scheduler.endLightbox(false);
+	// 		return false;
+	// 	}
+	//
+	// 	reset_form(ev);
+	//
+	// 	//added by cesar: check la dispo pour les 18 trous
+	// 	getPlayersBySlotAt(ev.start_date);
+	//
+	// 	//$("#eventStartDate").html(format_date_heure(ev.start_date));
+	// 	$("#eventStartDate").html(format_francais(ev.start_date));
+	// 	$("#date_resa").val(mysql_format(ev.start_date));
+	// 	$("#trou_depart").val(ev.trou_depart);
+	//
+	// 	scheduler.startLightbox(id, resa_form);
+	//
+	// 	$(".dhx_cal_cover").click(function(){
+	// 		$("#annuler_button").trigger("click");
+	// 	});
+	//
+	//
+	// 	// Reset checkboxes (enable all and 18 checked by default)
+	// 	for(var i = 1; i <= 4; i++) {
+	// 		// $(".nbTrous18[name=nbTrousJ"+i+"]").attr("checked", "checked");
+	// 		// $(".nbTrous18[name=nbTrousJ"+i+"]").removeAttr('disabled');
+	// 		$(".nbTrous18[name=nbTrousJ"+i+"]").prop("checked", true);
+	// 		$(".nbTrous18[name=nbTrousJ"+i+"]").prop('disabled',false);
+	// 	}
+	//
+	// 	// Desactive les 18 trous si pas possible
+	// 	var date_key = mysql_format(ev.start_date)+":00";
+	// 	if(date_key in occupation_array[ev.trou_depart]) {	// cesar: occupation_array provient de getPlayersBySlotAt -> getdispo
+	// 		for(var i = 4; i > 4-occupation_array[ev.trou_depart][date_key]; i--) {
+	// 			// $(".nbTrous18[name=nbTrousJ"+i+"]").removeAttr("checked");
+	// 			// $(".nbTrous18[name=nbTrousJ"+i+"]").attr('disabled', 'disabled');
+	// 			$(".nbTrous18[name=nbTrousJ"+i+"]").prop("checked", false);
+	// 			$(".nbTrous18[name=nbTrousJ"+i+"]").prop('disabled', true);
+	//
+	// 			$(".nbTrous9[name=nbTrousJ"+i+"]").click();
+	// 		}
+	// 	}
+	// }
+
+
+	// We configure our custom lightbox for reservations
+	var reservationLightbox =  function(id) {
+	// scheduler.showLightbox = function(id) {
 		var french_format = scheduler.date.date_to_str("%H:%i le %d %F %Y");
 		var mysql_format = scheduler.date.date_to_str("%Y-%m-%d %H:%i");	//moved here by cesar
 		var shortDate_format = scheduler.date.date_to_str("%d/%m/%Y");
-		
+
+		var resa_form = document.getElementById('resa_form_div');
+		var ev = scheduler.getEvent(id);
+
 		// si le slot horaire contient déjà une resa on n'ouvre pas le formulaire d'ajout
 		var from = ev.start_date;
 		var to = scheduler.date.add(ev.end_date, scheduler.config.time_step, 'minute');
@@ -1368,9 +1556,9 @@ function initScheduler()
 				return false;
 			}
 		}
-		
+
 		reset_form(ev);
-		
+
 		$("#eventStartDate").html(french_format(ev.start_date));
 		$("#eventType").hide();
 		// $("#flip_parcours_Button").hide();
@@ -1379,13 +1567,14 @@ function initScheduler()
 		$("#trou_depart").val(ev.sh);
 		// $("#reserver_button").show();
 		setDetailFormMode("add");
-		
-		scheduler.startLightbox(id, resa_form);	// ouverture de la lightbox basee sur resa_form
-		
+
+		// scheduler.startLightbox(id, resa_form);	// ouverture de la lightbox basee sur resa_form
+		scheduler.startLightbox(id);	// ouverture de la lightbox basee sur resa_form
+
 		$(".dhx_cal_cover").click(function(){
 			$("#annuler_button").trigger("click");
 		});
-		
+
 		// Desactive les 18 trous si pas possible
 		getPlayersBySlotFor(ev);	// check la dispo pour les 18 trous
 
@@ -1394,6 +1583,116 @@ function initScheduler()
 
 	};	// scheduler.showlightbox
 		
+	// By default, we use our custom lightbox to handle reservation when events occurs on the calendar
+	scheduler.showLightbox = reservationLightbox;
+	// scheduler.showLightbox = recurringLightbox;
+
+	// When clicking button to add event, we set the lightbox to default and open it
+	$("#recurring_button").click(function(){
+	    	scheduler.showLightbox = recurringLightbox;
+
+	    	scheduler.addEventNow();
+
+	    	//initColorPicker();
+	});
+
+
+	// // Fires when lightbox closes we set back lightbox to default
+	// scheduler.attachEvent("onAfterLightbox", function (){
+	// 	scheduler.showLightbox = reservationLightbox;
+	// });
+
+	scheduler.attachEvent("onEventChanged", function(id,ev) {
+		
+		// When user choose update a copy,
+		// we don't update the original event, we only create a new one
+		if(ev.id.indexOf('#') !== -1 ){
+			return;
+		}
+
+		$.ajax({
+			type: "POST",
+			url: "/events/update_ajax",
+			dataType: "json",
+			data: {
+				event:ev
+			},
+			success: function( data ) {
+				scheduler.clearAll();
+
+				if(data["success"] == false) {
+					alert(data["message"]);
+				}
+
+				scheduler.load("/resajax/eventsparcours", "json", function(){
+					$(".dhx_cal_event").height(20);
+					scheduler.blockTime();
+				});
+				
+			}
+		});
+	});
+
+	scheduler.attachEvent("onEventDeleted", function(id){
+		$.ajax({
+			type: "POST",
+			url: "/events/delete/"+id,
+			dataType: "json",
+			success: function( data ) {
+				scheduler.clearAll();
+
+				if(data["success"] == false) {
+					alert(data["success_message"]);
+				}
+
+				scheduler.load("/resajax/eventsparcours", "json", function(){
+					$(".dhx_cal_event").height(20);
+					scheduler.blockTime();
+				});
+				
+			}
+		});
+	});
+
+	scheduler.attachEvent("onEventSave",function(id, ev, is_new) {
+		console.log("onEventSave: ",id, ev);
+	    // Do some validation
+	    return true;
+	})
+
+	// Fires when recurring event added 
+	scheduler.attachEvent("onEventAdded", function(id,ev)
+	{
+		// We add the event to the database
+		console.log("onEventAdded: ",id, ev.rec_type);
+
+		//ev.trou_depart = [1,10];
+		$.ajax({
+			type: "POST",
+			url: "/events/insert_ajax",
+			dataType: "json",
+			data: {
+				event:ev
+			},
+			success: function( data ) {
+				scheduler.clearAll();
+
+				if(data["success"] == false) {
+					alert(data["message"]);
+				}
+
+				scheduler.load("/resajax/eventsparcours", "json", function(){
+					$(".dhx_cal_event").height(20);
+					scheduler.blockTime();
+				});
+
+			}
+		});
+		//alert(ev.id + '\n' + ev.start_date + '\n' + ev.end_date + '\n' + ev.text + '\n' + ev.color);
+	});
+	
+
+
 	scheduler.filter_agenda = function(id, ev){	// filtre de l'affichage de la vue "Mes reservations""
 		// if(ev.evt == "r" && ev.r == 0 && ev.u == 1 )
 		if(ev.evt == 1 && ev.g < 2 && ev.u == 1 )	// une partie joueur ET pas un retour ET avec l'utilisateur
