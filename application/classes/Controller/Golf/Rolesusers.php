@@ -76,6 +76,7 @@ class Controller_Golf_Rolesusers extends Controller_Golf_Admin
 		);
 
 		$data = (array)parent::action_list();
+		$data['statusFilter'] = null;
 
 		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
 		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
@@ -83,14 +84,8 @@ class Controller_Golf_Rolesusers extends Controller_Golf_Admin
 	
 	public function action_list()
 	{
-		// Set active page in menu
-		$this->pages["admin"]['sub']['Role']["active"] = true;
-		$this->pageTitle = "Roles des usagers";
-
-		$data = (array)parent::action_list();
-
-		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
-		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
+		HTTP::redirect('/admin/rolesusers/');
+		// self::action_index();
 	}
 
 	public function action_ajax_list()

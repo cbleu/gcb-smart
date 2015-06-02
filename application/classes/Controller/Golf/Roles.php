@@ -74,6 +74,7 @@ class Controller_Golf_Roles extends Controller_Golf_Admin
 		$this->make_crud();
 
 		$data = (array)parent::action_list();
+		$data['statusFilter'] = null;
 
 		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
 		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
@@ -86,23 +87,24 @@ class Controller_Golf_Roles extends Controller_Golf_Admin
 
 	public function action_ajax_list()
 	{
-		$this->template = View::factory('empty');
+		// $this->template = View::factory('empty');
 
 		//disable auto rendering if requested using ajax
-		if($this->request->is_ajax()){
+		// if($this->request->is_ajax()){
 			$this->auto_render = FALSE;
-		}
+		// }
 
 		$data = (array)parent::action_ajax_list();
+
 		echo View::factory('/fragments/admin/crud/list',$data);
 	}
 
 	public function action_ajax_list_info()
 	{
 		//disable auto rendering if requested using ajax
-		if($this->request->is_ajax()){
+		// if($this->request->is_ajax()){
 			$this->auto_render = FALSE;
-		}
+		// }
 		
 		$data = parent::action_ajax_list_info();
 

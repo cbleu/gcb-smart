@@ -216,7 +216,8 @@ Route::set('admin', 'admin(/<controller>(/<action>(/<id>)))')
 // 		'action'     => 'index',
 // 	));
 
-Route::set('default', '(<controller>(/<action>(/<id>)))')
+// Route::set('default', '(<controller>(/<action>(/<id>)))')
+Route::set('default', '(<controller>(/<action>(/<id>(/<param>))))')
 	->defaults(array(
 		'directory'  => 'golf',
 		'controller' => 'app',

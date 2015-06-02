@@ -61,7 +61,7 @@
 												
 												echo '
 													<div class="td-icon action-activate">
-														<a href="' .$action_url .'" class="td-icon ' .$action->css_class .'" rel="tooltip" data-placement="bottom" data-original-title="' .$action->label .'">' .$imgaction .'</a>
+														<a href="' .$action_url .'" class="td-icon ' .$action->css_class .'" rel="tooltip" data-placement="bottom" data-container="body" data-original-title="' .$action->label .'">' .$imgaction .'</a>
 													</div>
 													';
 											}

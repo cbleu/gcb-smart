@@ -141,6 +141,53 @@ class Model_Oscrud  extends Model { //DB_ORM_Model
     	return $tabcol;
     }
 
+	function get_list_count()
+	{
+		if($this->table_name === null)
+			return false;
+	
+		$select = "`{$this->table_name}`.*";
+
+		//set_relation special queries 
+		if(!empty($this->relation)){
+			foreach($this->relation as $relation){
+				list($field_name , $related_table , $related_field_title) = $relation;
+				$unique_join_name = $this->_unique_join_name($field_name);
+				$unique_field_name = $this->_unique_field_name($field_name);
+			
+				if(strstr($related_field_title,'{')){
+					$related_field_title = str_replace(array('{','}'),  '', $related_field_title);
+					$chars = preg_split('/ /', $related_field_title);
+					$ajoutselect = array();
+					for ($iop=0; $iop < count($chars); $iop++) { 
+						$ajoutselect[$iop] = "COALESCE(`{$unique_join_name}.".$chars[$iop]."`,'')";
+					}
+					$select .= ", CONCAT(";
+					for ($iop=0; $iop < count($chars); $iop++) { 
+						$select .= "".$ajoutselect[$iop].",' ',";
+					}
+					$select .= "'') as $unique_field_name";
+					$this->builder->column($select);
+				}else{
+					$this->builder->column($select);	
+					$this->builder->column($unique_join_name.".".$related_field_title,$unique_field_name);
+				}
+				if($this->field_exists($related_field_title)){
+					$this->builder->column("{$this->table_name}.$related_field_title", $this->table_name.".".$related_field_title);
+				}
+			}
+		}
+
+		if(!empty($this->relation_n_n)){
+			$select = $this->relation_n_n_queries($select);
+		}
+		$this->builder->from($this->table_name);
+
+		$results = $this->builder->query()->count();
+	
+		return $results;
+	}
+
 	public function set_primary_key($field_name, $table_name = null)
     {
     	$table_name = $table_name === null ? $this->table_name : $table_name;

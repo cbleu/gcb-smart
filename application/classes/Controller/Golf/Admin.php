@@ -20,13 +20,16 @@ class Controller_Golf_Admin extends Controller_Golf_App
 
 		Helpers_Stylesheet::add('/assets/css/flexigrid/flexigrid.css');
 		Helpers_Stylesheet::add('/assets/css/flexigrid/jquery.fancybox.css');
+		Helpers_Stylesheet::add('/assets/css/bootstrap-select.min.css');
 
-		Helpers_Javascript::add('/assets/js/flexigrid/cookies.js');
 		Helpers_Javascript::add('/assets/js/flexigrid/flexigrid.js');
+		Helpers_Javascript::add('/assets/js/flexigrid/cookies.js');
 		Helpers_Javascript::add('/assets/js/flexigrid/jquery.form.js');
 		Helpers_Javascript::add('/assets/js/flexigrid/jquery.printElement.js');
 		Helpers_Javascript::add('/assets/js/flexigrid/jquery.fancybox.pack.js');
 		Helpers_Javascript::add('/assets/js/flexigrid/jquery.numeric.min.js');
+
+		Helpers_Javascript::add('/assets/js/bootstrap-select/bootstrap-select.min.js');
 
 		Helpers_Javascript::add('/assets/js/easygolfpack/egp_action_alert.js');
 

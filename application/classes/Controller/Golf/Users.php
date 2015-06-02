@@ -3,7 +3,7 @@
 
 class Controller_Golf_Users extends Controller_Golf_Admin
 {
-
+	 
 	public function before()
 	{
 		//////////////////////////////////////////////////////////
@@ -63,6 +63,10 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 
 	public function action_index()
 	{
+		// $statusFilter = $this->request->param('id');
+		// if (!$statusFilter){
+			$statusFilter = 'enable';
+		// }
 
 		// Set active page in menu
 		$this->pages["admin"]["sub"]["users"]['sub']['members']["active"] = true;
@@ -77,17 +81,20 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 
 		$this->make_crud();
 
-		$this->crud->add_action('Editer', 'fa fa-pencil txt-color-seagreen fa-fw fa-1x','', 'with-tip', array($this,'edit_user'));
+		$this->crud->add_action('Editer', 'fa fa-pencil txt-color-seagreen fa-fw fa-1x','', 'with-tip', array($this,'get_edit_url'));
 		// $this->crud->add_action('Supprimer', 'fa fa-times txt-color-red', '', 'action-delete with-tip', array($this,'delete_user'));
-		$this->crud->add_action('Désactiver', 'fa fa-pause txt-color-orange fa-fw fa-1x', '', 'action-disable with-tip', array($this,'disable_path'));
+		$this->crud->add_action('Désactiver', 'fa fa-pause txt-color-orange fa-fw fa-1x', '', 'action-disable with-tip', array($this,'get_disable_url'));
 
 		$this->crud->where('users.id','>','9');
-		$this->crud->where('status', '=', 'enable');
+
+		$this->crud->where('status', '=', $statusFilter);
 
 		$data = (array)parent::action_list();
+		$data['statusFilter'] = $statusFilter;
 
 		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
 		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
+		// $this->template->content->list_view = null;
 	}
 
 	public function action_list()
@@ -95,13 +102,64 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 		HTTP::redirect('/admin/users/');
 	}
 
+	public function action_ajax_list()
+	{
+		$statusFilter = $this->request->param('id');
+		// print_r($statusFilter);
+
+		//disable auto rendering if requested using ajax
+		if($this->request->is_ajax()){
+			$this->auto_render = FALSE;
+		}
+
+		$this->make_crud();
+
+		$this->crud->add_action('Editer', 'fa fa-pencil txt-color-green','', 'with-tip', array($this,'get_edit_url'));
+		$this->crud->add_action('Supprimer', 'fa fa-times txt-color-red', '', 'with-tip', array($this,'get_delete_url'));
+
+		$this->crud->where('users.id','>','9');
+		// $this->crud->where('status', '=', 'enable');
+
+		$this->crud->where('status', '=', $statusFilter);
+		// print_r($statusFilter);
+
+		$data = (array)parent::action_ajax_list();
+		//print_r($data);
+		echo View::factory('/fragments/admin/crud/list',$data);
+		
+	}
+	
+	public function action_ajax_list_info()
+	{
+		$statusFilter = $this->request->param('id');
+
+		//disable auto rendering if requested using ajax
+		if($this->request->is_ajax()){
+			$this->auto_render = FALSE;
+		}
+		
+		$this->make_crud();
+
+		$this->crud->where('users.id','>','9');
+		// $this->crud->where('status', '=', 'enable');
+
+		// Notify::msg("lastFilter:".$lastFilter, 'warning');
+		$this->crud->where('status', '=', $statusFilter);
+
+		$data = parent::action_ajax_list_info();
+		//print_r($data);
+		echo json_encode($data);
+		
+	}
+
 	public function action_disabled()
 	{
+		$statusFilter = 'disable';
+
 		// Set active page in menu
 		$this->pages["admin"]["sub"]["users"]['sub']['disabled']["active"] = true;
 		$this->pageTitle = "Liste des usagers désactivés";
-		// Set breadcrumbs links
-		// $this->pageBreadcrumbs["admin"]["sub"]["users"]['sub']['disabled'] = "/admin/users/disabled";
+
 		$this->pageBreadcrumbs = array(
 			"Accueil" => "/",
 			"Admin" => "/admin",
@@ -109,18 +167,20 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 		);
 
 		$this->make_crud();
-		$this->crud->add_action('Activer', 'fa fa-play txt-color-blue fa-fw fa-2x','', 'action-active with-tip', array($this,'activate_user'));
-		$this->crud->add_action('Supprimer', 'fa fa-times txt-color-red fa-fw', '', 'action-delete with-tip', array($this,'delete_user'));
+		$this->crud->add_action('Activer', 'fa fa-play txt-color-blue fa-fw fa-2x','', 'action-active with-tip', array($this,'get_activate_url'));
+		$this->crud->add_action('Supprimer', 'fa fa-times txt-color-red fa-fw', '', 'action-delete with-tip', array($this,'get_delete_url'));
 		
-		$this->crud->where('status', '=', 'disable');
+		$this->crud->where('status', '=', $statusFilter);
 
 		$data = (array)parent::action_list();
+		
+		$data['statusFilter'] = $statusFilter;
 
 		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
 		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 	}
 
-	function activate_user($primary_key , $row)
+	function get_activate_url($primary_key , $row)
 	{
 		$url = "/admin/users/active/".$primary_key;
 		return $url;
@@ -130,6 +190,7 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 	{
 		$id_user = $this->request->param('id');
 		
+		// get enable id status
 		$status = DB_SQL::select('default')
 			->from('user_status')
 				->where('status', '=', 'enable')
@@ -171,6 +232,11 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 		HTTP::redirect('/admin/users/');
 	}
 	
+	function get_edit_url($primary_key , $row)
+	{
+		$url = "/admin/users/edit/".$primary_key;
+		return $url;
+	}
 	public function action_edit()
 	{
 		$this->make_crud();
@@ -213,7 +279,7 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 		// $this->crud->validation_layout($validation_result);
 	}
 	
-	function delete_user($primary_key , $row)
+	function get_delete_url($primary_key , $row)
 	{
 		$url = "/admin/users/delete/".$primary_key;
 		return $url;
@@ -252,6 +318,8 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 	
 	public function action_pending()
 	{
+		$statusFilter = 'pending';
+		
 		// Set active page in menu
 		$this->pages["admin"]["sub"]["users"]['sub']['pending']["active"] = true;
 		$this->pageTitle = "Inscription à valider";
@@ -264,18 +332,20 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 
 		$this->make_crud();
 		
-		$this->crud->add_action('Valider', 'fa fa-check-circle txt-color-green','', 'with-tip', array($this,'valid_user'));
-		$this->crud->add_action('Refuser', 'fa fa-times-circle txt-color-red', '', 'with-tip', array($this,'refuse_user'));
+		$this->crud->add_action('Valider', 'fa fa-check-circle txt-color-green','', 'with-tip', array($this,'get_validate_url'));
+		$this->crud->add_action('Refuser', 'fa fa-times-circle txt-color-red', '', 'with-tip', array($this,'get_refuse_url'));
 
-		$this->crud->where('status', '=', 'pending');
+		$this->crud->where('status', '=', $statusFilter);
 
 		$data = (array)parent::action_list();
+		
+		$data['statusFilter'] = $statusFilter;
 
 		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
 		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 	}
 
-	function disable_path($primary_key , $row)
+	function get_disable_url($primary_key , $row)
 	{
 		$url = "/admin/users/disable/".$primary_key;
 		return $url;
@@ -303,53 +373,7 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 		HTTP::redirect('/admin/users/');
 	}
 	
-	// public function action_valide()
-	// {
-	// 	$data = (array)parent::action_list();
-	// 	Notify::msg('Validation effectuée avec succès !', 'success');
-	//
-	// 	$this->template->content = View::factory('/fragments/admin/crud/list_template',$data);
-	// 	$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
-	// }
 	
-	public function action_ajax_list()
-	{
-		//disable auto rendering if requested using ajax
-		if($this->request->is_ajax()){
-			$this->auto_render = FALSE;
-		}
-
-		$this->make_crud();
-
-		$this->crud->add_action('Editer', 'fa fa-pencil txt-color-green','', 'with-tip', array($this,'edit_user'));
-		$this->crud->add_action('Supprimer', 'fa fa-times txt-color-red', '', 'with-tip', array($this,'delete_user'));
-
-		$this->crud->where('users.id','>','9');
-		$this->crud->where('status', '=', 'enable');
-
-		$data = (array)parent::action_ajax_list();
-		//print_r($data);
-		echo View::factory('/fragments/admin/crud/list',$data);
-		
-	}
-	
-	public function action_ajax_list_info()
-	{
-		//disable auto rendering if requested using ajax
-		if($this->request->is_ajax()){
-			$this->auto_render = FALSE;
-		}
-		
-		$this->make_crud();
-
-		$this->crud->where('users.id','>','9');
-		$this->crud->where('status', '=', 'enable');
-
-		$data = parent::action_ajax_list_info();
-		//print_r($data);
-		echo json_encode($data);
-		
-	}
 	
 	// public function action_success() {
 	//
@@ -436,22 +460,47 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 		return $post_array;
 	}
 	
-	function edit_user($primary_key , $row)
-	{
-		$url = "/admin/users/edit/".$primary_key;
-		return $url;
-	}
-
-	function valid_user($primary_key , $row)
+	function get_validate_url($primary_key , $row)
 	{
 		$url = "/admin/users/confirm/".$primary_key;
 		return $url;
 	}
 
-	function refuse_user($primary_key , $row)
+	function get_refuse_url($primary_key , $row)
 	{
 		$url = "/admin/users/refuse/".$primary_key;
 		return $url;
+	}
+	public function action_refuse()
+	{
+		$id_user = $this->request->param('id');
+		
+		$status = DB_SQL::select('default')
+			->from('user_status')
+				->where('status', '=', 'refuse')
+					->query();
+						
+		$refuse_status_id = $status[0]['id'];
+		
+		$user = DB_ORM::model('users');
+		$user->id = $id_user;
+		$user->load();
+	
+		if($user->is_loaded()){
+			$user->email 		= $user->email."_refused_".time();
+			$user->username 	= $user->username."_refused_".time();
+			$user->id_status 	= $refuse_status_id;
+			$user->save(true);
+			Notify::msg('Membre refusé !', 'warning');
+		}
+		
+		// $data = (array)parent::action_delete();
+
+		HTTP::redirect('/admin/users/');
+		
+		// $this->template = View::factory('/fragments/admin/ajax');
+		// $this->template->content = View::factory('/fragments/admin/crud/list_template',$data);
+		// $this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
 	}
 
 }

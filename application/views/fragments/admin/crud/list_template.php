@@ -73,18 +73,73 @@
 
 												<div class="sDiv" id='quickSearchBox'>
 													<div class="sDiv2">
-														<?php echo __('list_search');?>: <input type="text" class="qsbsearch_fieldox" name="search_text" size="30" id='search_text'>
-														<select name="search_field" id="search_field">
-															<option value=""><?php echo __('list_search_all');?></option>
-															<?php foreach($columns as $column){?>
-																<option value="<?php echo $column->field_name?>"><?php echo $column->display_as?>&nbsp;&nbsp;</option>
-															<?php }?>
+														
+														<!-- new row -->
+														<div class="row">
+
+															<!-- new col -->
+															<div class="col-sm-12">
+
+																<div class="input-group input-group-md">
+																	<span class="input-group-addon" id="filter_button"><i class="glyphicon glyphicon-filter"></i></span>
+
+																	<span class="input-group-addon">
+																		<select name="search_field" class="" id="search_field" data-container="body">
+																			<option value=""><?php echo __('list_search_all');?></option>
+																			<?php foreach($columns as $column){?>
+																				<option value="<?php echo $column->field_name?>"><?php echo $column->display_as?>&nbsp;&nbsp;</option>
+																			<?php }?>
+																		</select>
+																	</span>
+
+																	<!-- <div class="input-group-btn">
+																		<button type="button" class="btn btn-default" tabindex="-1">Action</button>
+																		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" data-container="body" tabindex="-1" aria-expanded="false">
+																			<span class="caret"></span>
+																		</button>
+																		<ul class="dropdown-menu pull-right" role="menu">
+																			<?php foreach($columns as $column){?>
+																				<li><a href="javascript:void(0);"><?php echo $column->field_name?> <?php echo $column->display_as?></a></li>
+																			<?php }?>
+																		</ul>
+																	</div> -->
+
+																	<span class="icon-addon addon-md">
+																		<input type="text" placeholder="<?php echo __('list_search');?>" class="form-control" id='search_text' name="search_text">
+																		<label for="email" class="glyphicon glyphicon-search" rel="tooltip" title="" data-placement="bottom" data-container="body" data-original-title="<?php echo __('list_search');?>"></label>
+																	</span>
+
+																	<div class="input-group-btn">
+																		<button class="btn btn-default txt-color-red" type="button" id='search_clear'>
+																			<i class="fa fa-times"></i>
+																	
+																		</button>
+																		<button class="btn btn-success txt-color-white" type="button"  id='crud_search'>
+																			<i class="fa fa-check"></i>
+																			Filtrer !
+																		</button>
+																	</div>
+
+																</div>
+
+															</div>
+															<!-- end col -->
+
+														</div>
+														<!-- end row -->
+
+														<!-- <?php //echo __('list_search');?>: <input type="text" class="qsbsearch_fieldox input-sm" name="search_text" size="30" id='search_text'>
+														<select name="search_field" class="input-sm" id="search_field">
+															<option value=""><?php //echo __('list_search_all');?></option>
+															<?php //foreach($columns as $column){?>
+																<option value="<?php //echo $column->field_name?>"><?php //echo $column->display_as?>&nbsp;&nbsp;</option>
+															<?php //}?>
 														</select>
-														<input type="button" value="<?php echo __('list_search');?>" id='crud_search'> 
+														<input type="button" class="btn btn-default btn-sm" value="<?php //echo __('list_search');?>" id='crud_search'>  -->
 													</div>
-													<div class='search-div-clear-button'>
-														<input type="button" value="<?php echo __('list_clear_filtering');?>" id='search_clear'>
-													</div>
+													<!-- <div class='search-div-clear-button'>
+														<input type="button" class="btn btn-default btn-sm" value="<?php //echo __('list_clear_filtering');?>" id='search_clear'>
+													</div> -->
 												</div>
 
 												<div class="pDiv">
@@ -118,7 +173,8 @@
 														<div class="pGroup">
 															<span class="pcontrol"><?= __('list_page'); ?> <input name='page' type="text" value="1" id='crud_page'> 
 																<?= __('list_paging_of'); ?> 
-																<span id='last-page-number'><?php echo ceil($total_results / $default_per_page)?></span>
+																<!-- <span id='last-page-number'><?php //echo ceil($total_results / $default_per_page)?></span> -->
+																<span id='last-page-number'></span>
 															</span>
 														</div>
 
@@ -140,7 +196,7 @@
 														<div class="pGroup">
 															<span class="pPageStat">
 																<? $paging_starts_from = "<span id='page-starts-from'>1</span>"; ?>
-																<? $paging_ends_to = "<span id='page-ends-to'>". ($total_results < $default_per_page ? $total_results : $default_per_page) ."</span>"; ?>
+																<? $paging_ends_to = "<span id='page-ends-to'>". ($total_results < $default_per_page ? $total_results : $default_per_page) ."</span>"; //echo $default_per_page;?>
 																<? $paging_total_results = "<span id='total_items'>$total_results</span>"?>
 																<?= str_replace( array('{start}','{end}','{results}'), array($paging_starts_from, $paging_ends_to, $paging_total_results), __('list_displaying'));?>
 															</span>
@@ -242,8 +298,11 @@
 	var base_url = '<?php echo URL::base('http', TRUE);?>';
 
 	var subject = '<?php echo $subject?>';
+	var ajax_list_url = '<?php echo $ajax_list_url?>';
 	var ajax_list_info_url = '<?php echo $ajax_list_info_url?>';
 	var unique_hash = '<?php echo $unique_hash; ?>';
 
+	var statusFilter = '<?php echo $statusFilter ?>';
+	
 	var message_alert_delete = "<?= __('alert_delete'); ?>";
 </script>

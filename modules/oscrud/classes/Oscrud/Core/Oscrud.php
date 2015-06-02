@@ -964,7 +964,7 @@ class Oscrud_Core_Oscrud extends Oscrud_Core_States
 				}
 				
 				if($this->theme === null)
-					$this->set_theme($this->default_theme);				
+					$this->set_theme($this->default_theme);
 				$this->setThemeBasics();
 					
 				$this->set_basic_Layout();
@@ -983,7 +983,7 @@ class Oscrud_Core_Oscrud extends Oscrud_Core_States
 				}
 				
 				if($this->theme === null)
-					$this->set_theme($this->default_theme);				
+					$this->set_theme($this->default_theme);
 				$this->setThemeBasics();
 				
 				$this->set_basic_Layout();
@@ -1000,7 +1000,7 @@ class Oscrud_Core_Oscrud extends Oscrud_Core_States
 				}
 				
 				if($this->theme === null)
-					$this->set_theme($this->default_theme);				
+					$this->set_theme($this->default_theme);
 				$this->setThemeBasics();
 				
 				$this->set_basic_Layout();
@@ -1059,13 +1059,13 @@ class Oscrud_Core_Oscrud extends Oscrud_Core_States
 				}
 				
 				if($this->theme === null)
-					$this->set_theme($this->default_theme);				
+					$this->set_theme($this->default_theme);
 				$this->setThemeBasics();
 				
 				$this->set_basic_Layout();
 				
 				$state_info = $this->getStateInfo();
-				$this->set_ajax_list_queries($state_info);				
+				$this->set_ajax_list_queries($state_info);
 					
 				$this->showList(true);
 				
@@ -1074,13 +1074,13 @@ class Oscrud_Core_Oscrud extends Oscrud_Core_States
 			case 8://ajax_list_info
 
 				if($this->theme === null)
-					$this->set_theme($this->default_theme);				
+					$this->set_theme($this->default_theme);
 				$this->setThemeBasics();
 				
 				$this->set_basic_Layout();
 				
 				$state_info = $this->getStateInfo();
-				$this->set_ajax_list_queries($state_info);				
+				$this->set_ajax_list_queries($state_info);
 					
 				$this->showListInfo();
 			break;

@@ -47,6 +47,7 @@ class Controller_Oscrudc extends Controller_Template
 	
 	public function action_ajax_list(){
 		
+		// echo "action_ajax_list";
 		if($this->request->is_ajax()){
 			$this->auto_render = FALSE;
 		}
@@ -56,8 +57,8 @@ class Controller_Oscrudc extends Controller_Template
 		$first_parameter = $this->request->param('id');
 		$second_parameter = $this->request->param('param');
 		$state_info = $this->crud->getStateInfo($first_parameter,$second_parameter);
-		//echo "state_info=";
-		//print_r($state_info);
+		// echo "ajax_list state_info=";
+		// print_r($state_info);
 		$this->crud->set_ajax_list_queries($state_info);
 		$data = $this->crud->showList(true);
 		// print_r($data);
@@ -65,14 +66,19 @@ class Controller_Oscrudc extends Controller_Template
 	}
 	
 	public function action_ajax_list_info(){
+		// echo "action_ajax_list_info";
+
 		$this->crud->pre_render();
 		
 		$first_parameter = $this->request->param('id');
 		$second_parameter = $this->request->param('param');
 		$state_info = $this->crud->getStateInfo($first_parameter,$second_parameter);
+
+		// echo "ajax_list_info state_info=";
+		// print_r($state_info);
 		$this->crud->set_ajax_list_queries($state_info);
 
-		$data = $this->crud->showListInfo();
+		$data = $this->crud->showListInfo2();
 
 		return $data;
 	}

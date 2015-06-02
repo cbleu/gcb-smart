@@ -798,6 +798,82 @@ class Oscrud_Core_Model_Driver extends Oscrud_Core_Field_Types
 		
 		return $results;
 	}
+
+	public function get_list_count()
+	{	
+		if(!empty($this->order_by))
+			$this->basic_model->order_by($this->order_by[0],$this->order_by[1]);
+		
+		if(!empty($this->where))
+			foreach($this->where as $where)
+				$this->basic_model->where($where[0],$where[1],$where[2]);
+
+		if(!empty($this->or_where))
+			foreach($this->or_where as $or_where)
+				$this->basic_model->or_where($or_where[0],$or_where[1],$or_where[2]);				
+
+		if(!empty($this->like))
+			foreach($this->like as $like)
+				$this->basic_model->like($like[0],$like[1],$like[2]);
+				
+		if(!empty($this->or_like))
+			foreach($this->or_like as $or_like)
+				$this->basic_model->or_like($or_like[0],$or_like[1],$or_like[2]);				
+			
+		if(!empty($this->having))
+			foreach($this->having as $having)
+				$this->basic_model->having($having[0],$having[1],$having[2]);		
+		
+		if(!empty($this->or_having))
+			foreach($this->or_having as $or_having)
+				$this->basic_model->or_having($or_having[0],$or_having[1],$or_having[2]);		
+		
+		if(!empty($this->relation))
+			foreach($this->relation as $relation){
+				$this->basic_model->join_relation($relation[0],$relation[1],$relation[2]);
+			}
+
+		if(!empty($this->relation_n_n))
+		{
+			$columns = $this->get_columns();
+			foreach($columns as $column)
+			{
+				//Use the relation_n_n ONLY if the column is called . The set_relation_n_n are slow and it will make the table slower without any reason as we don't need those queries.
+				if(isset($this->relation_n_n[$column->field_name]))
+				{
+					$this->basic_model->set_relation_n_n_field($this->relation_n_n[$column->field_name]);
+				}
+			}
+				
+		}	
+		
+		// a revoir
+		$this->theme_config['crud_paging'] = true;
+		
+		// if($this->theme_config['crud_paging'] === true)
+		// {
+		// 	if($this->limit === null)
+		// 	{
+		// 		$default_per_page = $this->config->default_per_page;
+		// 		if(is_numeric($default_per_page) && $default_per_page >1)
+		// 		{
+		// 			$this->basic_model->limit($default_per_page);
+		// 		}
+		// 		else
+		// 		{
+		// 			$this->basic_model->limit(10);
+		// 		}
+		// 	}
+		// 	else
+		// 	{
+		// 		$this->basic_model->limit($this->limit[0],$this->limit[1]);
+		// 	}
+		// }
+		
+		$results = $this->basic_model->get_list_count();
+		
+		return $results;
+	}
 	
 	protected function get_edit_values($primary_key_value)
 	{

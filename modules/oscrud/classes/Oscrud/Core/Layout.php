@@ -283,13 +283,9 @@ class Oscrud_Core_Layout extends Oscrud_Core_Model_Driver
 	
 	public function showListInfo2()
 	{
-		$this->set_echo_and_die();
-		
-		$total_results = (int)$this->get_total_results();
-		@ob_end_clean();
-		//return array('total_results' => $total_results);
-		echo json_encode(array('total_results' => $total_results));
-		die();
+		$total_results = (int)$this->get_list_count();
+
+		return array('total_results' => $total_results);
 	}
 	
 	public function showListInfo()
