@@ -180,6 +180,15 @@ function initWizard()
 			success: function(data) {
 				// $("#confirmation_div").hide();
 				// $("#reservation_done").show();
+				// On clos le wizard
+				$('#reservation_ready').hide();
+				$('#reservation_done').show();
+				$('#wizard_form_DOM').find('.pager .finish').addClass('disabled');
+				$('#wizard_form_DOM').find('.pager .finish').hide();
+				$('#wizard_form_DOM').find('.pager .previous').addClass('disabled');
+				$('#wizard_form_DOM').find('.pager .previous').hide();
+				$('#wizard_form_DOM').find('.pager .first').removeClass('disabled');
+				$('#wizard_form_DOM').find('.pager .first').show();
 				console.log(data);
 				// var resp = jQuery.parseJSON(data);
 				if(!data.valid) {
@@ -188,6 +197,7 @@ function initWizard()
 				}
 			},
 		});
+		
 	});
 
 	$('#wizard_form').bootstrapWizard({
@@ -196,7 +206,7 @@ function initWizard()
 			if(!validate_form_wizard(index-1)){
 				return false;
 			}
-			step_form_action(tab,navigation,index);
+			// step_form_action(tab,navigation,index);
 		},
 		onTabClick: function(tab, navigation, index){
 			if(!validate_form_wizard(index)){
@@ -216,6 +226,7 @@ function initWizard()
 				$('#wizard_form_DOM').find('.pager .finish').show();
 				$('#wizard_form_DOM').find('.pager .finish').removeClass('disabled');
 			} else {
+				$('#wizard_form_DOM').find('.pager .first').hide();
 				$('#wizard_form_DOM').find('.pager .next').show();
 				$('#wizard_form_DOM').find('.pager .finish').hide();
 			}

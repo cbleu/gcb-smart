@@ -203,7 +203,7 @@ Route::set('example', 'example(/<action>(/<id>))')
 		'action'     => 'index',
 ));
 
-Route::set('admin', 'admin(/<controller>(/<action>(/<id>)))')
+Route::set('admin', 'admin(/<controller>(/<action>(/<id>(/<param>))))')
 	->defaults(array(
 		'directory'  => 'Golf',
 		'controller' => 'Admin',

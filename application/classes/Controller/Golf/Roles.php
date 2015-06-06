@@ -74,7 +74,7 @@ class Controller_Golf_Roles extends Controller_Golf_Admin
 		$this->make_crud();
 
 		$data = (array)parent::action_list();
-		$data['statusFilter'] = null;
+		// $data['statusFilter'] = null;
 
 		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
 		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);

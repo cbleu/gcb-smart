@@ -302,7 +302,10 @@
 	var ajax_list_info_url = '<?php echo $ajax_list_info_url?>';
 	var unique_hash = '<?php echo $unique_hash; ?>';
 
-	var statusFilter = '<?php echo $statusFilter ?>';
-	
+	<? if( isset($statusFilter)){ ?>
+		var statusFilter = '<?php echo $statusFilter ?>';
+	<? }else{ ?>
+		var statusFilter = '';
+	<? } ?>		
 	var message_alert_delete = "<?= __('alert_delete'); ?>";
 </script>

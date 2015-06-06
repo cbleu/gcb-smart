@@ -167,6 +167,9 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 		);
 
 		$this->make_crud();
+		$this->crud->unset_delete();
+		$this->crud->unset_add();
+
 		$this->crud->add_action('Activer', 'fa fa-play txt-color-blue fa-fw fa-2x','', 'action-active with-tip', array($this,'get_activate_url'));
 		$this->crud->add_action('Supprimer', 'fa fa-times txt-color-red fa-fw', '', 'action-delete with-tip', array($this,'get_delete_url'));
 		
@@ -331,6 +334,7 @@ class Controller_Golf_Users extends Controller_Golf_Admin
 		);
 
 		$this->make_crud();
+		$this->crud->unset_add();
 		
 		$this->crud->add_action('Valider', 'fa fa-check-circle txt-color-green','', 'with-tip', array($this,'get_validate_url'));
 		$this->crud->add_action('Refuser', 'fa fa-times-circle txt-color-red', '', 'with-tip', array($this,'get_refuse_url'));

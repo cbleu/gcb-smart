@@ -48,10 +48,11 @@ class Controller_Golf_Settings extends Controller_Golf_Admin
 		//////////////////////////////////////////////////////////
 		// CRUD Management										//
 
-		$this->crud->fields('key','keyname','value','default','description');
-		$this->crud->required_fields('key', 'keyname', 'value');
-		$this->crud->columns('keyname','value','default','description');
-		// $this->crud->unset_edit_fields('key','keyname','default');
+		$this->crud->fields('key','keyname','value','default','section','description');
+		$this->crud->required_fields('key', 'keyname', 'value', 'section');
+		$this->crud->columns('keyname','value','default','section','description');
+		$this->crud->unset_add_fields('editable');
+		$this->crud->unset_edit_fields('editable');
 
 		$this->crud->unset_delete();
 		$this->crud->add_action('Editer', 'fa fa-pencil txt-color-green','', 'with-tip', array($this,'edit_path'));
@@ -70,6 +71,8 @@ class Controller_Golf_Settings extends Controller_Golf_Admin
 
 	public function action_index()
 	{
+		$statusFilter = 'club';
+
 		// Set active page in menu
 		$this->pages["admin"]['sub']['settings']['sub']['club']["active"] = true;
 		$this->pageTitle = "Paramètres du club";
@@ -82,9 +85,10 @@ class Controller_Golf_Settings extends Controller_Golf_Admin
 
 		$this->make_crud();
 		
-		$this->crud->where('section', '=', 'club');
+		$this->crud->where('section', '=', $statusFilter);
 
 		$data = (array)parent::action_list();
+		$data['statusFilter'] = $statusFilter;
 
 		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
 		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
@@ -92,6 +96,8 @@ class Controller_Golf_Settings extends Controller_Golf_Admin
 	
 	public function action_parcours()
 	{
+		$statusFilter = 'parcours';
+
 		// Set active page in menu
 		$this->pages["admin"]['sub']['settings']['sub']['parcours']["active"] = true;
 		$this->pageTitle = "Paramètres du parcours";
@@ -104,9 +110,10 @@ class Controller_Golf_Settings extends Controller_Golf_Admin
 
 		$this->make_crud();
 		
-		$this->crud->where('section', '=', 'parcours');
+		$this->crud->where('section', '=', $statusFilter);
 
 		$data = (array)parent::action_list();
+		$data['statusFilter'] = $statusFilter;
 
 		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
 		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
@@ -114,6 +121,8 @@ class Controller_Golf_Settings extends Controller_Golf_Admin
 	
 	public function action_display()
 	{
+		$statusFilter = 'display';
+
 		// Set active page in menu
 		$this->pages["admin"]['sub']['settings']['sub']['display']["active"] = true;
 		$this->pageTitle = "Paramètres de l'affichage";
@@ -126,9 +135,10 @@ class Controller_Golf_Settings extends Controller_Golf_Admin
 
 		$this->make_crud();
 		
-		$this->crud->where('section', '=', 'display');
+		$this->crud->where('section', '=', $statusFilter);
 
 		$data = (array)parent::action_list();
+		$data['statusFilter'] = $statusFilter;
 
 		$this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
 		$this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
@@ -139,6 +149,9 @@ class Controller_Golf_Settings extends Controller_Golf_Admin
 		if(!$this->isSuperAdmin){
 			HTTP::redirect('/admin/settings/');
 		}
+
+		$statusFilter = 'app';
+
 		// Set active page in menu
 		$this->pages["admin"]['sub']['settings']['sub']['superadmin']["active"] = true;
 		$this->pageTitle = "Super Admin";
@@ -151,9 +164,10 @@ class Controller_Golf_Settings extends Controller_Golf_Admin
 
 		$this->make_crud();
 		
-		$this->crud->where('section', '=', 'app');
+		$this->crud->where('section', '=', $statusFilter);
 
 		$data = (array)parent::action_list();
+		$data['statusFilter'] = $statusFilter;
 
 		// $this->template->content= View::factory('/fragments/admin/crud/list_template',$data);
 		// $this->template->content->list_view = View::factory('/fragments/admin/crud/list',$data);
@@ -168,23 +182,34 @@ class Controller_Golf_Settings extends Controller_Golf_Admin
 
 	public function action_ajax_list()
 	{
-		$this->template = View::factory('empty');
+		$statusFilter = $this->request->param('id');
+
+		// $this->template = View::factory('empty');
 
 		//disable auto rendering if requested using ajax
-		if($this->request->is_ajax()){
+		// if($this->request->is_ajax()){
 			$this->auto_render = FALSE;
-		}
+		// }
 
+		$this->make_crud();
+
+		$this->crud->where('section', '=', $statusFilter);
+		
 		$data = (array)parent::action_ajax_list();
+		
 		echo View::factory('/fragments/admin/crud/list',$data);
 	}
 
 	public function action_ajax_list_info()
 	{
-		//disable auto rendering if requested using ajax
-		if($this->request->is_ajax()){
-			$this->auto_render = FALSE;
-		}
+		$statusFilter = $this->request->param('id');
+
+		//disable auto rendering
+		$this->auto_render = FALSE;
+		
+		$this->make_crud();
+
+		$this->crud->where('section', '=', $statusFilter);
 		
 		$data = parent::action_ajax_list_info();
 
@@ -193,12 +218,19 @@ class Controller_Golf_Settings extends Controller_Golf_Admin
 
 	public function action_add()
 	{
+		$this->pages['admin']['sub']['settings']['active'] = true;
+		$this->pageTitle = "Paramètres du club";
+
+		$this->make_crud();
+
 		$data = (array)parent::action_add();
 		
 		$this->template->content= View::factory('/fragments/admin/crud/add-edit',$data);
 	}
 	public function action_insert()
 	{
+		$this->make_crud();
+
 		$data = (array)parent::action_insert();
 
 		HTTP::redirect('/admin/settings/');
@@ -212,6 +244,8 @@ class Controller_Golf_Settings extends Controller_Golf_Admin
 
 	public function action_edit()
 	{
+		$this->make_crud();
+
 		$data = (array)parent::action_edit();
 		
 		$this->template->content= View::factory('/fragments/admin/crud/add-edit',$data);
@@ -219,6 +253,8 @@ class Controller_Golf_Settings extends Controller_Golf_Admin
 
 	public function action_update()
 	{
+		$this->make_crud();
+
 		$this->auto_render = FALSE;
 
 		$data = (array)parent::action_update();

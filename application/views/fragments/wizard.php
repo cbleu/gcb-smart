@@ -159,16 +159,17 @@
 														<div class="form-group" style="margin-bottom: 20px">
 															<label class="control-label big" for='joueur<?=$i;?>'>Joueur #<?=$i;?></label>
 															<div class="controls">
-																<input type="text" placeholder="Chercher un nom..." id="joueur<?=$i;?>" name="joueur<?=$i;?>" class="span5 joueur_input" value="<?=$players[$i]['name'];?>" <?=$players[$i]['tags'];?> style="height: 30px"/>
-																<?php for($k = 0; $k < count($ressources); $k++) {
-																	echo "<input type='checkbox' name='" .$ressources[$k]['ressource'] ."[]' class='" .$ressources[$k]['ressource'] ."_check cb_ressource_" .$i ." serialize' value='" .($i - 1) ."' /> " .$ressources[$k]['ressource'];
-																} ?>
 																<? if($isAdmin && $i ==1){?>
+																	<input type="text" placeholder="Chercher un nom..." id="joueur<?=$i;?>" name="joueur<?=$i;?>" class="joueur_input serialize" value="" style="height: 30px"/>
 																	<input type="hidden" name="id_joueur1" id="id_joueur1" class="serialize" value="2">
 																<? }else{ ?>
+																	<input type="text" placeholder="Chercher un nom..." id="joueur<?=$i;?>" name="joueur<?=$i;?>" class="joueur_input serialize" value="<?=$players[$i]['name'];?>" <?=$players[$i]['tags'];?> style="height: 30px"/>
 																	<input type="hidden" name="id_joueur<?=$i;?>" id="id_joueur<?=$i;?>" class="serialize" value="<?=$players[$i]['id'];?>">
 																<? } ?>
 																<input type="hidden" name="nbTrousJ<?=$i;?>" id="nbTrousJ<?=$i;?>" class="serialize" value="">
+																<?php for($k = 0; $k < count($ressources); $k++) {
+																	echo "<input type='checkbox' name='" .$ressources[$k]['ressource'] ."[]' class='" .$ressources[$k]['ressource'] ."_check cb_ressource_" .$i ." serialize' value='" .($i - 1) ."' /> " .$ressources[$k]['ressource'];
+																} ?>
 															</div>
 														</div>
 													<? } ?>
@@ -265,15 +266,27 @@
 																<ul></ul>
 															</div>
 														</div>
-														<div id="reservation_done" class="controls" style="display:none;">Votre réservation à bien été faite.</div>
+
+														<div id="reservation_ready" class="controls" style="display:block;">
+															<br>
+															<h1 class="text-center text-success"><strong><!-- <i class="fa fa-check fa-lg"></i> --> Prêt ?</strong></h1>
+															<h4 class="text-center">Cliquez sur Réserver pour valider la réservation</h4>
+															<br>
+															<br>
+														</div>
+
+														<div id="reservation_done" class="controls" style="display:none;">
+															
+															<br>
+															<h1 class="text-center text-success"><strong><!-- <i class="fa fa-check fa-lg"></i> --> Bravo !</strong></h1>
+															<h4 class="text-center">Votre réservation à bien été faite.</h4>
+															<br>
+															<br>
+														</div>
+
 													</div>
 												</div>
 
-												<br>
-												<h1 class="text-center text-success"><strong><!-- <i class="fa fa-check fa-lg"></i> --> Prêt ?</strong></h1>
-												<h4 class="text-center">Cliquez sur Réserver pour valider la réservation</h4>
-												<br>
-												<br>
 											</div>
 
 											<!-- ****************************** -->
@@ -293,9 +306,9 @@
 												<div class="row" name="boutons-wizard">
 													<div class="col-sm-12">
 														<ul class="pager wizard no-margin">
-															<!--<li class="previous first disabled">
-															<a href="javascript:void(0);" class="btn btn-lg btn-default"> First </a>
-															</li>-->
+															<li class="first disabled">
+															<a href="javascript:void(0);" class="btn btn-lg btn-default"> Début </a>
+															</li>
 															<li class="previous disabled">
 																<a href="javascript:void(0);" class="btn btn-lg btn-default"> Précédent </a>
 															</li>

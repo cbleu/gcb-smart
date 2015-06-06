@@ -517,8 +517,8 @@ class Controller_Golf_App extends Controller_Golf_Main
 		$this->template->content->timeStr				= $timeStr;
 		$this->template->content->players 				= $players;
 		$this->template->content->lastStartFor18hole	= $lastStartFor18hole->format('H:i');
-		$this->template->content->success = false;
-		$this->template->content->message = "";
+		$this->template->content->success 				= false;
+		$this->template->content->message 				= "";
 
 		$this->template->appscript = "";
 		

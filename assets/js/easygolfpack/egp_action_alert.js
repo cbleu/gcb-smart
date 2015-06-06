@@ -25,89 +25,180 @@ $(function(){
 		});
 	};		
 
+	// $("a.action-active").click(function(e) {
+	// 	console.log(e.currentTarget.baseURI);
+	// 	follow_uri = e.currentTarget.href;
+	// 	$.SmartMessageBox({
+	// 		title : "Activation d'un compte!",
+	// 		content : "Voulez vous activer ce compte ?",
+	// 		buttons : '[Non][Oui]'
+	// 	}, function(ButtonPressed, e) {
+	// 		if (ButtonPressed === "Oui") {
+	//
+	// 			$.smallBox({
+	// 				title : "Confirmation ...",
+	// 				content : "<i class='fa fa-clock-o'></i> <i>Action validé...</i>",
+	// 				color : "#659265",
+	// 				iconSmall : "fa fa-check fa-2x fadeInRight animated",
+	// 				timeout : 1000
+	// 			});
+	// 			// window.location = e.currentTarget.baseURI;
+	// 			window.setTimeout(function(){
+	// 				window.location = follow_uri;
+	// 			}, 1500);
+	// 		}
+	// 		if (ButtonPressed === "Non") {
+	// 			$.smallBox({
+	// 				title : "Annulation",
+	// 				content : "<i class='fa fa-clock-o'></i> <i>Vous avez annulé l'action...</i>",
+	// 				color : "#C46A69",
+	// 				iconSmall : "fa fa-times fa-2x fadeInRight animated",
+	// 				timeout : 2000
+	// 			});
+	// 		}
+	//
+	// 	});
+	// 	e.preventDefault();
+	// });
+
+	// $("a.action-disable").click(function(e) {
+	// 	// console.log(e.currentTarget.baseURI);
+	// 	follow_uri = e.currentTarget.href;
+	// 	$.SmartMessageBox({
+	// 		title : "Désactivation d'un compte!",
+	// 		content : "Voulez vous désactiver ce compte ?",
+	// 		buttons : '[Non][Oui]'
+	// 	}, function(ButtonPressed, e) {
+	// 		if (ButtonPressed === "Oui") {
+	//
+	// 			$.smallBox({
+	// 				title : "Confirmation ...",
+	// 				content : "<i class='fa fa-clock-o'></i> <i>Action validé...</i>",
+	// 				color : "#659265",
+	// 				iconSmall : "fa fa-check fa-2x fadeInRight animated",
+	// 				timeout : 1000
+	// 			});
+	// 			// window.location = e.currentTarget.baseURI;
+	// 			window.setTimeout(function(){
+	// 				window.location = follow_uri;
+	// 			}, 1500);
+	// 		}
+	// 		if (ButtonPressed === "Non") {
+	// 			$.smallBox({
+	// 				title : "Annulation",
+	// 				content : "<i class='fa fa-clock-o'></i> <i>Vous avez annulé l'action...</i>",
+	// 				color : "#C46A69",
+	// 				iconSmall : "fa fa-times fa-2x fadeInRight animated",
+	// 				timeout : 2000
+	// 			});
+	// 		}
+	//
+	// 	});
+	// 	e.preventDefault();
+	// });
+
+	// $("a.action-delete").click(function(e) {
+	// 	follow_uri = e.currentTarget.href;
+	// 	$.SmartMessageBox({
+	// 		title : "Suppression d'un enregistrement!",
+	// 		content : "Etes-vous sur de vouloir supprimer cet enregistrement ?",
+	// 		buttons : '[Non][Oui]'
+	// 	}, function(ButtonPressed, e) {
+	// 		if (ButtonPressed === "Oui") {
+	//
+	// 			$.smallBox({
+	// 				title : "Confirmation ...",
+	// 				content : "<i class='fa fa-clock-o'></i> <i>Action validé...</i>",
+	// 				color : "#659265",
+	// 				iconSmall : "fa fa-check fa-2x fadeInRight animated",
+	// 				timeout : 1000
+	// 			});
+	// 			// window.location = e.currentTarget.baseURI;
+	// 			window.setTimeout(function(){
+	// 				window.location = follow_uri;
+	// 			}, 1500);
+	// 		}
+	// 		if (ButtonPressed === "Non") {
+	// 			$.smallBox({
+	// 				title : "Annulation",
+	// 				content : "<i class='fa fa-clock-o'></i> <i>Vous avez annulé l'action...</i>",
+	// 				color : "#C46A69",
+	// 				iconSmall : "fa fa-times fa-2x fadeInRight animated",
+	// 				timeout : 2000
+	// 			});
+	// 		}
+	//
+	// 	});
+	// 	e.preventDefault();
+	// });
+
 	$("a.action-active").click(function(e) {
-		console.log(e.currentTarget.baseURI);
-		follow_uri = e.currentTarget.href;
-		$.SmartMessageBox({
-			title : "Activation d'un compte!",
-			content : "Voulez vous activer ce compte ?",
-			buttons : '[Non][Oui]'
-		}, function(ButtonPressed, e) {
-			if (ButtonPressed === "Oui") {
-
-				$.smallBox({
-					title : "Confirmation ...",
-					content : "<i class='fa fa-clock-o'></i> <i>Action validé...</i>",
-					color : "#659265",
-					iconSmall : "fa fa-check fa-2x fadeInRight animated",
-					timeout : 1000
-				});
-				// window.location = e.currentTarget.baseURI;
-				window.setTimeout(function(){
-					window.location = follow_uri;
-				}, 1500);
-			}
-			if (ButtonPressed === "Non") {
-				$.smallBox({
-					title : "Annulation",
-					content : "<i class='fa fa-clock-o'></i> <i>Vous avez annulé l'action...</i>",
-					color : "#C46A69",
-					iconSmall : "fa fa-times fa-2x fadeInRight animated",
-					timeout : 2000
-				});
-			}
-
-		});
-		e.preventDefault();
-	})
+		
+		var titleMsg = "Activation d'un compte!";
+		var subtitleMsg = "Voulez vous activer ce compte ?";
+		var yesMsg = "Confirmation";
+		var noMsg = "Annulation";
+		
+		click_action(e, titleMsg, subtitleMsg, yesMsg, noMsg);
+	});
 
 	$("a.action-disable").click(function(e) {
-		// console.log(e.currentTarget.baseURI);
-		follow_uri = e.currentTarget.href;
-		$.SmartMessageBox({
-			title : "Désactivation d'un compte!",
-			content : "Voulez vous désactiver ce compte ?",
-			buttons : '[Non][Oui]'
-		}, function(ButtonPressed, e) {
-			if (ButtonPressed === "Oui") {
-
-				$.smallBox({
-					title : "Confirmation ...",
-					content : "<i class='fa fa-clock-o'></i> <i>Action validé...</i>",
-					color : "#659265",
-					iconSmall : "fa fa-check fa-2x fadeInRight animated",
-					timeout : 1000
-				});
-				// window.location = e.currentTarget.baseURI;
-				window.setTimeout(function(){
-					window.location = follow_uri;
-				}, 1500);
-			}
-			if (ButtonPressed === "Non") {
-				$.smallBox({
-					title : "Annulation",
-					content : "<i class='fa fa-clock-o'></i> <i>Vous avez annulé l'action...</i>",
-					color : "#C46A69",
-					iconSmall : "fa fa-times fa-2x fadeInRight animated",
-					timeout : 2000
-				});
-			}
-
-		});
-		e.preventDefault();
-	})
+		
+		var titleMsg = "Désactivation d'un compte!";
+		var subtitleMsg = "Voulez vous désactiver ce compte ?";
+		var yesMsg = "Confirmation";
+		var noMsg = "Annulation";
+		
+		click_action(e, titleMsg, subtitleMsg, yesMsg, noMsg);
+	});
 
 	$("a.action-delete").click(function(e) {
+		
+		var titleMsg = "Suppression d'un enregistrement!";
+		var subtitleMsg = "Etes-vous sur de vouloir supprimer cet enregistrement ?";
+		var yesMsg = "Confirmation";
+		var noMsg = "Annulation";
+		
+		click_action(e, titleMsg, subtitleMsg, yesMsg, noMsg);
+	});
+
+	$("a.action-cancel").click(function(e) {
+		
+		var titleMsg = "Annulation de l'action en cours";
+		var subtitleMsg = "Etes-vous sur de vouloir annuler cette action ?";
+		var yesMsg = "Confirmation";
+		var noMsg = "Annulation";
+		
+		click_action(e, titleMsg, subtitleMsg, yesMsg, noMsg);
+	});
+
+	$("a.action-cancel").click(function(e) {
+		
+		var titleMsg = "Annulation de l'action en cours";
+		var subtitleMsg = "Etes-vous sur de vouloir annuler cette action ?";
+		var yesMsg = "Confirmation";
+		var noMsg = "Annulation";
+		
+		click_action(e, titleMsg, subtitleMsg, yesMsg, noMsg);
+	});
+
+	function click_action(e, titleMsg, subtitleMsg, yesMsg, noMsg) {
+
+		titleMsg 	= typeof titleMsg 		!== 'undefined' ? titleMsg : "";
+		subtitleMsg = typeof subtitleMsg 	!== 'undefined' ? subtitleMsg : "";
+		yesMsg 		= typeof yesMsg 		!== 'undefined' ? yesMsg : "Confirmation";
+		noMsg 		= typeof noMsg 			!== 'undefined' ? noMsg : "Annulation";
+
 		follow_uri = e.currentTarget.href;
 		$.SmartMessageBox({
-			title : "Suppression d'un enregistrement!",
-			content : "Etes-vous sur de vouloir supprimer cet enregistrement ?",
+			title : titleMsg,
+			content : subtitleMsg,
 			buttons : '[Non][Oui]'
 		}, function(ButtonPressed, e) {
 			if (ButtonPressed === "Oui") {
 
 				$.smallBox({
-					title : "Confirmation ...",
+					title : yesMsg,
 					content : "<i class='fa fa-clock-o'></i> <i>Action validé...</i>",
 					color : "#659265",
 					iconSmall : "fa fa-check fa-2x fadeInRight animated",
@@ -120,7 +211,7 @@ $(function(){
 			}
 			if (ButtonPressed === "Non") {
 				$.smallBox({
-					title : "Annulation",
+					title : noMsg,
 					content : "<i class='fa fa-clock-o'></i> <i>Vous avez annulé l'action...</i>",
 					color : "#C46A69",
 					iconSmall : "fa fa-times fa-2x fadeInRight animated",
@@ -130,7 +221,7 @@ $(function(){
 
 		});
 		e.preventDefault();
-	})
+	};
 
 
 	// var pagefunction = function() {

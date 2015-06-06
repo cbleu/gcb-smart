@@ -66,8 +66,11 @@ class Controller_Golf_ResaPending extends Controller_Golf_Admin
 
 		$this->make_crud();
 
-		$this->crud->add_action('Confirmer', 'fa fa-check txt-color-seagreen','', 'action-confirm', array($this,'confirm_path'));
-		$this->crud->add_action('Supprimer', 'fa fa-times txt-color-red', '', 'action-delete', array($this,'delete_user'));
+		$this->crud->unset_add();
+
+		$this->crud->add_action('Confirmer', 'fa fa-check txt-color-seagreen','', 'action-confirm', array($this,'get_confirm_url'));
+		$this->crud->add_action('Annuler', 'fa fa-times txt-color-red', '', 'action-cancel', array($this,'get_cancel_url'));
+
 		// $this->crud->add_action('Editer', 'fa fa-pencil txt-color-seagreen fa-fw fa-1x','', 'with-tip', array($this,'edit_user'));
 		// $this->crud->add_action('Désactiver', 'fa fa-pause txt-color-orange fa-fw fa-1x', '', 'action-disable with-tip', array($this,'disable_path'));
 
@@ -104,14 +107,15 @@ class Controller_Golf_ResaPending extends Controller_Golf_Admin
 	}	// traitement_resa
 
 
-	function confirm_path($primary_key , $row)
+	function get_confirm_url($primary_key , $row)
 	{
-		$url = "/admin/resapending/confirm/".$primary_key;
+		// $url = "/admin/resapending/confirm/".$primary_key;
+		$url = "/admin/resapending/do/".$primary_key ."/confirm/";
 		return $url;
 	}
+
 	public function action_confirm()
 	{
-
 		//recup id du statut actif
 		$status = DB_SQL::select('default')
 			->from('user_status')
@@ -168,7 +172,23 @@ class Controller_Golf_ResaPending extends Controller_Golf_Admin
 		
 	}
 
+	function get_cancel_url($primary_key , $row)
+	{
+		$url = "/admin/resapending/do/".$primary_key ."/" ."cancel";
+		return $url;
+	}
 
+	public function action_do()
+	{
+		$reqId = $this->request->param('id');
+		$doAction = $this->request->param('param');
+
+		$this->auto_render = FALSE;
+
+		Notify::msg('Action enregistrées avec succès !', 'success');
+
+		HTTP::redirect('/admin/resapending/');
+	}
 
 
 	public function fullname($value, $row) {

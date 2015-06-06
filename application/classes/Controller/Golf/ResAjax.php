@@ -140,9 +140,11 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 				$usr->id = $users[$i]['id_users'];
 				$usr->load();
 				
-				if($usr->id > 10) {
+				if($usr->id > 10) { // TODO use settings
+					// Infos du membre
 					$users_list .= $usr->firstname." ".$usr->lastname." (".$usr->indgolf.")<br />";
 				}else if($usr->id == 1) {
+					// Infos du Visiteur
 					if($reservations[$res]['id_demande_reservation'] != NULL && $reservations[$res]['id_demande_reservation'] != 0) {
 						$demande_resa = DB_ORM::Model('demande_reservation');
 						$demande_resa->id = $reservations[$res]['id_demande_reservation'];
@@ -737,26 +739,37 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 	{
 		$valid = false;
 		$message = "";
-		//////////////////////////////////////////////////////////////////////////
-		// Récupération et vérification des elements de la requete POST
+		//////////////////////////////////////////////////////////
+		// Récupération et vérification de la requete POST
 		$newResa = new EGP_GameReservation();
-		// $funcresult = $newResa->initGameReservation($_POST);
 		$funcresult = $newResa->IsRequestValid($_POST);
-		if($funcresult['valid']) {
-			//////////////////////////////////////////////////////////////////////////
-			// Requete valide: Création de la réservation
-			$resa_result = $newResa->MakeReservation(Arr::get($_POST, 'trou_depart'));
-			if($resa_result['valid']) {
-				$valid = true;
-			}else{
+		$message = $funcresult['message'];
+		$valid = $funcresult['valid'];
+		
+		
+		//////////////////////////////////////////////////////
+		// Si Requete valide: Création de la réservation		//
+		if($valid) {
+			// Test de la provenance de la resa
+			$toto = $this->request->post('trou_depart');
+			$titi = Arr::get($_POST, 'trou_depart');
+			// $tutu = $_POST['trou_depart'];
+			// if (isset(Arr::get($_POST, 'trou_depart'))){
+			// if (isset($_POST['trou_depart'])){
+			// if (Arr::get($_POST, 'trou_depart') != null){
+				// Resa en provenance du planning membre
+				$resa_result = $newResa->MakeReservation(Arr::get($_POST, 'trou_depart'));
+			// }else{
+				// Resa en provenance du WIZARD
+				// $resa_result = $newResa->MakeReservation();
+			// }
+			if(!$resa_result['valid']) {
 				$message = $resa_result['message'];
 				$valid = false;
 			}
-		}else{
-			$message = $funcresult['message'];
-			$valid = false;
 		}
-		//////////////////////////////////////////////////////////////////////////
+		
+		//////////////////////////////////////////////////////////
 		// Creation de la page de résultat
 		echo json_encode(array(
 			'valid' => $valid,
@@ -1428,7 +1441,8 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		}
 	}
 
-	public function action_logout() {
+	public function action_logout()
+	{
 		Auth::instance()->logout();
 		header('Location: '.$redirect);
 		exit();
