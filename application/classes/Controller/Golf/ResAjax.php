@@ -419,7 +419,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		$response = array();
 		//////////////////////////////////////////////////////////////////////////
 		// Récupération et vérification des elements de la requete POST
-		$newResa = new EGP_GameReservation();
+		$newResa = new EGP_GameReservation(Settings::get('id_trace'));
 		$isPermanent = false;
 		$this->method = $_POST;		// on récupère les paramètres de la requete
 		$funcresult = $newResa->IsRequestValid($_POST, $isPermanent);
@@ -442,7 +442,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		$response = array();
 		//////////////////////////////////////////////////////////////////////////
 		// Récupération et vérification des elements de la requete POST
-		$newResa = new EGP_GameReservation();
+		$newResa = new EGP_GameReservation(Settings::get('id_trace'));
 		$isPermanent = false;
 		$funcresult = $newResa->IsRequestValid($_POST, $isPermanent);
 		if($funcresult['valid']) {
@@ -460,21 +460,20 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 	
 	public function action_loaddetailsform()
 	{
+		$isValid = false;
+		$returnArray = array();
 		if (!$this->isLogged) {
 			echo json_encode($returnArray);
 			return;
 		}
-		$isValid = false;
-		$returnArray = array();
 		//////////////////////////////////////////////////////////////////////////
 		$method = $_POST;
-		$id_reservation = Arr::get($method, 'id_reservation');
-		$start_date = Arr::get($method, 'start_date');
-		$trou_depart = Arr::get($method, 'trou_depart');
-		// $current_user_in_resa = Arr::get($method, 'current_user_in_resa');
-		$current_user_in_resa = Arr::get($method, 'usr_in');
+		$id_reservation 		= Arr::get($method, 'id_reservation');
+		$start_date 			= Arr::get($method, 'start_date');
+		$trou_depart 			= Arr::get($method, 'trou_depart');
+		$current_user_in_resa 	= Arr::get($method, 'usr_in');
 		
-		$actual_resa = new EGP_GameReservation();
+		$actual_resa = new EGP_GameReservation(Settings::get('id_trace'));
 		$funcresult = $actual_resa->loadEventResa($id_reservation);
 		if($funcresult['valid']) {
 			//////////////////////////////////////////////////////////////////////////
@@ -489,7 +488,11 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 			$returnArray[$id_reservation]['players'] = $actual_resa->players;
 			// $returnArray['players'] = $actual_resa->players;
 			$returnArray[$id_reservation]['slotAller'] = $actual_resa->slotAller->id;
-			$returnArray[$id_reservation]['slotRetour'] = $actual_resa->slotRetour->id;
+			if(isset($actual_resa->slotRetour)){
+				$returnArray[$id_reservation]['slotRetour'] = $actual_resa->slotRetour->id;
+			}else{
+				$returnArray[$id_reservation]['slotRetour'] = null;
+			}
 		}else{
 			$isValid = false;
 			$returnArray = $funcresult;
@@ -500,7 +503,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 			//Trouver s'il y a d'autres reservations au même slot
 			$other_reservations = Helpers_Tools::getOtherResaOnTheSameSlotAs($id_reservation);
 			foreach($other_reservations as $otherone){
-				$tmpresa = new EGP_GameReservation();
+				$tmpresa = new EGP_GameReservation(Settings::get('id_trace'));
 				$tmpresult = $tmpresa->loadEventResa($otherone['id']);
 				if($tmpresult['valid']) {
 					//////////////////////////////////////////////////////////////////////////
@@ -653,7 +656,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		}
 		//////////////////////////////////////////////////////////////////////////
 		// Récupération et vérification des elements de la requete POST
-		$newResa = new EGP_GameReservation();
+		$newResa = new EGP_GameReservation(Settings::get('id_trace'));
 		$funcresult = $newResa->IsRequestValid($_POST);
 		$message = $funcresult['message'];
 		$valid = $funcresult['valid'];
@@ -664,7 +667,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 			$valid = $digest_return['valid'];
 		}
 		
-		//////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////
 		// Creation de la page de résultat
 		echo json_encode($digest_return);
 
@@ -741,28 +744,15 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		$message = "";
 		//////////////////////////////////////////////////////////
 		// Récupération et vérification de la requete POST
-		$newResa = new EGP_GameReservation();
+		$newResa = new EGP_GameReservation(Settings::get('id_trace'));
 		$funcresult = $newResa->IsRequestValid($_POST);
 		$message = $funcresult['message'];
 		$valid = $funcresult['valid'];
-		
-		
-		//////////////////////////////////////////////////////
-		// Si Requete valide: Création de la réservation		//
+
+		//////////////////////////////////////////////////////////
+		// Si Requete valide: Création de la réservation
 		if($valid) {
-			// Test de la provenance de la resa
-			$toto = $this->request->post('trou_depart');
-			$titi = Arr::get($_POST, 'trou_depart');
-			// $tutu = $_POST['trou_depart'];
-			// if (isset(Arr::get($_POST, 'trou_depart'))){
-			// if (isset($_POST['trou_depart'])){
-			// if (Arr::get($_POST, 'trou_depart') != null){
-				// Resa en provenance du planning membre
-				$resa_result = $newResa->MakeReservation(Arr::get($_POST, 'trou_depart'));
-			// }else{
-				// Resa en provenance du WIZARD
-				// $resa_result = $newResa->MakeReservation();
-			// }
+			$resa_result = $newResa->MakeReservation(Arr::get($_POST, 'trou_depart'));
 			if(!$resa_result['valid']) {
 				$message = $resa_result['message'];
 				$valid = false;
@@ -1056,12 +1046,12 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		if(count($players_18_trous_index) > 0) {
 
 			$tp = DB_SQL::select('default')
-				->column('type_parcours.id')
 				->from('parcours')
+				->column('type_parcours.id')
 				->join(NULL, 'combinaison_parcours')
-				->on("combinaison_parcours.id_parcours", "=", "parcours.id")
+					->on("combinaison_parcours.id_parcours", "=", "parcours.id")
 				->join(NULL, 'type_parcours')
-				->on("combinaison_parcours.id_type_parcours", "=", "type_parcours.id")
+					->on("combinaison_parcours.id_type_parcours", "=", "type_parcours.id")
 				->where("type_parcours.trou_depart", "<>", $reservation->type_parcours->trou_depart)
 				->where("parcours.nb_trous_total", "=", 18 , "AND")
 				->where("combinaison_parcours.ordre", "=", 2, "AND")

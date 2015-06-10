@@ -177,6 +177,8 @@ function initWizard()
 			url: "/resajax/add",
 			dataType: "json",
 			data: $("#wizard_form .serialize").serialize(),
+			prevText: "",
+			nextText: "",
 			success: function(data) {
 				// $("#confirmation_div").hide();
 				// $("#reservation_done").show();
@@ -242,17 +244,24 @@ function initWizard()
 
 	$("#datepicker").datepicker({
 		dateFormat: "dd/mm/yy" ,
+		// regional: "fr",
 		minDate: 0,
 		maxDate: vars['maxDate'],
+		firstDay: 1,
 		numberOfMonths: 2,
-		onSelect: function(dateText, inst) {
-			$("#date_resa").val($('#datepicker').datepicker().val());
-		}
-	});	// TODO : se baser sur l'heure serveur pour restreindre
+		altField: "#date_resa",
+		altFormat: "dd/mm/yy",
+		// altFormat: "DD d MM yy",
+		// onSelect: function(dateText, inst) {
+		// 	$("#date_resa").val($('#datepicker').datepicker().val());
+		// }
+	},
+	$.datepicker.regional['fr']
+	);	// TODO : se baser sur l'heure serveur pour restreindre
 	
 
 	// Set the field date to the datpicker default date
-	$("#date_resa").val($('#datepicker').datepicker({dateFormat:'dd/mm/yy'}).val());
+	// $("#date_resa").val($('#datepicker').datepicker({dateFormat:'dd/mm/yy'}).val());
 	
 	$("#date_resa").change(function(){
 		var currentDate = new Date();
@@ -801,6 +810,15 @@ function DisplayDigest()
 	});	// ajax wizarddigest
 }	// DisplayDigest
 
+
+
+
+
+
+
+
+
+
 /////////////////////////////////////////////////////////////////////////////////
 // CALENDRIER
 /////////////////////////////////////////////////////////////////////////////////
@@ -1230,8 +1248,13 @@ function initScheduler()
 	scheduler.attachEvent("onClick", function (event_id, native_event_object){
 		var ev = scheduler.getEvent(event_id);
 		// if(click_disabled || ev.evt == "evenement" || ev.evt == "provi" || scheduler.config.readonly ) {
-		if(click_disabled || ev.evt > 1 || scheduler.config.readonly ) {
+		// if(click_disabled || ev.evt > 1 || scheduler.config.readonly ) {
+		// TODO faire la gestion de l'edition des evenements ev.evt==3
+		if(click_disabled || scheduler.config.readonly ) {
 			return false;
+		}
+		if( ev.evt == 3 ) {
+			return true;
 		}
 		startEditEventForm(ev);
 		return false;
@@ -1371,10 +1394,58 @@ function initScheduler()
 	});	// not used
 		
 	// Keep a reference to the default lightbox to manage recurring events
-	var recurringLightbox =  scheduler.showLightbox;
+	// var recurringLightbox = function(id) {
+	// 	scheduler.showLightbox;
+	// };
+	var recurringLightbox = scheduler.showLightbox;
+	
+	// We configure our custom lightbox for reservations
+	var reservationLightbox = function(id) {
+		var french_format = scheduler.date.date_to_str("%H:%i le %d %F %Y");
+		var mysql_format = scheduler.date.date_to_str("%Y-%m-%d %H:%i");	//moved here by cesar
+		var shortDate_format = scheduler.date.date_to_str("%d/%m/%Y");
+
+		var resa_form = document.getElementById('resa_form_div');
+		var ev = scheduler.getEvent(id);
+
+		// si le slot horaire contient déjà une resa on n'ouvre pas le formulaire d'ajout
+		var from = ev.start_date;
+		var to = scheduler.date.add(ev.end_date, scheduler.config.time_step, 'minute');
+		var evs = scheduler.getEvents(from, to);
+		for (var i = 0; i < evs.length; i++) {
+			if(	isOn_user_play || (evs[i].id != id && (evs[i].start_date + "") == (ev.start_date + "") && evs[i].sh == ev.sh)) {
+				scheduler.deleteEvent(id);
+				return false;
+			}
+		}
+
+		reset_form(ev);
+
+		$("#eventStartDate").html(french_format(ev.start_date));
+		$("#eventType").hide();
+		// $("#flip_parcours_Button").hide();
+		$("#date_resa").val(shortDate_format(ev.start_date));
+		$("#heure_resa").val(shortTime_format(ev.start_date));
+		$("#trou_depart").val(ev.sh);
+		// $("#reserver_button").show();
+		setDetailFormMode("add");
+
+		scheduler.startLightbox(id, resa_form);	// ouverture de la lightbox basee sur resa_form
+
+		$(".dhx_cal_cover").click(function(){
+			$("#annuler_button").trigger("click");
+		});
+
+		// Desactive les 18 trous si pas possible
+		getPlayersBySlotFor(ev);	// check la dispo pour les 18 trous
+
+		// On lance la résa provisoire des slots aller et retour au max de joueurs
+		CreateResaProvi($("#form .serialize"));
+
+	};	// scheduler.showlightbox
 
 	scheduler.templates.lightbox_header = function(start, end, event){
-		return "Programmer un évènement";
+		return "<h4>Programmer un évènement</h4>";
 	}
 
 	// // Adding Color to lightbox
@@ -1431,7 +1502,7 @@ function initScheduler()
 			height:40,
 			options:sections,
 		},
-		{ name: 'Infos', height: 40, type: 'textarea', map_to: 'n' },
+		{ name: 'Infos', height: 40, type: 'textarea', map_to: 'text' },
 		{ name: "recurring", height: 150, type: "recurring", map_to: "rec_type", button: "recurring" },
 		{ name: 'time', height: 72, type: 'time', map_to: 'auto' },
 	];
@@ -1547,53 +1618,6 @@ function initScheduler()
 	// }
 
 
-	// We configure our custom lightbox for reservations
-	var reservationLightbox =  function(id) {
-	// scheduler.showLightbox = function(id) {
-		var french_format = scheduler.date.date_to_str("%H:%i le %d %F %Y");
-		var mysql_format = scheduler.date.date_to_str("%Y-%m-%d %H:%i");	//moved here by cesar
-		var shortDate_format = scheduler.date.date_to_str("%d/%m/%Y");
-
-		var resa_form = document.getElementById('resa_form_div');
-		var ev = scheduler.getEvent(id);
-
-		// si le slot horaire contient déjà une resa on n'ouvre pas le formulaire d'ajout
-		var from = ev.start_date;
-		var to = scheduler.date.add(ev.end_date, scheduler.config.time_step, 'minute');
-		var evs = scheduler.getEvents(from, to);
-		for (var i = 0; i < evs.length; i++) {
-			if(	isOn_user_play || (evs[i].id != id && (evs[i].start_date + "") == (ev.start_date + "") && evs[i].sh == ev.sh)) {
-				scheduler.deleteEvent(id);
-				return false;
-			}
-		}
-
-		reset_form(ev);
-
-		$("#eventStartDate").html(french_format(ev.start_date));
-		$("#eventType").hide();
-		// $("#flip_parcours_Button").hide();
-		$("#date_resa").val(shortDate_format(ev.start_date));
-		$("#heure_resa").val(shortTime_format(ev.start_date));
-		$("#trou_depart").val(ev.sh);
-		// $("#reserver_button").show();
-		setDetailFormMode("add");
-
-		// scheduler.startLightbox(id, resa_form);	// ouverture de la lightbox basee sur resa_form
-		scheduler.startLightbox(id);	// ouverture de la lightbox basee sur resa_form
-
-		$(".dhx_cal_cover").click(function(){
-			$("#annuler_button").trigger("click");
-		});
-
-		// Desactive les 18 trous si pas possible
-		getPlayersBySlotFor(ev);	// check la dispo pour les 18 trous
-
-		// On lance la résa provisoire des slots aller et retour au max de joueurs
-		CreateResaProvi($("#form .serialize"));
-
-	};	// scheduler.showlightbox
-		
 	// By default, we use our custom lightbox to handle reservation when events occurs on the calendar
 	scheduler.showLightbox = reservationLightbox;
 	// scheduler.showLightbox = recurringLightbox;
@@ -1603,10 +1627,10 @@ function initScheduler()
 	    	scheduler.showLightbox = recurringLightbox;
 
 	    	scheduler.addEventNow();
+			// scheduler.startLightbox();
 
 	    	//initColorPicker();
 	});
-
 
 	// // Fires when lightbox closes we set back lightbox to default
 	// scheduler.attachEvent("onAfterLightbox", function (){
@@ -1614,6 +1638,8 @@ function initScheduler()
 	// });
 
 	scheduler.attachEvent("onEventChanged", function(id,ev) {
+		console.log("For recurring event ONLY: onEventChanged");
+		console.log("onEventChanged: ",id, ev);
 		
 		// When user choose update a copy,
 		// we don't update the original event, we only create a new one
@@ -1644,7 +1670,10 @@ function initScheduler()
 		});
 	});
 
-	scheduler.attachEvent("onEventDeleted", function(id){
+	scheduler.attachEvent("onEventDeleted", function(id, ev){
+		console.log("For recurring event ONLY: onEventDeleted");
+		console.log("onEventDeleted: ",id, ev);
+
 		$.ajax({
 			type: "POST",
 			url: "/events/delete/"+id,
@@ -1666,15 +1695,16 @@ function initScheduler()
 	});
 
 	scheduler.attachEvent("onEventSave",function(id, ev, is_new) {
+		console.log("For recurring event ONLY: onEventSave");
 		console.log("onEventSave: ",id, ev);
 	    // Do some validation
 	    return true;
 	})
 
 	// Fires when recurring event added 
-	scheduler.attachEvent("onEventAdded", function(id,ev)
-	{
+	scheduler.attachEvent("onEventAdded", function(id,ev){
 		// We add the event to the database
+		console.log("For recurring event ONLY: onEventAdded");
 		console.log("onEventAdded: ",id, ev.rec_type);
 
 		//ev.trou_depart = [1,10];

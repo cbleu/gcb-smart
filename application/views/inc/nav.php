@@ -9,7 +9,19 @@
 					<a href="javascript:void(0);" id="show-shortcut" data-action="toggleShortcut">
 						<img src="<?php echo ASSETS_URL; ?>/img/avatars/sunny.png" alt="me" class="online" /> 
 						<span>
-							César Jacquet 
+							<? if($isLogged){
+								echo $thisUserFullName;
+								if ($isAdmin){
+									if ($isSuperAdmin){
+										echo '<small class="txt-color-pink"> (SupAdm) </small>';
+									}else{
+										echo '<small class="txt-color-red"> (Admin) </small>';
+									}
+								}
+							}else{
+								echo "Visiteur";
+							}?>
+							<!-- César Jacquet  -->
 						</span>
 						<i class="fa fa-angle-down"></i>
 					</a> 

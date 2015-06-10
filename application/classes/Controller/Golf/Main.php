@@ -34,7 +34,11 @@ abstract class Controller_Golf_Main extends Controller_Oscrudc
 			$this->isAdmin 			= true;
 		}
 		$this->user 			= Auth::instance()->get_user();
-		
+		if($this->isLogged){
+			$this->userRole			= $this->user->id_status;
+		}else{
+			$this->userRole			= 0;
+		}
 		$this->golf 			= DB_ORM::model('Golf', array(1));
 		$this->golf_rules 		= DB_SQL::select("default")->from("golf_rules")->query();
 		$this->parcours 		= DB_SQL::select("default")->from("parcours")->query();
@@ -76,18 +80,23 @@ abstract class Controller_Golf_Main extends Controller_Oscrudc
 		
 		//////////////////////////////////////////////////////////
 
+
 		//////////////////////////////////////////////////////////
 		// Make globals available to all views
 		View::bind_global('isLogged', $this->isLogged);
 		Helpers_InputForJs::add('isLogged', $this->isLogged);
 		
 		View::bind_global('isAdmin', $this->isAdmin);
+		View::bind_global('isSuperAdmin', $this->isSuperAdmin);
 		Helpers_InputForJs::add('isAdmin', $this->isAdmin);
 		View::bind_global('user', $this->user);
 		View::bind_global('thisUser', $this->user);
+		View::bind_global('thisRole', $this->userRole);
 		if($this->isLogged){
+			$userfullname = $this->user->firstname." ".$this->user->lastname; //." (".$this->user->indgolf.")" ;
 			Helpers_InputForJs::add('thisUserId', $this->user->id);
 			Helpers_InputForJs::add('thisUserFullName', $this->user->firstname." ".$this->user->lastname." (".$this->user->indgolf.")" );
+			View::bind_global('thisUserFullName', $userfullname );
 		}
 		// Share pages infos
 		View::bind_global('page_css', $this->pageCSS);

@@ -28,6 +28,9 @@ ex:
 $no_main_header = false; //set true for lock.php and login.php
 $page_body_prop = array(
 	// "class"=>"fixed-header fixed-navigation fixed-ribbon fixed-page-footer"
+
+	// "class"=>"fixed-page-footer"
+
 ); //optional properties for <body>
 $page_html_prop = array(); //optional properties for <html>
 ?>

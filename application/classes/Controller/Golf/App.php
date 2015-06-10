@@ -115,7 +115,7 @@ class Controller_Golf_App extends Controller_Golf_Main
 		$this->template->content->pays = $pays;
 	}	// action_inscription
 	
-	public function action_informations()	// cesar: est utilisé
+	public function action_informations()	// TODO a faire
 	{
 		if(!$this->isLogged){
 			Notify::msg("Vous devez être connecté !", 'info');
@@ -126,15 +126,21 @@ class Controller_Golf_App extends Controller_Golf_Main
 		$pays = DB_ORM::select('Pays')
 			->query();
 			
-		$this->pages["user"]["active"] = true;
+
+		//////////////////////////////////////////////////////////
+		// Set active page in menu								//
+
+		$this->pages["users"]["active"] = true;
 		$this->pageTitle = "Mes Informations";
+		//////////////////////////////////////////////////////////
 
 		$this->template->content = View::factory( '/fragments/user/info');
 		$this->template->content->pays = $pays;
 		$this->template->content->user = $this->user;
 		
 	}	// action_informations
-	
+
+/*	
 	public function action_updateuser_OLD()	// cesar: est utilisé
 	{
 		if (!Auth::instance()->logged_in()) {
@@ -191,7 +197,7 @@ class Controller_Golf_App extends Controller_Golf_Main
 		$this->template->content = View::factory( '/fragments/user/info');
 		$this->template->content->texte = $error_message;
 	}	// action_updateuser_OLD
-	
+*/	
 	public function action_passwordforgot()
 	{
 		$this->template->title = 'Golf Club de Bourbon - Inscription';
@@ -535,7 +541,7 @@ class Controller_Golf_App extends Controller_Golf_Main
 		// Helpers_Javascript::add('/assets/wizard/formwizard.js');
 		Helpers_Javascript::add('/assets/js/plugin/jquery-form/jquery-form.min.js');
 		Helpers_Javascript::add('/assets/js/plugin/knob/jquery.knob.min.js"');
-		// Helpers_Javascript::add('/assets/wizard/jquery.ui.datepicker-fr.js');
+		Helpers_Javascript::add('/assets/js/libs/i18n/jquery.ui.datepicker-fr.js');
 		// load main App Module JS
 		Helpers_Javascript::add('/assets/js/easygolfpack/egp.js');
 		// Helpers_Javascript::add('/assets/libs/easygolfpack/js/egp-wizard.js');
