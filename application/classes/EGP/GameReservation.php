@@ -58,20 +58,24 @@ class EGP_GameReservation
 	{
 		// On charge la ligne de la resa
 		$postresa = DB_ORM::model("reservation", array($id_resa));
-		
+
 		// Récupère la reservation lié si il y en a une
 		$linkedresa = DB_ORM::model("reservation");
-		if($postresa->id_parent == 0) {
+		if($postresa->id_parent == null || $postresa->id_parent == 0) {	// id_parent est soit null soit > 0
 			// ce slot est un parcours 9 trous ou l'aller d'un 18 trous
 			$this->slotAller->setSlot($postresa,  EGP_GameSlot::UNIQ);
+			$this->slotCurrent = &$this->slotAller;	// on met à jour le current
 			//on cherche un eventuel retour
-			$childresa = DB_SQL::select("default")
-				->from('reservation')
-					->where("id_parent", "=", $postresa->id)
-						->query();
-			if(count($childresa) > 0) {
+			// $childresa = DB_SQL::select("default")
+			// 	->from('reservation')
+			// 		->where("id_parent", "=", $postresa->id)
+			// 			->query();
+			// if(count($childresa) > 0) {
+			if($postresa->id_children > 0){
 				// ce slot est donc l'aller d'un 18 trous
-				$linkedresa->load($childresa[0]);
+				// $linkedresa->load($childresa[0]);
+				$linkedresa->id = $postresa->id_children;
+				$linkedresa->load();
 				$this->slotRetour = new  EGP_GameSlot($linkedresa,  EGP_GameSlot::RETOUR);
 				$this->slotAller->type =  EGP_GameSlot::ALLER;	// changement de type pour l'aller
 			}
@@ -83,8 +87,19 @@ class EGP_GameReservation
 			$this->slotAller->setSlot($linkedresa,  EGP_GameSlot::ALLER);		//l'aller c'est la resa liée
 			$this->slotCurrent = &$this->slotRetour;	// on met à jour le current
 		}
+
+		////////////////////////////////////////////////////////
+		// Stockage des Ids des reservations aller et retour
+		
+		$this->reservations['id_reservation_aller'] = &$this->slotAller->id;
+		if($this->slotRetour){
+			$this->reservations['id_reservation_retour'] = &$this->slotRetour->id;
+		}
+		////////////////////////////////////////////////////////
+
 		// On positionne le trou de départ de l'aller
 		$this->setTrouDepart($this->slotAller->typeParcours->trou_depart);
+
 		// On recupère les joueurs et leurs nombres de trous respectifs
 		if($this->slotCurrent->type ==  EGP_GameSlot::UNIQ){
 			//cette partie est en 9 trous, donc pas de retour à chercher
@@ -96,10 +111,10 @@ class EGP_GameReservation
 				$pl = DB_ORM::model('users',array($loopitem['id_users']));
 				$newplayer = new EGP_GamePlayer($pl->id, 9, $pl->firstname, $pl->lastname, $loopitem['info']);
 				$newplayer->userHasResa = $loopitem['id'];
-				$this->players[] = $newplayer;
-				$this->nb_joueurs++;
 				$this->slotCurrent->players[] = $newplayer;
 				$this->slotCurrent->nbPlayers++;
+				// $this->players[] = $newplayer;
+				// $this->nb_joueurs++;
 			}
 		}else{
 			//cette partie est en 18 trous, on cherche quels joueurs font le retour
@@ -125,8 +140,8 @@ class EGP_GameReservation
 				}
 				$newplayer = new EGP_GamePlayer($pl->id, $usernbtrous, $pl->firstname, $pl->lastname, $loopitem['info']);
 				$newplayer->userHasResa = $loopitem['id'];
-				$this->players[] = $newplayer;
-				$this->nb_joueurs++;
+				// $this->players[] = $newplayer;
+				// $this->nb_joueurs++;
 				$this->slotAller->players[] = $newplayer;
 				$this->slotAller->nbPlayers++;
 				if($userhasretour){
@@ -137,6 +152,9 @@ class EGP_GameReservation
 				}
 			}
 		}
+		// on ajuste les pointeurs globaux (reference à l'aller)
+		$this->players = &$this->slotAller->players;
+		$this->nb_joueurs = &$this->slotAller->nbPlayers;
 		
 		// Récupération des ressources demandées
 		$users_has_resa = DB_SQL::select("default")
@@ -509,8 +527,10 @@ class EGP_GameReservation
 					$info = Arr::get($this->method, 'joueur'.($i+1));
 				}
 				$newplayer = new EGP_GamePlayer($formplayerid, $formplayernbtrous, $pl->firstname, $pl->lastname, $info);
-				$this->players[] = $newplayer;
-				$this->nb_joueurs++;
+				
+				$this->players[] = $newplayer;	// TODO faire ça sur le slotAller et pas sur le pointeur global !
+				$this->nb_joueurs++;			// TODO faire ça sur le slotAller et pas sur le pointeur global !
+				// TODO ici ajouter la création du pointeur player vers le slotAller
 			}
 		}
 		if(!$this->CheckPostedPlayers()){	// probleme dans les joueurs

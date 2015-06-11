@@ -39,3 +39,35 @@
 2015-06-11 16:01:00 --- EMERGENCY: ErrorException [ 4 ]: syntax error, unexpected '$valid' (T_VARIABLE), expecting ';' or '{' ~ APPPATH/classes/Controller/Golf/Resajax.php [ 771 ] in file:line
 2015-06-11 16:01:00 --- DEBUG: #0 [internal function]: Kohana_Core::shutdown_handler()
 #1 {main} in file:line
+2015-06-11 18:13:22 --- EMERGENCY: ErrorException [ 8 ]: Undefined variable: childresa ~ APPPATH/classes/EGP/GameReservation.php [ 76 ] in /Users/cesar/Documents/DEV/GIT/gcb-smart/application/classes/EGP/GameReservation.php:76
+2015-06-11 18:13:22 --- DEBUG: #0 /Users/cesar/Documents/DEV/GIT/gcb-smart/application/classes/EGP/GameReservation.php(76): Kohana_Core::error_handler(8, 'Undefined varia...', '/Users/cesar/Do...', 76, Array)
+#1 /Users/cesar/Documents/DEV/GIT/gcb-smart/application/classes/Controller/Golf/Resajax.php(477): EGP_GameReservation->loadEventResa('71459')
+#2 /Users/cesar/Documents/DEV/GIT/gcb-smart/system/classes/Kohana/Controller.php(84): Controller_Golf_ResAjax->action_loaddetailsform()
+#3 [internal function]: Kohana_Controller->execute()
+#4 /Users/cesar/Documents/DEV/GIT/gcb-smart/system/classes/Kohana/Request/Client/Internal.php(97): ReflectionMethod->invoke(Object(Controller_Golf_ResAjax))
+#5 /Users/cesar/Documents/DEV/GIT/gcb-smart/system/classes/Kohana/Request/Client.php(114): Kohana_Request_Client_Internal->execute_request(Object(Request), Object(Response))
+#6 /Users/cesar/Documents/DEV/GIT/gcb-smart/system/classes/Kohana/Request.php(986): Kohana_Request_Client->execute(Object(Request))
+#7 /Users/cesar/Documents/DEV/GIT/gcb-smart/index.php(118): Kohana_Request->execute()
+#8 {main} in /Users/cesar/Documents/DEV/GIT/gcb-smart/application/classes/EGP/GameReservation.php:76
+2015-06-11 18:15:45 --- EMERGENCY: ErrorException [ 4096 ]: Argument 1 passed to Base_DB_ORM_Model::load() must be of the type array, integer given, called in /Users/cesar/Documents/DEV/GIT/gcb-smart/application/classes/EGP/GameReservation.php on line 77 and defined ~ MODPATH/leap/classes/Base/DB/ORM/Model.php [ 360 ] in /Users/cesar/Documents/DEV/GIT/gcb-smart/modules/leap/classes/Base/DB/ORM/Model.php:360
+2015-06-11 18:15:45 --- DEBUG: #0 /Users/cesar/Documents/DEV/GIT/gcb-smart/modules/leap/classes/Base/DB/ORM/Model.php(360): Kohana_Core::error_handler(4096, 'Argument 1 pass...', '/Users/cesar/Do...', 360, Array)
+#1 /Users/cesar/Documents/DEV/GIT/gcb-smart/application/classes/EGP/GameReservation.php(77): Base_DB_ORM_Model->load(71460)
+#2 /Users/cesar/Documents/DEV/GIT/gcb-smart/application/classes/Controller/Golf/Resajax.php(477): EGP_GameReservation->loadEventResa('71459')
+#3 /Users/cesar/Documents/DEV/GIT/gcb-smart/system/classes/Kohana/Controller.php(84): Controller_Golf_ResAjax->action_loaddetailsform()
+#4 [internal function]: Kohana_Controller->execute()
+#5 /Users/cesar/Documents/DEV/GIT/gcb-smart/system/classes/Kohana/Request/Client/Internal.php(97): ReflectionMethod->invoke(Object(Controller_Golf_ResAjax))
+#6 /Users/cesar/Documents/DEV/GIT/gcb-smart/system/classes/Kohana/Request/Client.php(114): Kohana_Request_Client_Internal->execute_request(Object(Request), Object(Response))
+#7 /Users/cesar/Documents/DEV/GIT/gcb-smart/system/classes/Kohana/Request.php(986): Kohana_Request_Client->execute(Object(Request))
+#8 /Users/cesar/Documents/DEV/GIT/gcb-smart/index.php(118): Kohana_Request->execute()
+#9 {main} in /Users/cesar/Documents/DEV/GIT/gcb-smart/modules/leap/classes/Base/DB/ORM/Model.php:360
+2015-06-11 18:19:19 --- EMERGENCY: ErrorException [ 4096 ]: Argument 1 passed to Base_DB_ORM_Model::load() must be of the type array, integer given, called in /Users/cesar/Documents/DEV/GIT/gcb-smart/application/classes/EGP/GameReservation.php on line 77 and defined ~ MODPATH/leap/classes/Base/DB/ORM/Model.php [ 360 ] in /Users/cesar/Documents/DEV/GIT/gcb-smart/modules/leap/classes/Base/DB/ORM/Model.php:360
+2015-06-11 18:19:19 --- DEBUG: #0 /Users/cesar/Documents/DEV/GIT/gcb-smart/modules/leap/classes/Base/DB/ORM/Model.php(360): Kohana_Core::error_handler(4096, 'Argument 1 pass...', '/Users/cesar/Do...', 360, Array)
+#1 /Users/cesar/Documents/DEV/GIT/gcb-smart/application/classes/EGP/GameReservation.php(77): Base_DB_ORM_Model->load(71460)
+#2 /Users/cesar/Documents/DEV/GIT/gcb-smart/application/classes/Controller/Golf/Resajax.php(477): EGP_GameReservation->loadEventResa('71459')
+#3 /Users/cesar/Documents/DEV/GIT/gcb-smart/system/classes/Kohana/Controller.php(84): Controller_Golf_ResAjax->action_loaddetailsform()
+#4 [internal function]: Kohana_Controller->execute()
+#5 /Users/cesar/Documents/DEV/GIT/gcb-smart/system/classes/Kohana/Request/Client/Internal.php(97): ReflectionMethod->invoke(Object(Controller_Golf_ResAjax))
+#6 /Users/cesar/Documents/DEV/GIT/gcb-smart/system/classes/Kohana/Request/Client.php(114): Kohana_Request_Client_Internal->execute_request(Object(Request), Object(Response))
+#7 /Users/cesar/Documents/DEV/GIT/gcb-smart/system/classes/Kohana/Request.php(986): Kohana_Request_Client->execute(Object(Request))
+#8 /Users/cesar/Documents/DEV/GIT/gcb-smart/index.php(118): Kohana_Request->execute()
+#9 {main} in /Users/cesar/Documents/DEV/GIT/gcb-smart/modules/leap/classes/Base/DB/ORM/Model.php:360
