@@ -38,11 +38,14 @@ hr{
 	margin: 0px;
 }
 .dhx_scale_holder {
-	background-image: url(/assets/img/scheduler/scheduler_bg_1hour.png) !important;
+/* use for cal line_height*/
+	background-image: url(/assets/img/scheduler/scheduler_bg_1hour.png) !important;	
 }
 
 .dhx_cal_event{
-	height: 24px !important;
+/* use for cal line_height*/
+/*	height: 24px !important;*/
+	height: 30px !important;
 }
 /*.dhx_cal_event_line.custom, .dhx_cal_event.custom div {*/
 /*	background-color: #fd7;*/
@@ -57,14 +60,20 @@ hr{
 }
 
 .dhx_cal_event .dhx_title.reservation{
-	border-radius:4px;
-/*	border-bottom-left-radius:4px !important;*/
-/*	border-bottom-right-radius:4px !important;*/
+/* use for cal line_height*/
+/*	border-radius:4px;*/
+	border-radius:2px;
 	border-style: solid !important;
 	border-color: rgb(128, 128, 128) !important;
-	height:16px !important;
-	line-height: 16px !important;
-	margin-top: 3px !important;
+/* use for cal line_height*/
+/*	height:16px !important;*/
+	height:24px !important;
+/* use for cal line_height*/
+/*	line-height: 16px !important;*/
+	line-height: 24px !important;
+/* use for cal line_height*/
+/*	margin-top: 3px !important;*/
+	margin-top: 2px !important;
 	margin-left: -2px !important;
 	border-width: 1px !important;
 	padding: 0px !important;
@@ -168,22 +177,63 @@ hr{
 	display: none;
 }
 
+/*.dhx_cal_navline div.dhx_minical_icon {
+  width: 18px;
+  height: 18px;
+  left: 190px;
+  top: 1px;
+  cursor: pointer;
+  background-image: url(imgs/calendar.gif);
+}
+*/
+.dhx_cal_navline div.egp_cal_navline_icon {
+	top: 14px;
+	cursor: pointer;
+	border-radius: 5px;
+	border: 1px solid #CECECE;
+	padding: 4px;
+}
+
+.dhx_cal_navline div.egp_minical_icon {
+	left: 0%;
+}
+
+.dhx_cal_navline div.egp_unit_icon {
+	left: 6%;
+}
+
+.dhx_cal_navline div.egp_agenda_icon {
+	left: 10%;
+}
+
+.dhx_cal_navline div.egp_event_icon {
+	left: 16%;
+}
+
+
+
 .minute_tag,
 .hour_tag{
-	height:22px;
-	line-height:22px;
+/* use for cal line_height*/
+/*	height:22px;*/
+	height:28px;
+/* use for cal line_height*/
+/*	line-height:22px;*/
+	line-height:28px;
 	padding-top:2px;
 }
 .hour_tag{
 	font-weight: bolder;
-	font-size: larger;
+	font-size: medium;
 }
 #scheduler_here {
 	margin-top:0px;
 	margin-bottom:10px;
 	height: 100%;
-	width:650px;
-	margin-left:20px;
+/*	width:650px;*/
+	width:96%;
+/*	margin-left:20px;*/
+	margin-left:2%;
 	background: transparent;
 }
 #left_col {

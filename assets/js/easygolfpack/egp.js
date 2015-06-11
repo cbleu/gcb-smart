@@ -15,7 +15,8 @@ var lastNameValue = "";
 var minicalendar;
 
 var main_div_height = 0;
-var event_height = 24;
+// var event_height = 24;
+var event_height = 30;
 var occupation_array = new Array();	//Tableau du nombre de joueurs par slot horaire pour les trous 1 et 10
 // var joueurs_input = "#joueur1, #joueur2, #joueur3, #joueur4";
 
@@ -842,6 +843,22 @@ function initCalendrier()
 			$(".dhx_cal_event").height(event_height);
 		}
 	});
+
+	$("#dhx_minical_icon").click(function show_minical(){
+		if (scheduler.isCalendarVisible()){
+			scheduler.destroyCalendar();
+		} else {
+			scheduler.renderCalendar({
+				position:"dhx_minical_icon",
+				date:scheduler._date,
+				navigation:true,
+				handler:function(date,calendar){
+					scheduler.setCurrentView(date);
+					scheduler.destroyCalendar()
+				}
+			});
+		}
+	});
 	
 	$("#joueur1, #joueur2, #joueur3, #joueur4").focus(function(){
 		lastNameValue = $(this).val();
@@ -1082,6 +1099,12 @@ function initCalendrier()
 		scheduler.setCurrentView(scheduler._date, "myplay");
 	});
 		
+	$("#agenda_tab").click(function(){
+		// scheduler.setCurrentView(scheduler.getState().date, "starter_units");
+		// scheduler.linkCalendar(calendar);
+		scheduler.setCurrentView(scheduler._date, "agenda");
+	});
+		
 	$('#form').ajaxForm({
 		beforeSubmit: function(data, form, options) {
 			if(!validate_form()) {
@@ -1122,8 +1145,11 @@ function initScheduler()
 	var isOn_user_play = false;
 	var shortTime_format = scheduler.date.date_to_str("%H:%i");
 	
-	scheduler.locale.labels.agenda_tab="Mes réservations";
-	scheduler.locale.labels.unit_tab = "Calendrier"
+	// scheduler.locale.labels.agenda_tab="Mes";
+	// scheduler.locale.labels.agenda_tab="Mes réservations";
+	scheduler.locale.labels.agenda_tab=null;
+	// scheduler.locale.labels.unit_tab = "Calendrier"
+
 	// scheduler.locale.labels.section_custom = "starter_units";
 		
 	// scheduler.config.prevent_cache = true;
@@ -1144,7 +1170,7 @@ function initScheduler()
 	scheduler.config.separate_short_events = false;
 	scheduler.config.event_duration = step;
 	scheduler.config.time_step = step;
-	scheduler.config.hour_size_px = (60 / step) * 24; // 24 => nb px event 10minutes
+	scheduler.config.hour_size_px = (60 / step) * event_height; // 24 => nb px event 10minutes
 	scheduler.config.scroll_hour= (new Date()).getHours(); //scroll to actual hour
 	console.log("scroll_hour: ", (new Date()).getHours());
 	
@@ -1623,7 +1649,7 @@ function initScheduler()
 	// scheduler.showLightbox = recurringLightbox;
 
 	// When clicking button to add event, we set the lightbox to default and open it
-	$("#recurring_button").click(function(){
+	$("#egp_event_icon").click(function(){
 	    	scheduler.showLightbox = recurringLightbox;
 
 	    	scheduler.addEventNow();
@@ -1751,7 +1777,7 @@ function initScheduler()
 		scheduler.setLoadMode("day")	// chargement par jour meme s'il est déjà passé
 	}
 
-	show_minical();		// create and display mini calendar
+	// show_minical();		// create and display mini calendar
 	scheduler.load("/resajax/eventsparcours", "json", function(){
 		$(".dhx_cal_event").height(event_height);
 		loadBlockTime();
@@ -1775,21 +1801,21 @@ function schedulerLoad(){
 	});
 }	// schedulerLoad
 
-function show_minical(){
-	if (minicalendar){
-		console.log("destroyCalendar", minicalendar);
-		scheduler.destroyCalendar(minicalendar);
-	}
-	minicalendar = scheduler.renderCalendar({
-		container:"cal_here", 
-		date: scheduler.getState().date,
-		navigation:true,
-		handler:function(date,calendar) {
-			scheduler.updateView(date, "starter_units");
-			scheduler.linkCalendar(minicalendar);
-		}
-	});
-};	// show_minical
+// function show_minical(){
+// 	if (minicalendar){
+// 		console.log("destroyCalendar", minicalendar);
+// 		scheduler.destroyCalendar(minicalendar);
+// 	}
+// 	minicalendar = scheduler.renderCalendar({
+// 		container:"cal_here",
+// 		date: scheduler.getState().date,
+// 		navigation:true,
+// 		handler:function(date,calendar) {
+// 			scheduler.updateView(date, "starter_units");
+// 			scheduler.linkCalendar(minicalendar);
+// 		}
+// 	});
+// };	// show_minical
 
 function resize_calendar(){
 	var document_height = $(window).height();

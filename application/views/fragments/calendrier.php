@@ -32,21 +32,51 @@
 							<div class="col-sm-12">
 
 								<div class="row" id="main_div_cal" >
-									<div id="left_col">
+									<!-- <div id="left_col">
 										<div id="cal_here"></div>
 										<div id="logo_here">
 											<img src="/assets/img/gcb/logo-gcb.jpg" style="width:200px;">
 										</div>
-									</div>
+									</div> -->
 									<div id="scheduler_here" class="dhx_cal_container">
 										<div class="dhx_cal_navline">
-											<input type="button" value="Programmer un évènement" id="recurring_button"/>
+
+											<!-- <input type="button" value="Programmer un évènement" id="recurring_button"/> -->
+
 											<div class="dhx_cal_prev_button">&nbsp;</div>
 											<div class="dhx_cal_next_button">&nbsp;</div>
 											<div class="dhx_cal_today_button"></div>
 											<div class="dhx_cal_date"></div>
-											<div class="dhx_cal_tab" name="unit_tab" id="unit_tab" style="left:0px"></div>
-											<div class="dhx_cal_tab" name="agenda_tab" id="agenda_tab" style="left:78px"></div>
+											<!-- <div class="dhx_cal_tab" name="unit_tab" id="unit_tab" style="left:0px"></div> -->
+											<!-- <div class="dhx_cal_tab" name="agenda_tab" id="agenda_tab" style="left:78px"><i class="fa fa-list-ul fa-2x" style="color: grey;"></i></div> -->
+
+											<!-- <div class="dhx_minical_icon egp_cal_navline_icon" id="dhx_minical_icon"> -->
+											<div class="egp_cal_navline_icon egp_minical_icon" id="dhx_minical_icon">
+												<i class="fa fa-calendar fa-2x txt-color-blue"></i>
+												<!-- <span class="fa-stack fa-2x">
+													<i class="fa fa-square-o fa-stack-2x txt-color-grey" style="color: grey; font-weight: ligther;"></i>
+													<i class="fa fa-calendar fa-stack-1x txt-color-blue"></i>
+												</span> -->
+											</div>
+
+											<div class="egp_cal_navline_icon egp_unit_icon " id="unit_tab" name="unit_tab">
+												<i class="fa fa-columns fa-2x" style="color: grey;"></i>
+											</div>
+
+											<div class="egp_cal_navline_icon egp_agenda_icon " id="agenda_tab" name="agenda_tab">
+												<i class="fa fa-list-ul fa-2x" style="color: grey;"></i>
+											</div>
+
+											<div class="egp_cal_navline_icon egp_event_icon" id="egp_event_icon">
+												<i class="fa fa-flag fa-2x txt-color-pink"></i>
+												<!-- <span class="fa-stack fa-lg">
+													<i class="fa fa-square-o fa-stack-2x txt-color-grey"></i>
+													<i class="fa fa-flag fa-stack-1x txt-color-pink"></i>
+												</span> -->
+
+												<!-- <i class="fa fa-flag fa-2x txt-color-pink"></i> -->
+											</div>
+
 											<!-- <div class="dhx_cal_tab" name="myplay_tab" id="myplay_tab" style="left:178px"></div> -->
 										</div>
 										<div class="dhx_cal_header"></div>
