@@ -7,26 +7,29 @@ class EGP_GameReservation
 	public $isValid			= true;
 	public $message			= "";
 
-	public $nb_joueurs		= 0;
-	public $nb_trous		= 9;
-	public $date;
-	public $beginDateTime;
-	public $players			= array();	// tableau de EGP_GamePlayer
-	public $parcours		= array();
-	public $reservations	= array();	//{id_reservation_aller, id_reservation_retour}
-	// public $is18trous		= false;
-	public $slotCurrent;				// pointeur sur un objet de type  EGP_GameSlot: aller ou retour
-	public $slotAller;					// objet de type  EGP_GameSlot
-	public $slotRetour;					// objet de type  EGP_GameSlot
+	public $nb_joueurs		= 0;		// nb de joueurs present au debut de la partie: parcours aller
+	public $nb_trous		= 9;		// nb de trous pour la partie
+	public $date;						// Date du jour de la partie
+	public $beginDateTime;				// Slot horaire de la partie
+	public $players			= array();	// Tableau des EGP_GamePlayer
+	public $parcours		= array();	// Tableau des parcours de la partie: 1 ou 2 parcours
+	public $reservations	= array();	// Tableau des id des reservations: {id_reservation_aller, id_reservation_retour}
 
-	private $trouDepart		= 1;
-	private $max_joueurs	= 4; // Settings::get('max_players_by_game'); 
-	private $id_min_user	= 10;
+	public $slotCurrent;				// pointeur sur un des 2 objet de type EGP_GameSlot suivant: slotAller ou slotRetour
+	public $slotAller;					// objet de type  EGP_GameSlot ou null
+	public $slotRetour;					// objet de type  EGP_GameSlot ou null
+
+	private $trouDepart;				// Pointeur vers $this->slotAller->typeParcours->trou_depart
+	private $id_trace;					// Id du trace en cours pour cette resa: normal, InOut, etc... (initialisé avec l'objet)
+
+	private $max_joueurs;				// Lu depuis Settings::get('max_players_by_game'); 
+	private $id_min_user;				// Lu depuis Settings::get('id_min_user')
+	private $temporaryLifeSetting;		// Lu depuis Settings::get('resa_provi_timeout_xxx')
+
+	//donnees du formulaire initial
 	private $postnbusers	= 0;
 	private $postdate;
 	private $postheure;
-	private $temporaryLifeSetting = 300;		// duree de vie en secondes des reservation provisoires
-	private $id_trace;
 
 	////////////////////////////////
 	// PUBLIC FUNCTIONS ////////////
@@ -34,7 +37,7 @@ class EGP_GameReservation
 
 	public function getTrouDepart(){
 		return $this->trouDepart;
-	}			// getter
+	}	// getter
 	public function setTrouDepart($value){
 		$this->trouDepart = $value;
 		$this->UpdatePlayersParcours();
@@ -44,6 +47,7 @@ class EGP_GameReservation
 	{
 		$this->max_joueurs	= Settings::get('max_players_by_game');
 		$this->id_min_user	= Settings::get('id_min_user');
+		$this->temporaryLifeSetting	= Settings::get('resa_provi_timeout_public');
 		$this->beginDateTime = new DateTime();	// pour que ce soit bien un objet initialisé
 		$this->slotAller = new  EGP_GameSlot();
 		$this->slotCurrent = &$this->slotAller;
@@ -52,9 +56,7 @@ class EGP_GameReservation
 	
 	public function loadEventResa($id_resa)
 	{
-		// $this->method = $post;		// on récupère les paramètres de la requete
-		// $postresaId = Arr::get($this->method, 'id_reservation');
-		
+		// On charge la ligne de la resa
 		$postresa = DB_ORM::model("reservation", array($id_resa));
 		
 		// Récupère la reservation lié si il y en a une
@@ -159,9 +161,9 @@ class EGP_GameReservation
 			'valid' => $this->isValid,
 			'message' => $this->message
 		);
-	}
+	}	//loadEventResa
 	
-	public function loadEventResa_old($post)
+/*	public function loadEventResa_old($post)
 	{
 		$this->method = $post;		// on récupère les paramètres de la requete
 		
@@ -348,8 +350,9 @@ class EGP_GameReservation
 			'message' => $this->message
 		);
 	}
-	
-	public function initGameReservation_OLD($post, $permanent = true)
+*/
+
+/*	public function initGameReservation_OLD($post, $permanent = true)
 	{
 		$postplayers = array();
 		$postplayersname = array();
@@ -447,6 +450,7 @@ class EGP_GameReservation
 			'message' => $this->message
 		);
 	}	// initGameReservation
+*/
 
 	public function IsRequestValid($post, $permanent = true)
 	{
@@ -919,6 +923,22 @@ class EGP_GameReservation
 		);
 	}	// MakeReservation
 
+	public function UpdateReservation()
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Concept: Mises à jour possibles
+		// A/ +/- nb joueurs
+		// B/ Changer 9/18 trous d'un joueur
+		// C/ +/- ressources d'un joueur 
+		//////////////////////////////////////////////////////////////////////////
+
+		//////////////////////////////////////////////////////////////////////////
+		// A-1 Ajout d'un joueur
+		
+		// test de la dispo du nouveau nombre de place
+
+	}	// UpdateReservation
+	
 	public function AddToPendingResa()
 	{
 		//////////////////////////////////////////////////////////////////////////
@@ -1031,12 +1051,12 @@ class EGP_GameReservation
 	public function getNbPlayerForSlot($slot, $id_type_parcours)
 	{
 		$reservation_query = DB_SQL::select('default')
-			->column('reservation.id')
-				->count('users_has_reservation.id')
-					->from('reservation')
+			->from('reservation')
+				->column('reservation.id')
+					->count('users_has_reservation.id')
 						->join(NULL, 'users_has_reservation')
 							->on('users_has_reservation.id_reservation', '=', 'reservation.id')
-								->where('id_type_parcours', '=', $id_type_parcours)
+								->where('id_type_parcours', '=', $id_type_parcours)		// correspond au parcours du tracé ex: 9t retour du inout
 									->where('date_reservation', '=', $slot)
 										->query();
 		$result = $reservation_query[0];
@@ -1047,7 +1067,7 @@ class EGP_GameReservation
 		}
 	}	// getNbPlayerForSlot
 
-	public function TakeResaForParcours($parcours, $temp_until = null, $parent = null, $child = null)
+	public function InsertResaForParcours($parcours, $temp_until = null, $parent = null, $child = null)
 	{
 		$until = null;
 		if ($temp_until){
@@ -1064,7 +1084,7 @@ class EGP_GameReservation
 									->column('date_fin', $parcours['fin']->format('Y-m-d H:i:s'))
 										->column('temp_until', $until);
 		return $reservation_insert_query->execute(TRUE);	// SQL INSERT la reservation
-	}	// TakeResaForParcours
+	}	// InsertResaForParcours
 	
 	public function UpdateReservationsToPermanent()	// passe la resa de provisoire a permanent,met à jour le nb de joueurs
 	{
@@ -1126,7 +1146,7 @@ class EGP_GameReservation
 		// $nbforslot;
 		$until_or_null	= new Datetime();
 		$until_or_null->add(new DateInterval('PT' .$this->temporaryLifeSetting .'S'));	// resa temporaire
-		// $this->PurgeExpiredResaProvi();
+
 		Helpers_Tools::PurgeExpiredResaProvi();
 		
 		// Test de la dispo pour l'aller /////////////////////////////////////////////////////////
@@ -1156,7 +1176,7 @@ class EGP_GameReservation
 		//ok parcours aller dispo => on reserve
 		if($this->isValid){
 			// Réservation du parcour aller
-			$id_resa_parent = $this->TakeResaForParcours($this->parcours['aller'],$until_or_null,0);
+			$id_resa_parent = $this->InsertResaForParcours($this->parcours['aller'],$until_or_null,0);
 			if($id_resa_parent == null){
 				$this->isValid = false;
 				$this->message = "Réservation impossible pour le parcours aller";
@@ -1189,7 +1209,7 @@ class EGP_GameReservation
 			}
 			if($this->isValid){
 				// Réservation du parcour retour
-				$id_resa_retour = $this->TakeResaForParcours($this->parcours['retour'],$until_or_null,$id_resa_parent);
+				$id_resa_retour = $this->InsertResaForParcours($this->parcours['retour'],$until_or_null,$id_resa_parent);
 				if($id_resa_retour == null){
 					$this->isValid = false;
 					$this->message = "Réservation impossible pour le parcours retour";

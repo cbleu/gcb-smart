@@ -769,6 +769,42 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 
 	public function action_update()
 	{
+		$isValid = false;
+		$returnArray = array();
+
+		//////////////////////////////////////////////////////////
+		// Récupération et vérification de la requete POST
+		$method = $_POST;
+		$id_reservation 		= Arr::get($method, 'id_reservation');
+		$start_date 			= Arr::get($method, 'start_date');
+		$trou_depart 			= Arr::get($method, 'trou_depart');
+		$current_user_in_resa 	= Arr::get($method, 'usr_in');
+		
+		//////////////////////////////////////////////////////////
+		// Initialisation de l'objet resa à mettre a jour
+		$actual_resa = new EGP_GameReservation(Settings::get('id_trace'));
+
+		//////////////////////////////////////////////////////////
+		// Chargement de la réservation actuelle
+		$funcresult = $actual_resa->loadEventResa($id_reservation);
+		if($funcresult['valid']) {
+			$isValid = true;
+			$returnArray = $funcresult;
+
+			//////////////////////////////////////////////////////////
+			// Si Requete valide: Traitement de la mise à jour
+			$funcresult = $actual_resa->UpdateReservation();
+
+		}
+
+		
+		//////////////////////////////////////////////////////////
+		// Envoi de l'etat de résultat
+		echo json_encode($returnArray);
+	}	// action_update
+	
+	public function action_update_OLD()
+	{
 		$message = "Veuillez vous identifier";
 		$valid = false;
 		
@@ -1216,7 +1252,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 			'valid' => $valid,
 			'message' => $message,
 		));
-	}	// action_update
+	}	// action_update_OLD
 	
 	public function action_delete()
 	{
@@ -1330,20 +1366,15 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		// Récupère la reservation lié si il y en a une
 		$reservation_linked = DB_ORM::model("reservation");
 		if($reservation->id_parent > 0) {
-			
-			//$reservation_linked = DB_ORM::model("r");
 			$reservation_linked->id = $reservation->id_parent;
 			$reservation_linked->load();
-			
 		} else {
-			
 			$reservation_child = DB_SQL::select("default")
 									->from('reservation')
 									->where("id_parent", "=", $reservation->id)
 									->query();
 			
 			if(count($reservation_child) > 0) {
-				//$reservation_linked = DB_ORM::model("r");
 				$reservation_linked->load($reservation_child[0]);
 			}
 		}
@@ -1372,6 +1403,13 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 			'message' => $message,
 		));
 	}	// action_leave
+
+
+
+	////////////////////////////////
+	// ACTIONS NOT FOR RESA ////////
+	////////////////////////////////
+
 
 	public function action_login()
 	{
@@ -1533,7 +1571,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 	// PRIVATE FUNCS ///////////////
 	////////////////////////////////
 	
-	private function leave_reservation($id_users_has_reservation)	// used in action_leavepublic
+	private function leave_reservation($id_users_has_reservation)	// used in action_leave
 	{
 		$valid = false;
 		$message = "";
@@ -1602,7 +1640,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		);
 	}	// leave_reservation
 	
-	private function collision_check($id_joueurs, $date_debut_reservation, $id_type_parcours)	// used in updatepublic, addpublic
+	private function collision_check($id_joueurs, $date_debut_reservation, $id_type_parcours)	// used in update only
 	{
 		$message = "";
 		$valid = FALSE;

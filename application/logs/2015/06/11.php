@@ -15,3 +15,27 @@
 #11 /Users/cesar/Documents/DEV/GIT/gcb-smart/system/classes/Kohana/Request.php(986): Kohana_Request_Client->execute(Object(Request))
 #12 /Users/cesar/Documents/DEV/GIT/gcb-smart/index.php(118): Kohana_Request->execute()
 #13 {main} in /Users/cesar/Documents/DEV/GIT/gcb-smart/modules/leap/classes/Base/DB/Connection.php:302
+2015-06-11 16:00:36 --- EMERGENCY: ErrorException [ 4 ]: syntax error, unexpected '$valid' (T_VARIABLE), expecting ';' or '{' ~ APPPATH/classes/Controller/Golf/Resajax.php [ 771 ] in file:line
+2015-06-11 16:00:36 --- DEBUG: #0 [internal function]: Kohana_Core::shutdown_handler()
+#1 {main} in file:line
+2015-06-11 16:00:36 --- EMERGENCY: ErrorException [ 4 ]: syntax error, unexpected '$valid' (T_VARIABLE), expecting ';' or '{' ~ APPPATH/classes/Controller/Golf/Resajax.php [ 771 ] in file:line
+2015-06-11 16:00:36 --- DEBUG: #0 [internal function]: Kohana_Core::shutdown_handler()
+#1 {main} in file:line
+2015-06-11 16:00:40 --- EMERGENCY: ErrorException [ 4 ]: syntax error, unexpected '$valid' (T_VARIABLE), expecting ';' or '{' ~ APPPATH/classes/Controller/Golf/Resajax.php [ 771 ] in file:line
+2015-06-11 16:00:40 --- DEBUG: #0 [internal function]: Kohana_Core::shutdown_handler()
+#1 {main} in file:line
+2015-06-11 16:00:40 --- EMERGENCY: ErrorException [ 4 ]: syntax error, unexpected '$valid' (T_VARIABLE), expecting ';' or '{' ~ APPPATH/classes/Controller/Golf/Resajax.php [ 771 ] in file:line
+2015-06-11 16:00:40 --- DEBUG: #0 [internal function]: Kohana_Core::shutdown_handler()
+#1 {main} in file:line
+2015-06-11 16:00:48 --- EMERGENCY: ErrorException [ 4 ]: syntax error, unexpected '$valid' (T_VARIABLE), expecting ';' or '{' ~ APPPATH/classes/Controller/Golf/Resajax.php [ 771 ] in file:line
+2015-06-11 16:00:48 --- DEBUG: #0 [internal function]: Kohana_Core::shutdown_handler()
+#1 {main} in file:line
+2015-06-11 16:00:48 --- EMERGENCY: ErrorException [ 4 ]: syntax error, unexpected '$valid' (T_VARIABLE), expecting ';' or '{' ~ APPPATH/classes/Controller/Golf/Resajax.php [ 771 ] in file:line
+2015-06-11 16:00:48 --- DEBUG: #0 [internal function]: Kohana_Core::shutdown_handler()
+#1 {main} in file:line
+2015-06-11 16:01:00 --- EMERGENCY: ErrorException [ 4 ]: syntax error, unexpected '$valid' (T_VARIABLE), expecting ';' or '{' ~ APPPATH/classes/Controller/Golf/Resajax.php [ 771 ] in file:line
+2015-06-11 16:01:00 --- DEBUG: #0 [internal function]: Kohana_Core::shutdown_handler()
+#1 {main} in file:line
+2015-06-11 16:01:00 --- EMERGENCY: ErrorException [ 4 ]: syntax error, unexpected '$valid' (T_VARIABLE), expecting ';' or '{' ~ APPPATH/classes/Controller/Golf/Resajax.php [ 771 ] in file:line
+2015-06-11 16:01:00 --- DEBUG: #0 [internal function]: Kohana_Core::shutdown_handler()
+#1 {main} in file:line

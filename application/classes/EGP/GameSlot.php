@@ -7,11 +7,11 @@ class  EGP_GameSlot
     const RETOUR = 2;
 
 	public $id;
-	public $resa;			// un objet de type DB_ORM::model("reservation")
-	public $type;			// O = 9 trous ou inconnu; 1 = Aller d'un 18 trous; 2 retour d'un 18 trous
-	public $typeParcours;	// objet de type DB_ORM::model("type_parcours")
-	public $players = array();
-	public $nbPlayers = 0;
+	public $resa;				// un objet de type DB_ORM::model("reservation")
+	public $type;				// O = 9 trous ou inconnu; 1 = Aller d'un 18 trous; 2 retour d'un 18 trous
+	public $typeParcours;		// objet de type DB_ORM::model("type_parcours")
+	public $players = array();	// Tableau d'objet de type GamePlayer des joueurs sur ce parcours
+	public $nbPlayers = 0;		// Nb de joueurs sur ce parcours
 	
 	public function  EGP_GameSlot($thisresa = null, $thistype = 0){
 		$this->setSlot($thisresa, $thistype);
