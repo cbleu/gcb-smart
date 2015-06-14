@@ -956,6 +956,10 @@ class EGP_GameReservation
 		// A-1 Ajout d'un joueur
 		
 		// test de la dispo du nouveau nombre de place
+		$actualNbUser = $this->getNbPlayerForSlot($this->slotAller->resa->date_reservation, $this->slotAller->typeParcours->id);
+		
+		$addedUsers = $this->nb_joueurs;
+		
 
 	}	// UpdateReservation
 	

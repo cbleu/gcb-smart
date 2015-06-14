@@ -257,20 +257,33 @@ float: left;
 }	
 #resa_form_div, #details_form_div {
 	width:320px;
-	margin:auto;
+/*	width:640px;*/
 	position:absolute;
 	z-index:99999;
+	background-color:white;
+	margin:auto;
+/*	padding:2px;*/
+	border-radius:5px;
+	border: 1px solid #A6C9E2;
+	color: #222222;
+}
+
+#resa_form_div .players_div{
+/*	width:100%;*/
+/*	margin:auto;*/
+/*	position:absolute;*/
+/*	z-index:99999;
 	background-color:white;
 	padding:2px;
 	border-radius:5px;
 	border: 1px solid #A6C9E2;
 	color: #222222;
-}
+*/}
 /*#resa_form_div form {*/
 /*padding:20px;*/
 /*}*/
 #eventStartDate, #u_eventStartDate {
-	border: 1px solid #b5b3b4;
+/*	border: 1px solid #b5b3b4;
 	border-width: 1px 0;
 	border-top: 1px solid #9bd2ee;
 	background: #0c5fa3 url(../images/old-browsers-bg/block-header-bg.png) repeat-x top;
@@ -287,6 +300,7 @@ float: left;
 	font-weight:bold;
 	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
 	color:white;
+*/
 }
 
 #eventType {
@@ -320,14 +334,15 @@ float: left;
 }
 .nbTrousSpan {
 	margin:auto;
-	margin-left:10px;
+/*	margin-left:10px;*/
+	margin: 10px 0px 10px 0px;
 	font-size:0.9em;
 	/*color:grey;*/
 }
 .nbTrousSpan input {
 	vertical-align:baseline;
-	margin-right:2px;
-	margin-left:2px;
+/*	margin-right:2px;*/
+	margin-left:5px;
 }
 .submit_div {
 	margin-top:20px;
@@ -384,7 +399,7 @@ float: left;
 }
 .joueur_pair {
 	padding:10px;
-	padding-left: 20px;
+/*	padding-left: 20px;*/
 	background-color:#F6FCFF;
 	border-top:1px solid #E6E6E6;
 	border-bottom:1px solid #E6E6E6;
@@ -392,7 +407,7 @@ float: left;
 }
 .joueur_impair {
 	padding: 10px;
-	padding-left: 20px;
+/*	padding-left: 20px;*/
 	border-top:1px solid #E6E6E6;
 	border-bottom:1px solid #E6E6E6;
 	margin:-1px;
