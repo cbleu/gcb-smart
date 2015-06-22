@@ -317,7 +317,7 @@ float: left;
 	text-align: center;
 	height: 30px;
 	line-height: 30px;
-	margin: -2px;
+	margin: 1px;
 	font-weight:bold;
 	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
 	color:white;
@@ -367,6 +367,23 @@ float: left;
 	position:absolute;
 	top:50%;
 }
+
+#parcours_div {
+	padding: 1px;
+}
+#eventToAdd {
+	padding:5px;
+}
+
+.players_div {
+	padding: 0px 2px 0px 2px !important;
+}
+
+.players_div .control-label,
+.players_div .radio-inline{
+	margin:	10px 0px 0px 0px;
+}
+
 .guest_checkbox, .visiteur_checkbox {
 	vertical-align:baseline;
 }
@@ -398,7 +415,8 @@ float: left;
 	margin-right:1px;
 }
 .joueur_pair {
-	padding:10px;
+/*	padding:10px;*/
+	padding: 10px 0px 10px 0px;
 /*	padding-left: 20px;*/
 	background-color:#F6FCFF;
 	border-top:1px solid #E6E6E6;
@@ -406,7 +424,8 @@ float: left;
 	margin:-1px;
 }
 .joueur_impair {
-	padding: 10px;
+	padding: 10px 0px 10px 0px;
+/*	padding: 10px;*/
 /*	padding-left: 20px;*/
 	border-top:1px solid #E6E6E6;
 	border-bottom:1px solid #E6E6E6;

@@ -516,7 +516,8 @@ class EGP_GameReservation
 		for($i = 0; $i < $this->max_joueurs; $i++) {
 			$formplayerid = Arr::get($this->method, 'id_joueur'.($i+1));
 			if($formplayerid != null && $formplayerid >= 0) {
-				$formplayernbtrous = Arr::get($this->method, 'nbTrousJ'.($i+1));
+				// $formplayernbtrous = Arr::get($this->method, 'nbTrousJ'.($i+1));
+				$formplayernbtrous = Arr::get($this->method, 'nb_trous_J'.($i+1));	// 2015-06-22 update for new form
 				if(!$formplayernbtrous) {
 					$formplayernbtrous = Arr::get($this->method, 'nb_trous');	// Si resa du Wizard
 				}
@@ -672,15 +673,12 @@ class EGP_GameReservation
 		// On alimente les objets joueurs
 		foreach($this->players as $player) {
 			// $player->parcourId = $partie['id'];	// TODO a changer car incohérent pour un 9T
-			if($player->nbTrous == 9){
-				// $player->typeParcourIds['aller']	= [$partie['parcour_aller'], $typeparcours->duree];
-				$player->typeParcourIds['aller']	= [$partie['parcour_aller'], $dureeAller];
-			}else{
-				// $player->typeParcourIds['aller']	= [$partie['parcour_aller'], $typeparcours->duree];
-				// $player->typeParcourIds['retour']	= [$partie['parcour_retour'], $typeparcours->duree];
+			if($player->nbTrous == 18){
 				$player->typeParcourIds['aller']	= [$partie['parcour_aller'], $dureeAller];
 				$player->typeParcourIds['retour']	= [$partie['parcour_retour'], $dureeRetour];
 				$nbretour++;
+			}else{	// joueur d'une partie 9T
+				$player->typeParcourIds['aller']	= [$partie['parcour_aller'], $dureeAller];
 			}
 		} //foreach players
 		

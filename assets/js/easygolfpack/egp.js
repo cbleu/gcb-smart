@@ -859,7 +859,40 @@ function initCalendrier()
 			});
 		}
 	});
+
+	// $('input[name="nbTrousJ1"]').toggleState('on', true, true);
+	// $("#nbTrousJ1, #nbTrousJ2, #nbTrousJ3, #nbTrousJ4").toggleState('on');
 	
+	// $("#nbTrousJ2, #nbTrousJ3, #nbTrousJ4").change(function(){
+	$(".nbTrousJ").change(function(){
+		console.log(this);
+		idxJ = this.name.slice( -1); 
+		console.log("idxJ:", idxJ);
+		elstr = "#nb_trous_J" + idxJ;
+		if (this.checked) {	// this is true if the switch is on
+			// console.log(this.val());
+			// this.val("18");
+			$(elstr).val(18);
+			
+		}
+		else {
+			$(elstr).val(9);
+			// console.log(this.val());
+			// this.val("9");
+		}
+		console.log(elstr, ":", $(elstr).val() );
+	});
+
+	// $("#nbTrousJ1").change(function(){
+	// 	if ($("#nbTrousJ1").is(':checked')) {//this is true if the switch is on
+	// 		$("#nbTrousJ1").value = "18";
+	// 	}
+	// 	else {
+	// 		$("#nbTrousJ1").value = "9";
+	// 	}
+	// 	// console.log($(this).val() );
+	// });
+
 	$("#joueur1, #joueur2, #joueur3, #joueur4").focus(function(){
 		lastNameValue = $(this).val();
 		$(this).css('color', 'black');
@@ -1106,7 +1139,11 @@ function initCalendrier()
 	});
 		
 	$('#form').ajaxForm({
+		// beforeSerialize: function($form, options) {
+		// 	$("#nbTrousJ1").val("9");
+		// },
 		beforeSubmit: function(data, form, options) {
+			// console.log("nbTrousj1:" , $("#nbTrousJ1").val());
 			if(!validate_form()) {
 				return false;
 			}
@@ -1600,6 +1637,10 @@ function initScheduler()
 
 	// Fires when recurring event added 
 	scheduler.attachEvent("onEventAdded", function(id,ev){
+
+		if( ev.evt != 3 ) {	// evt == 3 uniquement pour les evenements !
+			return true;
+		}
 		console.log("For recurring event ONLY: onEventAdded");
 		console.log("onEventAdded: ",id, ev.rec_type);
 
@@ -1829,7 +1870,7 @@ function startEditEventForm(ev){
 			// Boucle sur chaque résa presente sur ce slot horaire
 			$.each(data, function(index, value) {
 				if(value.isSelected){
-					$("#type_resa").val(value.type);	// type de parcours
+					$("#game_type").val(value.type);	// type de parcours
 					switch(value.type){
 						case 0: $("#eventType").html("Parcours 9 trous");
 						break;
@@ -1870,16 +1911,18 @@ function createPlayerDiv(value, joueurIdx){
 		}
 		if(value.isSelected){
 			if(value.usr_in == "1" || vars.isAdmin){
-				var sp =$("label[for=joueur"+i+"] span.action_span span.leave_button");
+				// var sp =$("label[for=joueur"+i+"] span.action_span span.leave_button");
+				var sp =$("btn_clear_user_"+i);
 				sp.attr("tag", value.players[i-nj].userHasResa);
 				sp.show();
 				setDetailFormMode("delete");
 			}else{
-				$("#new").val("1");
+				// $("#new").val("1");
 				setDetailFormMode("add_me");
 			}
 		}else{
-			$("#joueur"+i).parent().addClass("other_reservation");
+			$("#joueur"+i).parent().parent().parent().addClass("other_reservation");
+			// findAncestor($("#joueur"+i), ".joueur_div").addClass("other_reservation");
 			$("#joueur"+i).addClass("other_reservation");
 		}
 		// $('span.leave_button[tag='+selectedId +"]").show();
@@ -1887,7 +1930,7 @@ function createPlayerDiv(value, joueurIdx){
 		$("#joueur"+i).prop("disabled", true);
 		$("#id_joueur"+i).val(value.players[i-nj].id);
 		// on positionne le type de reservation pour ce joueur: 0=9T, 1=18T aller, 2=18T retour
-		// $("#type_resa_J"+i).val(value.type);
+		// $("#game_type_J"+i).val(value.type);
 			
 		$(".nbTrous9[name=nbTrousJ"+i+"]").prop('disabled', true);
 		$(".nbTrous18[name=nbTrousJ"+i+"]").prop('disabled', true);
@@ -1911,12 +1954,16 @@ function createPlayerDiv(value, joueurIdx){
 function setDetailFormMode(mode){
 	switch(mode){
 	case "add":
+		// permet de creer une nouvelle partie sur un slot vide
+		$("#crud_mode").val("add");
 		$("#reserver_button").show();
 		$("#add_new_button").hide();
 		$("#update_button").hide();
 		$("#delete_button").hide();
 		break;
 	case "add_me":
+		// permet (de creer) d'ajouter une nouvelle partie sur le meme slot horaire
+		$("#crud_mode").val("add");
 		$("#reserver_button").hide();
 		$("#add_new_button").show();
 		$("#update_button").hide();
@@ -1928,6 +1975,8 @@ function setDetailFormMode(mode){
 		$("#joueur1, #joueur2, #joueur3, #joueur4").addClass("disabled");
 		break;
 	case "update":
+		// permet de mettre à jour une partie déjà presente
+		$("#crud_mode").val("udpate");
 		$("#reserver_button").hide();
 		if(vars.isAdmin){
 			$("#reserver_button").show();
@@ -1938,6 +1987,8 @@ function setDetailFormMode(mode){
 		$("#delete_button").hide();
 		break;
 	case "delete":
+		// permet de supprimer une partie presente
+		$("#crud_mode").val("delete");
 		$("#reserver_button").hide();
 		if(vars.isAdmin)
 			$("#add_new_button").show();
@@ -1947,6 +1998,7 @@ function setDetailFormMode(mode){
 		$("#delete_button").show();
 		break;
 	default:
+		// n'est jamais utilisé
 		$("#reserver_button").hide();
 		$("#add_new_button").hide();
 		$("#update_button").hide();
@@ -2107,7 +2159,7 @@ function validate_name(object){
 			setDetailFormMode("update");
 		}
 		// var num = parseInt(object[0].name.substring(object[0].name.length-1)); // numero du joueur
-		// if($("#type_resa").val() == "2"){	// parcours 18-retour
+		// if($("#game_type").val() == "2"){	// parcours 18-retour
 		// 	$(".nbTrous9[name=nbTrousJ"+num+"]").prop('disabled', true);
 		// 	// $(".nbTrous9[name=nbTrousJ"+num+"]").prop("checked", false);
 		// 	$(".nbTrous18[name=nbTrousJ"+num+"]").prop('disabled', true);
@@ -2125,5 +2177,9 @@ function unvalidate_name(object){
 	// }
 }	// unvalidate_name
 
+function findAncestor (el, cls) {
+	while ((el = el.parentElement) && !el.classList.contains(cls));
+	return el;
+}
 /////////////////////////////////////////////////////////////////////////////////
 
