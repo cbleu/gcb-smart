@@ -1471,7 +1471,7 @@ function initScheduler()
 		reset_form(ev);
 
 		$("#eventStartDate").html(french_format(ev.start_date));
-		$("#eventType").hide();
+		$("#game_type_div").hide();
 		// $("#flip_parcours_Button").hide();
 		$("#date_resa").val(shortDate_format(ev.start_date));
 		$("#heure_resa").val(shortTime_format(ev.start_date));
@@ -1729,15 +1729,22 @@ function schedulerLoad(){
 // };	// show_minical
 
 function resize_calendar(){
-	var document_height = $(window).height();
-	// var main_div_height = $("#main_div_cal").height();
-	var header_div_height = $("#header").height();
-	// var menu_div_height = $(".navbar").height();
-	var ribbon_div_height = $("#ribbon").height();
-	// var footer_div_height = $(".footer-container").height();
-	var footer_div_height = $("#page-footer").height();
-	// $("#scheduler_here").height(document_height - menu_div_height - footer_div_height - 100);
-	$("#scheduler_here").height(document_height - header_div_height - ribbon_div_height - footer_div_height);
+
+	var window_h = $(window).outerHeight(true);
+	
+	var header_h = $("#header").outerHeight(true);
+	var ribbon_h = $("#ribbon").outerHeight(true);
+	
+	var div1_h = parseInt(jQuery('#content').css('margin'), 10) + parseInt(jQuery('#content').css('padding-top'), 10) + parseInt(jQuery('#content').css('padding-bottom'), 10);
+	var div2_h = parseInt(jQuery('.jarviswidget').css('margin'), 10) + parseInt(jQuery('.jarviswidget').css('padding'), 10);
+	var div3_h = parseInt(jQuery('.jarviswidget>div').css('margin'), 10) + parseInt(jQuery('.jarviswidget>div').css('padding-top'), 10);
+	var div4_h = parseInt(jQuery('.widget-body').css('margin'), 10) + parseInt(jQuery('.widget-body').css('padding-bottom'), 10);
+	var sche_h = parseInt(jQuery('#scheduler_here').css('margin-bottom'), 10);
+	
+	var footer_h = $(".page-footer").outerHeight(true);
+
+	$("#scheduler_here").height(window_h - header_h - ribbon_h - div1_h - div2_h - div3_h - div4_h - sche_h - footer_h);
+	
 	console.log("calendar height: "+$("#scheduler_here").height());
 }	// resize_calendar
 
@@ -1870,15 +1877,21 @@ function startEditEventForm(ev){
 			// Boucle sur chaque résa presente sur ce slot horaire
 			$.each(data, function(index, value) {
 				if(value.isSelected){
-					$("#game_type").val(value.type);	// type de parcours
+					// $("#game_type").val(value.type);	// type de parcours
 					switch(value.type){
-						case 0: $("#eventType").html("Parcours 9 trous");
+						case 0:
+							$("#game_type_div").html("Parcours 9 trous");
+							$("#game_type_div").show();
 						break;
-						case 1: $("#eventType").html("Parcours Aller");
+						case 1:
+							$("#game_type_div").html("Parcours Aller");
+							$("#game_type_div").show();
 						break;
-						case 2: $("#eventType").html("Parcours Retour");
+						case 2:
+							$("#game_type_div").html("Parcours Retour");
+							$("#game_type_div").show();
 						break;
-						default:  $("#eventType").hide();
+						default: $("#game_type_div").hide();
 					}
 				}
 				// On crée les slots des joueurs de la partie uniquement
@@ -2079,6 +2092,8 @@ function CreateResaProvi(formdata){
 		console.log("id_resa_provi_aller already exist:", $("#id_resa_provi_aller" ).val());
 		return;
 	}
+	$("#event_type" ).val(2);	// event_type == 2 => resa provisoire
+	// $("#game_type" ).val(1);	// game_type == 1 => partie 18T Aller
 	$.ajax({	// requete ajax pour reserver provisoirement les slots horaires
 		async: true,
 		type: "POST",

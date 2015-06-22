@@ -31,9 +31,10 @@
 						<div class="row">
 							<div class="col-sm-12">
 
-								<a href="" data-toggle="modal" data-target="#resa_form_div" class="btn btn-primary btn-lg">
+								<!-- <a href="" data-toggle="modal" data-target="#resa_form_div" class="btn btn-primary btn-lg">
 									Launch remote modal
-								</a>
+								</a> -->
+
 								<div class="row" id="main_div_cal" >
 									<!-- <div id="left_col">
 										<div id="cal_here"></div>
@@ -119,35 +120,21 @@
 				<!--<h1 class="reservation_title">Réservation</h1>-->
 				<div id="eventToAdd">
 
-					<input type="hidden" name="id_reservation" id="id_reservation" class="serialize" />
-					<input type="hidden" name="date_resa" id="date_resa" class="serialize" />
-					<input type="hidden" name="heure_resa" id="heure_resa" class="serialize" />
-					<input type="hidden" name="trou_depart" id="trou_depart" class="serialize" />
-					<input type="hidden" name="event_type" id="event_type" class="serialize" />
-					<input type="hidden" name="game_type" id="game_type" class="serialize" />
-					<input type="hidden" name="crud_mode" id="crud_mode" value="none" class="serialize" />
-					<!-- <input type="hidden" name="new" id="new" value="0" class="serialize" /> -->
-					<input type="hidden" name="user" id="user" class="serialize" />
-					<input type="hidden" name="current_full_name" id="current_full_name" value="<?= $current_user_fullname?>" class="serialize" />
-					<input type="hidden" name="current_user_id" id="current_user_id" value="<?= $current_user_id?>" class="serialize" />
-					<input type="hidden" name="isFormValid" id="isFormValid"  class="serialize" value="false">
-					<input type="hidden" name="id_resa_provi_aller" id="id_resa_provi_aller"  class="serialize">
-					<input type="hidden" name="id_resa_provi_retour" id="id_resa_provi_retour" class="serialize">
-
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
 
-								<ul id="tab_parcours" class="nav nav-tabs bordered">
+								<ul id="nav_tab_parcours" class="nav nav-tabs bordered">
 									<li class="active">
-										<a href="#tab_parcours_aller" data-toggle="tab" aria-expanded="true">
+										<a href="#tab_parcours" data-toggle="tab" aria-expanded="true">
 											<i class="fa fa-fw fa-lg txt-color-blue fa-arrow-circle-right"></i>
 											Aller
 											<span class="badge bg-color-blue txt-color-white">Trou 1</span>
 										</a>
 									</li>
 									<li class="">
-										<a href="#tab_parcours_retour" data-toggle="tab" aria-expanded="false">
+										<!-- <a href="#tab_parcours_retour" data-toggle="tab" aria-expanded="false"> -->
+										<a href="#tab_parcours" data-toggle="tab" aria-expanded="false">
 											<i class="fa fa-fw fa-lg txt-color-blue fa-arrow-circle-left"></i>
 											Retour
 											<span class="badge bg-color-blue txt-color-white">Trou 10</span>
@@ -161,10 +148,25 @@
 
 								<div id="parcours_div" class="tab-content">
 
-									<div class="tab-pane fade active in" id="tab_parcours_aller">
+									<div class="tab-pane fade active in" id="tab_parcours">
+
+										<input type="hidden" name="id_reservation" id="id_reservation" class="serialize" />
+										<input type="hidden" name="date_resa" id="date_resa" class="serialize" />
+										<input type="hidden" name="heure_resa" id="heure_resa" class="serialize" />
+										<input type="hidden" name="trou_depart" id="trou_depart" class="serialize" />
+										<input type="hidden" name="event_type" id="event_type" class="serialize" />
+										<!-- <input type="hidden" name="game_type" id="game_type" class="serialize" /> -->
+										<input type="hidden" name="crud_mode" id="crud_mode" value="none" class="serialize" />
+										<!-- <input type="hidden" name="new" id="new" value="0" class="serialize" /> -->
+										<input type="hidden" name="user" id="user" class="serialize" />
+										<input type="hidden" name="current_full_name" id="current_full_name" value="<?= $current_user_fullname?>" class="serialize" />
+										<input type="hidden" name="current_user_id" id="current_user_id" value="<?= $current_user_id?>" class="serialize" />
+										<input type="hidden" name="isFormValid" id="isFormValid"  class="serialize" value="false">
+										<input type="hidden" name="id_resa_provi_aller" id="id_resa_provi_aller"  class="serialize">
+										<input type="hidden" name="id_resa_provi_retour" id="id_resa_provi_retour" class="serialize">
 
 										<div type="text" id="eventStartDate"></div>
-										<div type="text" id="eventType"></div>
+										<div type="text" id="game_type_div"></div>
 
 										<div class="parcours_aller_div">
 
@@ -184,7 +186,7 @@
 														$user_id	= "";
 													}?>
 													<!-- <div class="<?= ($i % 2 == 0) ? "joueur_pair" : "joueur_impair"; ?> joueur_div "> -->
-													<div class="<?= ($i % 2 == 0) ? "joueur_pair" : "joueur_impair"; ?> col-sm-12 player_div">
+													<div class="<?= ($i % 2 == 0) ? "joueur_pair" : "joueur_impair"; ?> player_div">
 
 														<input type="hidden" name="crud_J<?= $i;?>" id="crud_J<?= $i;?>" value="none" class="serialize" />
 
@@ -322,9 +324,86 @@
 									</div>
 
 									<div class="tab-pane fade" id="tab_parcours_retour">
-										<p>
-											En cours de développement !
-										</p>
+
+										<div type="text" id="eventStartDate"></div>
+										<div type="text" id="game_type_div"></div>
+
+										<div class="parcours_aller_div">
+
+											<div class="players_div">
+
+												<? for($i = 1; $i <= 4; $i++) { // Boucle sur les 4 joueurs possibles ?>
+
+													<div class="<?= ($i % 2 == 0) ? 'joueur_pair' : 'joueur_impair'; ?> player_div">
+
+														<input type="hidden" name="crud_J<?= $i;?>" id="crud_J<?= $i;?>" value="none" class="serialize" />
+
+														<div class="input-group player-group">
+
+															<?if($i != 1) {?>
+																<span class="input-group-btn btn_clear_user_<?=$i;?> hidden">
+																	<button class="btn btn-danger" type="button">
+																		<i class="fa fa-remove"></i>
+																	</button>
+																</span>
+															<?}?>
+
+															<span class="input-group-addon"><?= $i;?></span>
+
+															<input class="form-control" name="joueur<?= $i;?>" id="joueur<?= $i;?>" <?=$user_value;?> type="text">
+
+															<input type="hidden" name="id_joueur<?=$i;?>" id="id_joueur<?=$i;?>" value="<?=$user_id;?>" class=" serialize" />
+
+															<input type="hidden" name="nb_trous_J<?= $i;?>" id="nb_trous_J<?= $i;?>" value="18" class=" serialize" >
+															<span class="input-group-addon">
+																<span class="onoffswitch">
+																	<input type="checkbox" name="nbTrousJ<?= $i;?>" class="onoffswitch-checkbox nbTrousJ" id="nbTrousJ<?= $i;?>" checked>
+																	<label class="onoffswitch-label" for="nbTrousJ<?= $i;?>">
+																		<span class="onoffswitch-inner" data-swchon-text="18T" data-swchoff-text="9T"></span>
+																		<span class="onoffswitch-switch"></span>
+																	</label>
+																</span>
+															</span>
+
+														</div>
+
+														<div class="input-group options-group">
+															<div class="form-group">
+																<label class="col-md-4 player_div control-label">options:</label>
+																<div class="col-md-8 player_div">
+																	<? if($isAdmin){?>
+
+																	<label class="radio radio-inline">
+																		<input type="checkbox" id="joueur<?= $i;?>_visiteur" class="radiobox"/>
+																		<span class="visiteur_label<?=$i;?>"> Visiteur</span>
+																	</label>
+																	<? }?>
+
+																	<? if($i > 1) {?>
+																		<label class="radio radio-inline">
+																			<input type="checkbox" id="joueur<?= $i;?>_invite" class="radiobox"/>
+																			<span class="invite_label<?=$i;?>"> Invité</span>
+																		</label>
+																	<? }?>
+
+																<? for($k = 0; $k < count($ressources); $k++) {?>
+																	<label class="radio radio-inline">
+																	<input type='checkbox' name='<?=$ressources[$k]['ressource'];?>[]' value='<?=$i-1;?>' class='radiobox <?=$ressources[$k]['ressource'];?>_check serialize'/> 
+																	<?=$ressources[$k]['ressource'];?>
+																	</label>
+																<?} // for k?>
+
+																</div>
+															</div>
+														</div>
+
+													</div>
+
+												<? } // for i : Boucle sur les 4 joueurs possibles ?>
+
+											</div>
+										</div>
+
 									</div>
 
 								</div>
