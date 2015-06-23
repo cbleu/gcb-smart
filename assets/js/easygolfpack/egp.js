@@ -14,11 +14,8 @@ var max_joueurs = 4;
 var lastNameValue = "";
 var minicalendar;
 
-var main_div_height = 0;
-// var event_height = 24;
 var event_height = 30;
 var occupation_array = new Array();	//Tableau du nombre de joueurs par slot horaire pour les trous 1 et 10
-// var joueurs_input = "#joueur1, #joueur2, #joueur3, #joueur4";
 
 var newUsers = new Array();
 var table_length = function(obj){
@@ -28,6 +25,19 @@ var table_length = function(obj){
 	}
 	return len;
 }
+
+// To keep a reference to the default lightbox to manage recurring events
+var recurring_lightbox;
+var reservation_lightbox;
+
+var isOn_user_play = false;
+
+var shortTime_format 		= scheduler.date.date_to_str("%H:%i");
+var shortDate_format 		= scheduler.date.date_to_str("%d/%m/%Y");
+var shortDate_mysql_format 	= scheduler.date.date_to_str("%Y-%m-%d");
+var mysql_format 			= scheduler.date.date_to_str("%Y-%m-%d %H:%i");
+var french_format 			= scheduler.date.date_to_str("%H:%i le %d %F %Y");
+
 
 /////////////////////////////////////////////////////////////////////////////////
 // JQUERY
@@ -259,11 +269,8 @@ function initWizard()
 	},
 	$.datepicker.regional['fr']
 	);	// TODO : se baser sur l'heure serveur pour restreindre
-	
 
-	// Set the field date to the datpicker default date
-	// $("#date_resa").val($('#datepicker').datepicker({dateFormat:'dd/mm/yy'}).val());
-	
+
 	$("#date_resa").change(function(){
 		var currentDate = new Date();
 		
@@ -279,7 +286,6 @@ function initWizard()
 		restrict_user_nb();
 	});
 
-	// $('#nb_trous_sw').bootstrapToggle();
 	$('#nb_trous_sw').bootstrapSwitch();
 
 	$('input[name="nb_trous_sw"]').on('switchChange.bootstrapSwitch', function(event, state) {
@@ -293,20 +299,6 @@ function initWizard()
 		$("#nb_trous_optgroup").attr("label", $("#nb_trous").val() + " Trous");
 	});
 
-	// $(".dial").knob({
-	// 	'change' : function (v) { console.log(v); }
-	// });
-	// $('.dial').trigger(
-	// 	'configure',
-	// 	{
-	// 		'displayPrevious' : true,
-	// 		'linecap' : 'round',
-	// 		'thickness' : '.4',
-	// 		// "fgColor":"#FF0000",
-	// 		// "cursor":true
-	// 	}
-	// );
-	
 	$("#joueur1, #joueur2, #joueur3, #joueur4").focus(function(){
 		lastNameValue = $(this).val();
 		$(this).css('color', 'black');
@@ -826,9 +818,6 @@ function DisplayDigest()
 
 function initCalendrier()
 {
-	// To keep a reference to the default lightbox to manage recurring events
-	// var recurringLightbox;
-	
 	resize_calendar();
 	initScheduler();
 	// update_joueurs_presents();
@@ -837,11 +826,14 @@ function initCalendrier()
 		resize_calendar();
 	});
 	
-	$(document).bind('DOMSubtreeModified', function() {
-		// Redimensionne .dhx_cal_event en 20px si il change.
-		if($(".dhx_cal_event").height() != event_height) {
-			$(".dhx_cal_event").height(event_height);
-		}
+	// When clicking button to add recurring event, we set the lightbox back to default and open it
+	$("#egp_event_icon").click(function(){
+		$("#event_type" ).val(3);	// event_type == 3 => resa event
+
+		scheduler.showLightbox = recurring_lightbox;
+
+		scheduler.addEventNow();
+
 	});
 
 	$("#dhx_minical_icon").click(function show_minical(){
@@ -860,38 +852,17 @@ function initCalendrier()
 		}
 	});
 
-	// $('input[name="nbTrousJ1"]').toggleState('on', true, true);
-	// $("#nbTrousJ1, #nbTrousJ2, #nbTrousJ3, #nbTrousJ4").toggleState('on');
-	
-	// $("#nbTrousJ2, #nbTrousJ3, #nbTrousJ4").change(function(){
 	$(".nbTrousJ").change(function(){
-		console.log(this);
-		idxJ = this.name.slice( -1); 
-		console.log("idxJ:", idxJ);
+		var idxJ = this.name.slice( -1); 
+		// console.log("idxJ:", idxJ);
 		elstr = "#nb_trous_J" + idxJ;
 		if (this.checked) {	// this is true if the switch is on
-			// console.log(this.val());
-			// this.val("18");
 			$(elstr).val(18);
-			
 		}
 		else {
 			$(elstr).val(9);
-			// console.log(this.val());
-			// this.val("9");
 		}
-		console.log(elstr, ":", $(elstr).val() );
 	});
-
-	// $("#nbTrousJ1").change(function(){
-	// 	if ($("#nbTrousJ1").is(':checked')) {//this is true if the switch is on
-	// 		$("#nbTrousJ1").value = "18";
-	// 	}
-	// 	else {
-	// 		$("#nbTrousJ1").value = "9";
-	// 	}
-	// 	// console.log($(this).val() );
-	// });
 
 	$("#joueur1, #joueur2, #joueur3, #joueur4").focus(function(){
 		lastNameValue = $(this).val();
@@ -971,16 +942,9 @@ function initCalendrier()
 			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
 		},
 	});	// $(joueurs_input).autocomplete
-	
-	// $(".nbTrous9[name=nbTrousJ1").change(function(){
-	// 	ReleaseResaProvi($("#form .serialize"));
-	// 	$("#id_resa_provi_aller" ).val("");
-	// 	$("#id_resa_provi_retour" ).val("");
-	// 	CreateResaProvi($("#form .serialize"));
-	// });
-	
-	if(vars.isAdmin){	// invites et visiteurs
-		$("#joueur1_invite, #joueur2_invite, #joueur3_invite, #joueur4_invite").click(function(){
+		
+	$("#joueur1_invite, #joueur2_invite, #joueur3_invite, #joueur4_invite").click(function(){
+		if(vars.isAdmin){
 			var localid = parseInt($(this).context.id.slice(6,7));	// on recupere le numero de place du joueur
 			if(this.checked) {
 				$("#joueur"+localid+"_visiteur").prop("checked", false);
@@ -996,8 +960,11 @@ function initCalendrier()
 				$("#joueur"+localid).focus();
 				$("#id_joueur"+localid).val("");
 			}
-		});
-		$("#joueur1_visiteur, #joueur2_visiteur, #joueur3_visiteur, #joueur4_visiteur").click(function(){
+		}// bloc admin
+	});
+
+	$("#joueur1_visiteur, #joueur2_visiteur, #joueur3_visiteur, #joueur4_visiteur").click(function(){
+		if(vars.isAdmin){
 			var localid = parseInt($(this).context.id.slice(6,7));	// on recupere le numero de place du joueur
 			if(this.checked) {
 				$("#joueur"+localid+"_invite").prop("checked", false);
@@ -1013,11 +980,11 @@ function initCalendrier()
 				$("#joueur"+localid).focus();
 				$("#id_joueur"+localid).val("");
 			}
-		});
-	}// bloc admin
+		}// bloc admin
+	});
 		
-	$(".leave_button").click(function(ev){
-		// var id_users_has_reservation_to_remove = $(this).attr("tag");
+	$(".btn_clear_user").click(function(ev){
+		var id_users_has_reservation_to_remove = $(this).attr("tag");
 		$.ajax({
 			async: true,
 			url: '/resajax/leave',
@@ -1121,20 +1088,14 @@ function initCalendrier()
 	});
 		
 	$("#unit_tab").click(function(){
-		// scheduler.setCurrentView(scheduler.getState().date, "starter_units");
-		// scheduler.linkCalendar(calendar);
 		scheduler.setCurrentView(scheduler._date, "starter_units");
 	});
 		
 	$("#myplay_tab").click(function(){
-		// scheduler.setCurrentView(scheduler.getState().date, "starter_units");
-		// scheduler.linkCalendar(calendar);
 		scheduler.setCurrentView(scheduler._date, "myplay");
 	});
 		
 	$("#agenda_tab").click(function(){
-		// scheduler.setCurrentView(scheduler.getState().date, "starter_units");
-		// scheduler.linkCalendar(calendar);
 		scheduler.setCurrentView(scheduler._date, "agenda");
 	});
 		
@@ -1152,22 +1113,22 @@ function initCalendrier()
 			}else{
 				options['url'] = "/resajax/addpublic";
 			}
-			$("#loading_div").height($("#form").height());
-			$("#form").hide();
-			$("#loading_div").show();
+			// $("#loading_div").height($("#form").height());
+			// $("#form").hide();
+			// $("#loading_div").show();
 		},
 		success: function(data) {
 			var resp = jQuery.parseJSON(data);
 			if(!resp.valid) {
 				alert(resp.message);
-				$("#form").show();
-				$("#loading_div").hide();
+				// $("#form").show();
+				// $("#loading_div").hide();
 				return false;
 			}
-			var resa_form = document.getElementById('resa_form_div');
-			$("#form").show();
-			$("#loading_div").hide();
-			scheduler.endLightbox(true, resa_form);
+			// var resa_form = document.getElementById('resa_form_div');
+			// $("#form").show();
+			// $("#loading_div").hide();
+			scheduler.endLightbox(true, document.getElementById('resa_form_div'));
 			schedulerLoad();
 		},
 	});
@@ -1177,19 +1138,16 @@ function initCalendrier()
 function initScheduler()
 {
 	var sections=[{key:1, label:"Trou 1"},{key:10, label:"Trou 10"}];
-	var step = 10;	// 10 minutes par slot pour le découpage du scheduler
+	var time_step = 10;		// 10 minutes par slot pour le découpage du scheduler
 	var click_disabled = false;
-	var isOn_user_play = false;
-	var shortTime_format = scheduler.date.date_to_str("%H:%i");
-	
-	// scheduler.locale.labels.agenda_tab="Mes";
-	// scheduler.locale.labels.agenda_tab="Mes réservations";
-	scheduler.locale.labels.agenda_tab=null;
-	// scheduler.locale.labels.unit_tab = "Calendrier"
+	// var isOn_user_play = false;
+	// var shortTime_format = scheduler.date.date_to_str("%H:%i");
 
-	// scheduler.locale.labels.section_custom = "starter_units";
-		
-	// scheduler.config.prevent_cache = true;
+	scheduler.locale.labels.agenda_tab=null;	// on utilise une icone a la place du texte
+
+	scheduler.locale.labels.section_couleur = "Couleur";
+	scheduler.locale.labels.section_startholes = "Départ sur";
+
 	scheduler.config.readonly = vars.isLogged ? false : true;
 	scheduler.config.show_loading = true;
 	scheduler.config.fix_tab_position = false;
@@ -1197,19 +1155,38 @@ function initScheduler()
 	scheduler.config.xml_date = "%Y-%m-%d %H:%i";
 	scheduler.config.first_hour = vars.premier_depart;
 	scheduler.config.last_hour = vars.dernier_depart;
-	// scheduler.config.multi_day = false;
 	scheduler.config.multi_day = true;
-	// scheduler.config.full_day = false;
 	scheduler.config.full_day  = true;
 	scheduler.config.details_on_create = true;
 	scheduler.config.details_on_dblclick = false;
 	scheduler.config.drag_create = false;
 	scheduler.config.separate_short_events = false;
-	scheduler.config.event_duration = step;
-	scheduler.config.time_step = step;
-	scheduler.config.hour_size_px = (60 / step) * event_height; // 24 => nb px event 10minutes
+	scheduler.config.time_step = time_step;		// x minutes par slot pour le découpage du scheduler
+	scheduler.config.event_duration = scheduler.config.time_step;
+	scheduler.config.hour_size_px = (60 / scheduler.config.time_step) * event_height;
 	scheduler.config.scroll_hour= (new Date()).getHours(); //scroll to actual hour
-	console.log("scroll_hour: ", (new Date()).getHours());
+
+	scheduler.config.lightbox.sections = [
+		{
+			name:"couleur",
+			map_to:"colour",
+			type:"select",
+			height:40,
+			default_value:"34cdf9",
+			options:$.colourPickerBasicColors()
+		},
+		{
+			name:"startholes",
+			map_to:"trou_depart",
+			type:"multiselect",
+			vertical:"false",
+			height:40,
+			options:sections,
+		},
+		{ name: 'Infos', height: 40, type: 'textarea', map_to: 'text' },
+		{ name: "recurring", height: 150, type: "recurring", map_to: "rec_type", button: "recurring" },
+		{ name: 'time', height: 72, type: 'time', map_to: 'auto' },
+	];
 	
 	dhtmlXTooltip.config.className = 'passover'; // sets the CSS classname of the tooltip window
 	dhtmlXTooltip.config.timeout_to_display = 50; // delay of the rendering
@@ -1231,24 +1208,38 @@ function initScheduler()
 	};
 	scheduler.templates.hour_scale = function(date){
 		var html="";
-		for (var i = 0; i < 60 / step; i++){
+		for (var i = 0; i < 60 / scheduler.config.time_step; i++){
 			if(i == 0){
 				html+='<div class="hour_tag">';
 			}else{
 				html+='<div class="minute_tag">';
 			}
 			html+=shortTime_format(date)+"</div>";
-			date = scheduler.date.add(date, step, "minute");
+			date = scheduler.date.add(date, scheduler.config.time_step, "minute");
 		}
 		return html;
 	}
-	scheduler.templates.agenda_text = function(start,end,ev){return ev.j;};
-	// defining date header
-	var format = scheduler.date.date_to_str("%Y-%m-%d");
-	scheduler.templates.agenda_date = function(start, end, mode) {
-		return format(start) + " — " + format(end);
-	};
 	
+	scheduler.templates.agenda_text = function(start,end,ev){return ev.j;};
+	scheduler.templates.agenda_date = function(start, end, mode) {
+		return shortDate_mysql_format(start) + " — " + shortDate_mysql_format(end);
+	};
+
+	scheduler.templates.lightbox_header = function(start, end, event){
+		return "<h4>Programmer un évènement</h4>";
+	}
+
+	scheduler.form_blocks.multiselect.set_value = function(node, value, ev){
+		for (i = 0 ; i < node.children.length; i++) {
+			// ev.type is present only if we are in update mode
+			// so in this case we disable the trou checkboxes
+			node.children[i].firstChild.disabled = (ev.type == "evenement");
+
+			// Here we check the right textbox
+			node.children[i].firstChild.checked = (ev.trou_depart == node.children[i].firstChild.value);
+		}
+	};
+
 	// defining add function for prev/next arrows
 	scheduler.date.add_agenda = function(date, inc) {
 		return scheduler.date.add(date, inc, "month");
@@ -1273,70 +1264,12 @@ function initScheduler()
 		from: new Date(scheduler.date.month_start(scheduler.getState().date)),
 		to: new Date(scheduler.date.add(scheduler.date.month_start(scheduler.getState().date), 1, "month"))
 	});
-	
-	// updating dates to display on before view change
-	scheduler.attachEvent("onBeforeViewChange", function(old_mode, old_date, new_mode, new_date) {
-		if(new_mode == "agenda"){
-			scheduler.config.agenda_start = scheduler.date.month_start(new Date((new_date || old_date).valueOf()));
-			scheduler.config.agenda_end = scheduler.date.add(scheduler.config.agenda_start, 1, "month");
-		}else if(new_mode == "unit"){
-			scheduler.config.day_start = scheduler.date.day_start(new Date((new_date || old_date).valueOf()));
-			scheduler.config.day_end = scheduler.date.add(scheduler.config.day_start, 1, "day");
-		}
-		return true;
-	});	// set correct start/end date
-		
-	scheduler.attachEvent("onViewChange", function (new_mode , new_date){
-		console.log("onViewChange: ", new_mode, new_date);
-		// show_minical();
-		if(minicalendar){
-			scheduler.linkCalendar(minicalendar);
-		}
-		$(".dhx_cal_event").height(event_height);
-	});	// restore mini calendar
 
-	scheduler.attachEvent("onEmptyClick", function (date, native_event_object){
-		if(vars.isMobile){
-			scheduler.addEventNow({ start_date: date });
-		}
-		
-		if(detectUserPlayTimespan(event)){
-			isOn_user_play = true;
-		}else{
-			isOn_user_play = false;
-			return true;
-		}
-	});	// -> openlightbox new event on really empty slot
-	
-	scheduler.attachEvent("onClick", function (event_id, native_event_object){
-		var ev = scheduler.getEvent(event_id);
-		// if(click_disabled || ev.evt == "evenement" || ev.evt == "provi" || scheduler.config.readonly ) {
-		// if(click_disabled || ev.evt > 1 || scheduler.config.readonly ) {
-		// TODO faire la gestion de l'edition des evenements ev.evt==3
-		if(click_disabled || scheduler.config.readonly ) {
-			return false;
-		}
-		if( ev.evt == 3 ) {
-			return true;
-		}
-		startEditEventForm(ev);
-		return false;
-	});	// ->openlightbox to edit form
-		
-	scheduler.attachEvent("onDblClick", function (event_id, native_event_object){return false;});	// no double click
-	
-	scheduler.attachEvent("onBeforeDrag", function (event_id, mode, native_event_object){return false;});	// no drag
-	
-	scheduler.attachEvent("onBeforeEventDeleted", function (mode , date){
-		console.log("onBeforeEventDeleted", date);
-		if(date.type == "reservation")
-			return false;
-		else
-			return true;
-	});	// patch to prevent delete real resa event
-	
-	scheduler.attachEvent("onXLE", loadUserBlockTime); // blocages du joueur
-		
+	scheduler.filter_agenda = function(id, ev){
+		if(ev.evt == 1 && ev.g < 2 && ev.u == 1 )	// une partie joueur ET pas un retour ET avec l'utilisateur
+			return true; // event will be rendered
+	}	// filtre de l'affichage de la vue "Mes reservations"
+
 	scheduler.deleteEvent = function(id) {
 		var ev = scheduler.getEvent(id);
 		console.log("deleteEvent", ev.id, ev.evt);
@@ -1358,7 +1291,7 @@ function initScheduler()
 		
 		var div_class = "";
 		var text = "";
-		var event_type = " reservation";
+		// var that_event_type = " reservation";
 		
 		if(ev.g == 0){			//  9T
 			text = '<span class="glyphicon glyphicon-circle-arrow-down"></span> ';
@@ -1397,7 +1330,7 @@ function initScheduler()
 			if (ev.evt == 2){
 				div_class = "event_provi";
 				text = "provisoire";
-				event_type = " provisoire";
+				// that_event_type = " provisoire";
 			}
 		}
 		// ici le slot est plein (pas les parties)
@@ -1432,115 +1365,26 @@ function initScheduler()
 		html += '</div>';
 		container.innerHTML = html;
 		return true;
-	};
+	}; // => render only player resa not big recurring event
 	
-	// scheduler.attachEvent("onBeforeLightbox", function (id){
-	// 	return true;
-	// });	// not used
-
-	scheduler.attachEvent("onAfterLightbox", function (id){
-		console.log("onAfterLightbox: ",id);
-	});	// not used
-		
-	// Keep a reference to the default lightbox to manage recurring events
-	// var recurringLightbox = function(id) {
-	// 	scheduler.showLightbox;
-	// };
-	var recurringLightbox = scheduler.showLightbox;
+	// To keep a reference to the default lightbox to manage recurring events
+	recurring_lightbox = scheduler.showLightbox;
 	
 	// We configure our custom lightbox for reservations
-	var reservationLightbox = function(id) {
-		var french_format = scheduler.date.date_to_str("%H:%i le %d %F %Y");
-		var mysql_format = scheduler.date.date_to_str("%Y-%m-%d %H:%i");	//moved here by cesar
-		var shortDate_format = scheduler.date.date_to_str("%d/%m/%Y");
+	reservation_lightbox = function(id) {reservationLightbox(id);};
 
-		var resa_form = document.getElementById('resa_form_div');
-		var ev = scheduler.getEvent(id);
+	// By default, we use our custom lightbox to handle reservation when events occurs on the calendar
+	scheduler.showLightbox = reservation_lightbox;
 
-		// si le slot horaire contient déjà une resa on n'ouvre pas le formulaire d'ajout
-		var from = ev.start_date;
-		var to = scheduler.date.add(ev.end_date, scheduler.config.time_step, 'minute');
-		var evs = scheduler.getEvents(from, to);
-		for (var i = 0; i < evs.length; i++) {
-			if(	isOn_user_play || (evs[i].id != id && (evs[i].start_date + "") == (ev.start_date + "") && evs[i].sh == ev.sh)) {
-				scheduler.deleteEvent(id);
-				return false;
-			}
-		}
-
-		reset_form(ev);
-
-		$("#eventStartDate").html(french_format(ev.start_date));
-		$("#game_type_div").hide();
-		// $("#flip_parcours_Button").hide();
-		$("#date_resa").val(shortDate_format(ev.start_date));
-		$("#heure_resa").val(shortTime_format(ev.start_date));
-		$("#trou_depart").val(ev.sh);
-		// $("#reserver_button").show();
-		setDetailFormMode("add");
-
-		scheduler.startLightbox(id, resa_form);	// ouverture de la lightbox basee sur resa_form
-
-		$(".dhx_cal_cover").click(function(){
-			$("#annuler_button").trigger("click");
-		});
-
-		// Desactive les 18 trous si pas possible
-		getPlayersBySlotFor(ev);	// check la dispo pour les 18 trous
-
-		// On lance la résa provisoire des slots aller et retour au max de joueurs
-		CreateResaProvi($("#form .serialize"));
-
-	};	// scheduler.showlightbox
-
-	scheduler.templates.lightbox_header = function(start, end, event){
-		return "<h4>Programmer un évènement</h4>";
-	}
-
-
-	scheduler.form_blocks.multiselect.set_value = function(node, value, ev)
-	{
-		for (i = 0 ; i < node.children.length; i++) {
-			// ev.type is present only if we are in update mode
-			// so in this case we disable the trou checkboxes
-			node.children[i].firstChild.disabled = (ev.type == "evenement");
-
-			// Here we check the right textbox
-			node.children[i].firstChild.checked = (ev.trou_depart == node.children[i].firstChild.value);
-		}
-	};
-
-	scheduler.locale.labels.section_couleur = "Couleur";
-	scheduler.locale.labels.section_startholes = "Départ sur";
-	scheduler.config.lightbox.sections = [
-		{
-			name:"couleur",
-			map_to:"colour",
-			type:"select",
-			height:40,
-			default_value:"34cdf9",
-			options:$.colourPickerBasicColors()
-		},
-		{
-			name:"startholes",
-			map_to:"trou_depart",
-			type:"multiselect",
-			vertical:"false",
-			height:40,
-			options:sections,
-		},
-		{ name: 'Infos', height: 40, type: 'textarea', map_to: 'text' },
-		{ name: "recurring", height: 150, type: "recurring", map_to: "rec_type", button: "recurring" },
-		{ name: 'time', height: 72, type: 'time', map_to: 'auto' },
-	];
+	// When normal lightbox closes we set back lightbox to reservation_lightbox
+	scheduler.attachEvent("onAfterLightbox", function (){
+		scheduler.showLightbox = reservation_lightbox;
+	});
 
 	scheduler.attachEvent("onLightbox", function (id){
 
 		if ($("input.color_display").length) {
 			//$("input.color_display").val("");
-			//alert(scheduler.getEvent(id).colour);
-			//alert("a[rel='" + scheduler.getEvent(id).colour + "']");
-
 			$( "a[rel='" + scheduler.getEvent(id).colour + "']" ).click();
 		}
 		else {
@@ -1549,27 +1393,14 @@ function initScheduler()
 				ico:    '/assets/admin/images/jquery.colourPicker.gif',
 				title:    false
 			});
-
-			$("input.color_display").click();
+			// $("input.color_display").click();
 		}
 
 	});
 
-	// By default, we use our custom lightbox to handle reservation when events occurs on the calendar
-	scheduler.showLightbox = reservationLightbox;
 
-	// When clicking button to add event, we set the lightbox to default and open it
-	$("#egp_event_icon").click(function(){
-		scheduler.showLightbox = recurringLightbox;
-		scheduler.addEventNow();
-		// scheduler.startLightbox();
-		//initColorPicker();
-	});
-
-	// Fires when lightbox closes we set back lightbox to default
-	scheduler.attachEvent("onAfterLightbox", function (){
-		scheduler.showLightbox = reservationLightbox;
-	});
+	/////////////////////////////////////////////////////////////////////
+	// Manage recurring events 
 
 	scheduler.attachEvent("onEventChanged", function(id,ev) {
 		console.log("For recurring event ONLY: onEventChanged");
@@ -1596,13 +1427,13 @@ function initScheduler()
 				}
 
 				scheduler.load("/resajax/eventsparcours", "json", function(){
-					$(".dhx_cal_event").height(20);
+					// $(".dhx_cal_event").height(20);
 					scheduler.blockTime();
 				});
 				
 			}
 		});
-	});
+	});		// => /events/udpate_ajax
 
 	scheduler.attachEvent("onEventDeleted", function(id, ev){
 		console.log("For recurring event ONLY: onEventDeleted");
@@ -1620,22 +1451,14 @@ function initScheduler()
 				}
 
 				scheduler.load("/resajax/eventsparcours", "json", function(){
-					$(".dhx_cal_event").height(20);
+					// $(".dhx_cal_event").height(20);
 					scheduler.blockTime();
 				});
 				
 			}
 		});
-	});
+	});		// => /events/delete
 
-	scheduler.attachEvent("onEventSave",function(id, ev, is_new) {
-		console.log("For recurring event ONLY: onEventSave");
-		console.log("onEventSave: ",id, ev);
-	    // Do some validation
-	    return true;
-	})
-
-	// Fires when recurring event added 
 	scheduler.attachEvent("onEventAdded", function(id,ev){
 
 		if( ev.evt != 3 ) {	// evt == 3 uniquement pour les evenements !
@@ -1661,22 +1484,81 @@ function initScheduler()
 				}
 
 				scheduler.load("/resajax/eventsparcours", "json", function(){
-					$(".dhx_cal_event").height(20);
+					// $(".dhx_cal_event").height(20);
 					scheduler.blockTime();
 				});
 
 			}
 		});
 		//alert(ev.id + '\n' + ev.start_date + '\n' + ev.end_date + '\n' + ev.text + '\n' + ev.color);
-	});
-	
+	});			// => /events/insert_ajax
 
+	/////////////////////////////////////////////////////////////////////
 
-	scheduler.filter_agenda = function(id, ev){	// filtre de l'affichage de la vue "Mes reservations""
-		if(ev.evt == 1 && ev.g < 2 && ev.u == 1 )	// une partie joueur ET pas un retour ET avec l'utilisateur
-			return true; // event will be rendered
-	}
+	// updating dates to display on before view change
+	scheduler.attachEvent("onBeforeViewChange", function(old_mode, old_date, new_mode, new_date) {
+		if(new_mode == "agenda"){
+			scheduler.config.agenda_start = scheduler.date.month_start(new Date((new_date || old_date).valueOf()));
+			scheduler.config.agenda_end = scheduler.date.add(scheduler.config.agenda_start, 1, "month");
+		}else if(new_mode == "unit"){
+			scheduler.config.day_start = scheduler.date.day_start(new Date((new_date || old_date).valueOf()));
+			scheduler.config.day_end = scheduler.date.add(scheduler.config.day_start, 1, "day");
+		}
+		return true;
+	});	// set correct start/end date
 		
+	scheduler.attachEvent("onViewChange", function (new_mode , new_date){
+		console.log("onViewChange: ", new_mode, new_date);
+		// show_minical();
+		if(minicalendar){
+			scheduler.linkCalendar(minicalendar);
+		}
+		// $(".dhx_cal_event").height(event_height);
+	});	// restore mini calendar
+
+	scheduler.attachEvent("onEmptyClick", function (date, native_event_object){
+		if(vars.isMobile){
+			scheduler.addEventNow({ start_date: date });
+		}
+		
+		if(detectUserPlayTimespan(event)){
+			isOn_user_play = true;
+		}else{
+			isOn_user_play = false;
+			return true;
+		}
+	});	// => openlightbox to create new event on empty slot
+	
+	scheduler.attachEvent("onClick", function (event_id, native_event_object){
+		var ev = scheduler.getEvent(event_id);
+		// if(click_disabled || ev.evt == "evenement" || ev.evt == "provi" || scheduler.config.readonly ) {
+		// if(click_disabled || ev.evt > 1 || scheduler.config.readonly ) {
+		// TODO faire la gestion de l'edition des evenements ev.evt==3
+		if(click_disabled || scheduler.config.readonly ) {
+			return false;
+		}
+		if( ev.evt == 3 ) {
+			return true;
+		}
+		startEditEventForm(ev);
+		return false;
+	});	// => openlightbox to edit form
+		
+	scheduler.attachEvent("onDblClick", function (event_id, native_event_object){return false;});	// no double click
+	
+	scheduler.attachEvent("onBeforeDrag", function (event_id, mode, native_event_object){return false;});	// no drag
+	
+	scheduler.attachEvent("onBeforeEventDeleted", function (mode , date){
+		console.log("onBeforeEventDeleted", date);
+		if(date.type == "reservation")
+			return false;
+		else
+			return true;
+	});	// patch to prevent delete real resa event
+	
+	scheduler.attachEvent("onXLE", loadUserBlockTime); // blocages du joueur apres le chargement des parties
+
+
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	// INIT SCHEDULER
 	/////////////////////////////////////////////////////////////////////////////////////////////
@@ -1688,16 +1570,20 @@ function initScheduler()
 		scheduler.setLoadMode("day")	// chargement par jour meme s'il est déjà passé
 	}
 
-	// show_minical();		// create and display mini calendar
-
 	scheduler.load("/resajax/eventsparcours", "json", function(){
-		$(".dhx_cal_event").height(event_height);
+		// $(".dhx_cal_event").height(event_height);
 		loadBlockTime();
 		scroll_to_now();
 		scheduler.updateView();
 	});
 
 }	// initScheduler
+
+
+
+
+
+
 
 /////////////////////////////////////////////////////////////////////////////////
 // CALENDIRER FUNCTIONS
@@ -1706,27 +1592,11 @@ function schedulerLoad(){
 	scheduler.clearAll();
 	scheduler.deleteMarkedTimespan();
 	scheduler.load("/resajax/eventsparcours", "json", function(){
-		$(".dhx_cal_event").height(event_height);
+		// $(".dhx_cal_event").height(event_height);
 		loadBlockTime();
 		scheduler.setCurrentView();
 	});
 }	// schedulerLoad
-
-// function show_minical(){
-// 	if (minicalendar){
-// 		console.log("destroyCalendar", minicalendar);
-// 		scheduler.destroyCalendar(minicalendar);
-// 	}
-// 	minicalendar = scheduler.renderCalendar({
-// 		container:"cal_here",
-// 		date: scheduler.getState().date,
-// 		navigation:true,
-// 		handler:function(date,calendar) {
-// 			scheduler.updateView(date, "starter_units");
-// 			scheduler.linkCalendar(minicalendar);
-// 		}
-// 	});
-// };	// show_minical
 
 function resize_calendar(){
 
@@ -1758,7 +1628,7 @@ function loadBlockTime(){
 
 function loadUserBlockTime(thatDate){
 	// Affiche les zones de blocage du joueur connecte
-	var shortDate_format = scheduler.date.date_to_str("%d/%m/%Y");
+	// var shortDate_format = scheduler.date.date_to_str("%d/%m/%Y");
 	var shortStrDate;
 	if(thatDate == null || thatDate == ""){
 		if(scheduler != null){
@@ -1774,13 +1644,12 @@ function loadUserBlockTime(thatDate){
 				start_date:new Date(val[0]),
 				end_date:new Date(val[1]),
 				type: "user_play",
-				// type:  "dhx_time_block",
 				css:   "user_play_section"
 			});
 		});
 		scheduler.setCurrentView();
 	});
-	$(".dhx_cal_event").height(event_height);
+	// $(".dhx_cal_event").height(event_height);
 }	// loadUserBlockTime
 
 function detectUserPlayTimespan(event){
@@ -1799,6 +1668,55 @@ function detectUserPlayTimespan(event){
 		return false;
 	}
 }	// detectUserPlayTimespan
+
+function reservationLightbox(id) {
+
+	var ev = scheduler.getEvent(id);
+	
+	if (ev.evt == 3){	// Si c'est un evenement on rebascule sur la lightbox d'origine
+		scheduler.showLightbox = recurring_lightbox;
+		scheduler.showLightbox(id);
+		return true;
+	}
+
+	var resa_form = document.getElementById('resa_form_div');
+
+	// si le slot horaire contient déjà une resa on n'ouvre pas le formulaire d'ajout
+	var from = ev.start_date;
+	var to = scheduler.date.add(ev.end_date, scheduler.config.time_step, 'minute');
+	var evs = scheduler.getEvents(from, to);
+	for (var i = 0; i < evs.length; i++) {
+		if(	isOn_user_play || (evs[i].id != id && (evs[i].start_date + "") == (ev.start_date + "") && evs[i].sh == ev.sh)) {
+			scheduler.deleteEvent(id);
+			return false;
+		}
+	}
+
+	reset_form(ev);
+
+	$("#eventStartDate").html(french_format(ev.start_date));
+	$("#game_type_div").hide();
+	$("#date_resa").val(shortDate_format(ev.start_date));
+	$("#heure_resa").val(shortTime_format(ev.start_date));
+	$("#trou_depart").val(ev.sh);
+
+	setDetailFormMode("add");
+
+	scheduler.startLightbox(id, resa_form);	// ouverture de la lightbox basee sur resa_form
+
+	$(".dhx_cal_cover").click(function(){
+		$("#annuler_button").trigger("click");
+	});
+
+	// Desactive les 18 trous si pas possible
+	getPlayersBySlotFor(ev);	// check la dispo pour les 18 trous
+
+	// On lance la résa provisoire des slots aller et retour au max de joueurs
+	CreateResaProvi($("#form .serialize"));
+
+	// On repositionne le type d'event sur le forumulaire pour une resa joueur
+	$("#event_type" ).val(1);	// event_type == 1 => resa joueur
+}	// reservationLightbox
 
 function getPlayersBySlotFor(ev){
 	var mysql_format = scheduler.date.date_to_str("%Y-%m-%d %H:%i");	//moved here by cesar
@@ -1841,8 +1759,7 @@ function scroll_to_now(){
 }	// scroll_to_now
 
 function startEditEventForm(ev){
-	var french_format = scheduler.date.date_to_str("%H:%i le %d %F %Y");
-	var mysql_format = scheduler.date.date_to_str("%Y-%m-%d %H:%i");
+
 	var resa_form = document.getElementById('resa_form_div');
 	
 	// On réinitialise tous les champs du formulaire
@@ -1871,25 +1788,21 @@ function startEditEventForm(ev){
 			usr_in: ev.u,
 		},
 		success: function(data){
-			// console.log("loaddetailsform", data);
 			var joueurIdx = 1;
 			
 			// Boucle sur chaque résa presente sur ce slot horaire
 			$.each(data, function(index, value) {
 				if(value.isSelected){
-					// $("#game_type").val(value.type);	// type de parcours
+					$("#game_type_div").show();
 					switch(value.type){
 						case 0:
 							$("#game_type_div").html("Parcours 9 trous");
-							$("#game_type_div").show();
 						break;
 						case 1:
 							$("#game_type_div").html("Parcours Aller");
-							$("#game_type_div").show();
 						break;
 						case 2:
 							$("#game_type_div").html("Parcours Retour");
-							$("#game_type_div").show();
 						break;
 						default: $("#game_type_div").hide();
 					}
@@ -1912,7 +1825,9 @@ function startEditEventForm(ev){
 function createPlayerDiv(value, joueurIdx){
 	var nj = joueurIdx;
 	var strname = "";
+	// boucle sur les emplacements joueurs de cette partie à partir de l'idx de début
 	for(var i=nj; i < nj+value.players.length; i++){
+		// récup du nom du joueur
 		if(value.players[i-nj].id == 0){
 			strname = value.players[i-nj].info +" (Invité)";
 			// $("span.invite_label"+i).show();
@@ -1922,42 +1837,37 @@ function createPlayerDiv(value, joueurIdx){
 		}else{
 			strname = value.players[i-nj].firstname +" " +value.players[i-nj].lastname;
 		}
+		// si partie selectionnée: afficher ou pas le bouton suppr du joueur
 		if(value.isSelected){
 			if(value.usr_in == "1" || vars.isAdmin){
-				// var sp =$("label[for=joueur"+i+"] span.action_span span.leave_button");
-				var sp =$("btn_clear_user_"+i);
-				sp.attr("tag", value.players[i-nj].userHasResa);
-				sp.show();
+				$("#btn_clear_user_" + i).show();
+				$("#btn_clear_user_" + i).attr("tag", value.players[i-nj].userHasResa);
+
 				setDetailFormMode("delete");
 			}else{
-				// $("#new").val("1");
 				setDetailFormMode("add_me");
 			}
 		}else{
 			$("#joueur"+i).parent().parent().parent().addClass("other_reservation");
-			// findAncestor($("#joueur"+i), ".joueur_div").addClass("other_reservation");
 			$("#joueur"+i).addClass("other_reservation");
 		}
-		// $('span.leave_button[tag='+selectedId +"]").show();
 		$("#joueur"+i).val(strname);
 		$("#joueur"+i).prop("disabled", true);
 		$("#id_joueur"+i).val(value.players[i-nj].id);
-		// on positionne le type de reservation pour ce joueur: 0=9T, 1=18T aller, 2=18T retour
-		// $("#game_type_J"+i).val(value.type);
-			
-		$(".nbTrous9[name=nbTrousJ"+i+"]").prop('disabled', true);
-		$(".nbTrous18[name=nbTrousJ"+i+"]").prop('disabled', true);
+
+		// On met à jour le switch du nombre de trous
+		var swj = $("#nbTrousJ" + i);
+		swj.prop("disabled", true);
 		if(value.players[i-nj].nbTrous == 9){
-			$(".nbTrous9[name=nbTrousJ"+i+"]").prop("checked", true);
-			$(".nbTrous18[name=nbTrousJ"+i+"]").prop("checked", false);
+			swj.prop("checked", false);
 		}else{
-			$(".nbTrous9[name=nbTrousJ"+i+"]").prop("checked", false);
-			$(".nbTrous18[name=nbTrousJ"+i+"]").prop("checked", true);
+			swj.prop("checked", true);
 		}
-		var cb = $(".Chariot_check[value="+(i-1)+"]");
-		cb.prop('disabled',true);
+		// On met à jour la checkbox des ressources
+		var cbresj = $(".Chariot_check[value="+(i-1)+"]");
+		cbresj.prop('disabled',true);
 		if(value.players[i-nj].ressources[0] == "Chariot"){
-			cb.prop('checked',true);
+			cbresj.prop('checked',true);
 		}
 		joueurIdx++;
 	}
@@ -2070,18 +1980,28 @@ function reset_form(ev){
 	$("#joueur1, #joueur2, #joueur3, #joueur4").prop("disabled", false);
 
 	for (var i=1; i <= 4; i++){
-		$("label[for=joueur"+i+"] span.action_span span.leave_button").hide();
-		$("label[for=joueur"+i+"] span.action_span span.leave_button").attr("tag","");
+		// $("label[for=joueur"+i+"] span.action_span span.leave_button").hide();
+		// $("label[for=joueur"+i+"] span.action_span span.leave_button").attr("tag","");
+		$("#btn_clear_user_" + i).hide();
+		$("#btn_clear_user_" + i).attr("tag","");
 		// $("span.invite_label"+i).hide();
 		// $("span.visiteur_label"+i).hide();
-		$(".nbTrous9[name=nbTrousJ"+i+"]").prop('disabled', false);
-		$(".nbTrous18[name=nbTrousJ"+i+"]").prop('disabled', false);
-		$(".nbTrous18[name=nbTrousJ"+i+"]").prop('checked', true);
+		$("#nbTrousJ" + i).prop("disabled", true);
+		$("#nbTrousJ" + i).prop("checked", true);
+		// $(".nbTrous9[name=nbTrousJ"+i+"]").prop('disabled', false);
+		// $(".nbTrous18[name=nbTrousJ"+i+"]").prop('disabled', false);
+		// $(".nbTrous18[name=nbTrousJ"+i+"]").prop('checked', true);
 	}
 	setDetailFormMode("none")
 	update_joueurs_presents();
 	$('.Chariot_check').prop('disabled',false);
 }	// reset_form
+
+
+
+
+
+
 
 /////////////////////////////////////////////////////////////////////////////////
 // COMMON FUNCTIONS
@@ -2192,9 +2112,5 @@ function unvalidate_name(object){
 	// }
 }	// unvalidate_name
 
-function findAncestor (el, cls) {
-	while ((el = el.parentElement) && !el.classList.contains(cls));
-	return el;
-}
 /////////////////////////////////////////////////////////////////////////////////
 

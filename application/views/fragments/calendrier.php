@@ -110,6 +110,7 @@
 
 									<div class="tab-pane fade active in" id="tab_parcours">
 
+										<!-- Global Hidden Inputs for that reservation -->
 										<input type="hidden" name="id_reservation" id="id_reservation" class="serialize" />
 										<input type="hidden" name="date_resa" id="date_resa" class="serialize" />
 										<input type="hidden" name="heure_resa" id="heure_resa" class="serialize" />
@@ -130,6 +131,7 @@
 
 											<div class="players_div">
 
+												<!-- Boucle principale sur les 4 joueurs possibles -->
 												<? for($i = 1; $i <= 4; $i++) { // Boucle sur les 4 joueurs possibles ?>
 
 													<?if($i == 1) {	// Joueur 1: Utilisateur courant
@@ -145,14 +147,17 @@
 														$user_id	= "";
 													}?>
 
-													<div class="<?= ($i % 2 == 0) ? "joueur_pair" : "joueur_impair"; ?> player_div">
+													<!-- User Hidden Inputs for that reservation -->
+													<input type="hidden" name="crud_J<?= $i;?>" id="crud_J<?= $i;?>" value="none" class="serialize" />
+													<input type="hidden" name="id_joueur<?=$i;?>" id="id_joueur<?=$i;?>" value="<?=$user_id;?>" class=" serialize" />
+													<input type="hidden" name="nb_trous_J<?= $i;?>" id="nb_trous_J<?= $i;?>" value="18" class=" serialize" >
 
-														<input type="hidden" name="crud_J<?= $i;?>" id="crud_J<?= $i;?>" value="none" class="serialize" />
+													<div class="<?= ($i % 2 == 0) ? "joueur_pair" : "joueur_impair"; ?> player_div" name="">
 
 														<div class="input-group">
 
 															<?if($i != 1) {?>
-																<span class="input-group-btn btn_clear_user_<?=$i;?> hidden">
+																<span class="input-group-btn btn_clear_user" id="btn_clear_user_<?=$i;?>" hidden>
 																	<button class="btn btn-danger" type="button">
 																		<i class="fa fa-remove"></i>
 																	</button>
@@ -163,9 +168,6 @@
 
 															<input class="form-control" name="joueur<?= $i;?>" id="joueur<?= $i;?>" <?=$user_value;?> type="text">
 
-															<input type="hidden" name="id_joueur<?=$i;?>" id="id_joueur<?=$i;?>" value="<?=$user_id;?>" class=" serialize" />
-
-															<input type="hidden" name="nb_trous_J<?= $i;?>" id="nb_trous_J<?= $i;?>" value="18" class=" serialize" >
 															<span class="input-group-addon">
 																<span class="onoffswitch">
 																	<input type="checkbox" name="nbTrousJ<?= $i;?>" class="onoffswitch-checkbox nbTrousJ" id="nbTrousJ<?= $i;?>" checked>
