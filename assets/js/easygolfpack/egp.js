@@ -984,7 +984,6 @@ function initCalendrier()
 	});
 		
 	$(".btn_clear_user").click(function(ev){
-		var id_users_has_reservation_to_remove = $(this).attr("tag");
 		$.ajax({
 			async: true,
 			url: '/resajax/leave',
@@ -994,7 +993,6 @@ function initCalendrier()
 			cache: false,
 			success: function (data) {
 				if(data.valid) {
-					// var resa_form = document.getElementById('resa_form_div');
 					scheduler.endLightbox(false, document.getElementById('resa_form_div'));
 					ReleaseResaProvi($("#form .serialize"));
 					schedulerLoad();
@@ -1812,7 +1810,6 @@ function startEditEventForm(ev){
 				if(!ev.usr_in && joueurIdx > 4){
 					setDetailFormMode("none");
 				}
-				// if(scheduler.checkInMarkedTimespan(scheduler.getEvent(ev), "user_play")){
 				if(detectUserPlayTimespan(ev)){
 					setDetailFormMode("none");
 				}
@@ -1937,48 +1934,53 @@ function reset_form(ev){
 	$("#id_reservation").val("");
 	scheduler.updateEvent(ev.id);
 	
-	// if(!vars.isLogged || vars.isAdmin){
+	// if(vars.isAdmin){
 	// 	$("#joueur1").prop("disabled", false);
+	// }else{
+	// 	$("#joueur1").prop("disabled", true);
 	// }
-	if(vars.isAdmin){
-		$("#joueur1").prop("disabled", false);
-	}else{
-		$("#joueur1").prop("disabled", true);
-	}
-	$("#joueur2").prop("disabled", false);
-	$("#joueur3").prop("disabled", false);
-	$("#joueur4").prop("disabled", false);
+	// $("#joueur2").prop("disabled", false);
+	// $("#joueur3").prop("disabled", false);
+	// $("#joueur4").prop("disabled", false);
 	
-	$("#joueur1").prop("placeholder", 'Chercher un nom de membre ...');
-	$("#joueur2").prop("placeholder", 'Chercher un nom de membre ...');
-	$("#joueur3").prop("placeholder", 'Chercher un nom de membre ...');
-	$("#joueur4").prop("placeholder", 'Chercher un nom de membre ...');
+	// $("#joueur1").prop("placeholder", 'Chercher un nom de membre ...');
+	// $("#joueur2").prop("placeholder", 'Chercher un nom de membre ...');
+	// $("#joueur3").prop("placeholder", 'Chercher un nom de membre ...');
+	// $("#joueur4").prop("placeholder", 'Chercher un nom de membre ...');
 	
-	$("#joueur1").css('color', 'black');
-	$("#joueur2").css('color', 'black');
-	$("#joueur3").css('color', 'black');
-	$("#joueur4").css('color', 'black');
+	// $("#joueur1").css('color', 'black');
+	// $("#joueur2").css('color', 'black');
+	// $("#joueur3").css('color', 'black');
+	// $("#joueur4").css('color', 'black');
 		
-	// if(!vars.isLogged || vars.isAdmin){
-	// 	$("#id_joueur1").val("");
+	// if(vars.isAdmin){
+	// 	$("#id_joueur1").val("2");	// si admin on laisse vide
 	// }else{
 	// 	$("#id_joueur1").val($("#current_user_id").val());
 	// }
-	if(vars.isAdmin){
-		$("#id_joueur1").val("");	// si admin on laisse vide
-	}else{
-		$("#id_joueur1").val($("#current_user_id").val());
-	}
-	$("#id_joueur2").val("");
-	$("#id_joueur3").val("");
-	$("#id_joueur4").val("");
+	$("#id_joueur2, #id_joueur3, #id_joueur4").val("");
+	$("#id_joueur2, #id_joueur3, #id_joueur4").prop("placeholder", 'Chercher un nom de membre ...');
 	
 	$("#joueur1, #joueur2, #joueur3, #joueur4").autocomplete("enable");
-	$("#joueur1, #joueur2, #joueur3, #joueur4").parent().removeClass("other_reservation");
-	$("#joueur1, #joueur2, #joueur3, #joueur4").removeClass("other_reservation");
-	$("#joueur1, #joueur2, #joueur3, #joueur4").removeClass("disabled");
-	$("#joueur1, #joueur2, #joueur3, #joueur4").prop("disabled", false);
+	// $("#joueur1, #joueur2, #joueur3, #joueur4").parent().removeClass("other_reservation");
+	// $("#joueur1, #joueur2, #joueur3, #joueur4").removeClass("other_reservation");
 
+	$("#joueur1, #joueur2, #joueur3, #joueur4").parent().parent().parent().removeClass("other_reservation");
+	$("#joueur1, #joueur2, #joueur3, #joueur4").removeClass("other_reservation");
+
+	$("#joueur1, #joueur2, #joueur3, #joueur4").removeClass("disabled");
+	$("#joueur1, #joueur2, #joueur3, #joueur4").css('color', 'black');
+	$("#joueur1, #joueur2, #joueur3, #joueur4").prop("disabled", false);
+	
+	$("#id_joueur1, #id_joueur2, #id_joueur3, #id_joueur4").val("");
+	if(vars.isAdmin){
+		$("#joueur1").prop("disabled", false);
+		$("#id_joueur1").val("2");	// si admin on laisse vide
+	}else{
+		$("#joueur1").prop("disabled", true);
+		$("#id_joueur1").val($("#current_user_id").val());
+	}
+	
 	for (var i=1; i <= 4; i++){
 		// $("label[for=joueur"+i+"] span.action_span span.leave_button").hide();
 		// $("label[for=joueur"+i+"] span.action_span span.leave_button").attr("tag","");
