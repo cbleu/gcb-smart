@@ -15,6 +15,12 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		parent::before();
 	}	// function before
 	
+	public function after()
+	{
+		// Set the response content-type here
+		$this->response->headers('Content-Type','application/json');
+		parent::after();
+	}
 
 	////////////////////////////////
 	// ACTION FUNCS ////////////////

@@ -15,7 +15,7 @@ var lastNameValue = "";
 var minicalendar;
 
 var event_height = 30;
-var occupation_array = new Array();	//Tableau du nombre de joueurs par slot horaire pour les trous 1 et 10
+// var occupation_array = new Array();	//Tableau du nombre de joueurs par slot horaire pour les trous 1 et 10
 
 var newUsers = new Array();
 var table_length = function(obj){
@@ -38,11 +38,9 @@ var shortDate_mysql_format 	= scheduler.date.date_to_str("%Y-%m-%d");
 var mysql_format 			= scheduler.date.date_to_str("%Y-%m-%d %H:%i");
 var french_format 			= scheduler.date.date_to_str("%H:%i le %d %F %Y");
 
-
 /////////////////////////////////////////////////////////////////////////////////
 // JQUERY
 /////////////////////////////////////////////////////////////////////////////////
-
 
 ;(function($, document, window, viewport)
 {
@@ -88,7 +86,6 @@ var french_format 			= scheduler.date.date_to_str("%H:%i le %d %F %Y");
 
 // })(jQuery);
 })(jQuery, document, window, ResponsiveBootstrapToolkit);
-
 
 // Récupération des Variables globales sérialisées dans la page
 function initVars()
@@ -148,15 +145,6 @@ function initWizard()
 					// }
 				}
 			}else{
-				// nbj = $("input[name=nb_joueurs]:checked").val();
-				// var reg = new RegExp('^[a-z0-9]+([_|\.|-]{1}[a-z0-9]+)*@[a-z0-9]+([_|\.|-]{1}[a-z0-9]+)*[\.]{1}[a-z]{2,6}$', 'i');
-				// if($("#client_name").val().length < 2) {
-				// 	message_erreur = "Erreur ! Veuillez saisir votre nom";
-				// }else if($("#client_firstname").val().length < 2) {
-				// 	message_erreur = "Erreur ! Veuillez saisir votre prénom";
-				// }else if(!reg.test($("#client_email").val())) {
-				// 	message_erreur = "Erreur ! Veuillez saisir une addresse E-mail valide";
-				// }
 				if(!nbj || !parentdiv) {
 					message_erreur = "ERREUR dans la structure du formulaire !";
 				}else{
@@ -866,7 +854,8 @@ function initCalendrier()
 
 	$("#joueur1, #joueur2, #joueur3, #joueur4").focus(function(){
 		lastNameValue = $(this).val();
-		$(this).css('color', 'black');
+		unvalidate_name($(this));
+		// $(this).css('color', 'black');
 		$(this).select();
 	});
 
@@ -874,25 +863,9 @@ function initCalendrier()
 		if(lastNameValue != "" && $(this).val() != lastNameValue) {
 			unvalidate_name($(this));
 		}
-		// if (vars.thisAction == "calendrier"){
-		// 	if($(this).val() == "") {
-		// 		delete newUsers[$(this).prop('id_reservation')];
-		// 	}else {
-		// 		newUsers[$(this).prop('id_reservation')] = $(this).val();
-		// 	}
-		// 	if(table_length(newUsers) > 0) {
-		// 		setDetailFormMode("update");
-		// 	}else {
-		// 		setDetailFormMode("none");
-		// 	}
-		// }
 	});
 	
 	$("#joueur1, #joueur2, #joueur3, #joueur4").focusout(function(){
-		// if(lastNameValue != "" && $(this).val() == lastNameValue) {
-		// 	validate_name($(this));
-		// }
-		// update_joueurs();
 		update_joueurs_presents();
 	});
 
@@ -1011,7 +984,8 @@ function initCalendrier()
 				$("#joueur"+i+"_visiteur").prop('disabled', false);
 				setDetailFormMode("update");
 			}else if(player_number == 0 && $("#joueur"+i).val() == "") {
-				$("#joueur"+i).val($("#current_full_name").val());
+				// $("#joueur"+i).val($("#current_full_name").val());
+				$("#joueur"+i).val(vars.thisUserFullName);
 				$("#joueur"+i).prop('disabled', true);
 				$("#id_joueur"+i).val($("#current_user_id").val());
 				setDetailFormMode("update");
@@ -1668,43 +1642,64 @@ function detectUserPlayTimespan(event){
 }	// detectUserPlayTimespan
 
 function reservationLightbox(id) {
+	console.log("reservationLightbox id: ", id)
 
+	////////////////////////////////////////////////////////
+	// On recupere l'evenement lié à cet id
 	var ev = scheduler.getEvent(id);
 	
-	if (ev.evt == 3){	// Si c'est un evenement on rebascule sur la lightbox d'origine
+	////////////////////////////////////////////////////////
+	// Si c'est un evenement on rebascule sur la lightbox d'origine
+	if (ev.evt == 3){
 		scheduler.showLightbox = recurring_lightbox;
-		scheduler.showLightbox(id);
+		scheduler.showLightbox(ev.id);
 		return true;
 	}
 
-	var resa_form = document.getElementById('resa_form_div');
-
-	// si le slot horaire contient déjà une resa on n'ouvre pas le formulaire d'ajout
+	////////////////////////////////////////////////////////
+	// Si le slot horaire contient déjà une resa on n'ouvre pas le formulaire d'ajout
 	var from = ev.start_date;
 	var to = scheduler.date.add(ev.end_date, scheduler.config.time_step, 'minute');
 	var evs = scheduler.getEvents(from, to);
 	for (var i = 0; i < evs.length; i++) {
 		if(	isOn_user_play || (evs[i].id != id && (evs[i].start_date + "") == (ev.start_date + "") && evs[i].sh == ev.sh)) {
-			scheduler.deleteEvent(id);
+			scheduler.deleteEvent(ev.id);
+			console.log("reservationLightbox: Clic sur un horaire contenant déjà une résa ! return false")
 			return false;
 		}
 	}
 
-	reset_form(ev);
-
-	$("#eventStartDate").html(french_format(ev.start_date));
-	$("#game_type_div").hide();
-	$("#date_resa").val(shortDate_format(ev.start_date));
-	$("#heure_resa").val(shortTime_format(ev.start_date));
-	$("#trou_depart").val(ev.sh);
-
-	setDetailFormMode("add");
-
-	scheduler.startLightbox(id, resa_form);	// ouverture de la lightbox basee sur resa_form
-
-	$(".dhx_cal_cover").click(function(){
-		$("#annuler_button").trigger("click");
-	});
+	////////////////////////////////////////////////////////
+	// On initialise et ouvre la popup
+	openReservationLightbox(ev);
+	
+	// ////////////////////////////////////////////////////////
+	// // On recupère le formulaire dans le DOM
+	// var resa_form = document.getElementById('resa_form_div');
+	//
+	// ////////////////////////////////////////////////////////
+	// // On réinitialise tous les champs du formulaire
+	// reset_form(ev);
+	//
+	// ////////////////////////////////////////////////////////
+	// // initialise la popup avec les valeurs de la partie
+	// // init des champs hidden
+	// $("#id_reservation").val(ev.id);
+	// $("#date_resa").val(shortDate_format(ev.start_date));
+	// $("#heure_resa").val(shortTime_format(ev.start_date));
+	// $("#trou_depart").val(ev.sh);
+	// $("#event_type" ).val(2);	// event_type == 2 => resa provisoire
+	// $("#crud_mode").val("create");
+	// // init de l'affichage
+	// $("#eventStartDate").html(french_format(ev.start_date));
+	// $("#game_type_div").hide();
+	//
+	//
+	// setDetailFormMode("add");
+	//
+	// scheduler.startLightbox(ev.id, resa_form);	// ouverture de la lightbox basee sur resa_form
+	//
+	// close_onClick_outside();
 
 	// Desactive les 18 trous si pas possible
 	getPlayersBySlotFor(ev);	// check la dispo pour les 18 trous
@@ -1712,16 +1707,50 @@ function reservationLightbox(id) {
 	// On lance la résa provisoire des slots aller et retour au max de joueurs
 	CreateResaProvi($("#form .serialize"));
 
-	// On repositionne le type d'event sur le forumulaire pour une resa joueur
-	$("#event_type" ).val(1);	// event_type == 1 => resa joueur
+	// // On repositionne le type d'event sur le forumulaire pour une resa joueur
+	// $("#event_type" ).val(1);	// event_type == 1 => resa joueur
 }	// reservationLightbox
 
+function openReservationLightbox(ev) {
+	console.log("openReservationLightbox ev.id: ", ev.id)
+
+	////////////////////////////////////////////////////////
+	// On recupère le formulaire dans le DOM
+	var resa_form = document.getElementById('resa_form_div');
+	
+	////////////////////////////////////////////////////////
+	// On réinitialise tous les champs du formulaire
+	reset_form(ev);
+
+	////////////////////////////////////////////////////////
+	// initialise la popup avec les valeurs de la partie
+	// init des champs hidden
+	$("#id_reservation").val(ev.id);
+	$("#date_resa").val(shortDate_format(ev.start_date));
+	$("#heure_resa").val(shortTime_format(ev.start_date));
+	$("#trou_depart").val(ev.sh);
+	$("#event_type" ).val(2);	// event_type 1 => joueur 2 => resa provi 3 => event
+	$("#crud_mode").val("read");
+	// init de l'affichage
+	$("#eventStartDate").html(french_format(ev.start_date));
+	$("#game_type_div").hide();
+
+	setDetailFormMode("add");
+
+	scheduler.startLightbox(ev.id, resa_form);	// ouverture de la lightbox basee sur resa_form
+
+	close_onClick_outside();
+
+}	// openReservationLightbox
+
+
 function getPlayersBySlotFor(ev){
-	var mysql_format = scheduler.date.date_to_str("%Y-%m-%d %H:%i");	//moved here by cesar
+	// var mysql_format = scheduler.date.date_to_str("%Y-%m-%d %H:%i");	//moved here by cesar
 	var thatMorning = new Date(ev.start_date);
 	thatMorning.setHours(0);
 	var thatEvening = new Date(ev.start_date);
 	thatEvening.setHours(23);
+
 	$.ajax({
 		async: true,
 		type: "POST",
@@ -1732,19 +1761,28 @@ function getPlayersBySlotFor(ev){
 			end_date: mysql_format(thatEvening)
 		},
 		success: function( data ) {
-			while(occupation_array.length > 0) { 
-				occupation_array.pop();
-			} 
+			var occupation_array = new Array();	//Tableau du nombre de joueurs par slot horaire pour les trous 1 et 10
+			// while(occupation_array.length > 0) {
+			// 	occupation_array.pop();
+			// }
 			$.each(data, function(key, val) {
 				occupation_array[key] = val;
 			});
 			// Activation du switch 9 ou 18 trous en fonction des places restantes
+			// TODO Verif si encore utilisé avec le nouveau switch nbTrousJ
 			var date_key = mysql_format(ev.start_date)+":00";
 			if(date_key in occupation_array[ev.sh]) {
 				for(var i = 4; i > 4-occupation_array[ev.sh][date_key]; i--) {
-					$(".nbTrous18[name=nbTrousJ"+i+"]").prop('disabled', true);
-					$(".nbTrous18[name=nbTrousJ"+i+"]").prop("checked", false);
-					$(".nbTrous9[name=nbTrousJ"+i+"]").prop("checked", true);
+
+					Change_PlayerDiv(i,	// Numero du slot
+						true,			// Div joueur entiere
+						null, null,		// joueur name, et name
+						null,				// id_user
+						false, false		// nbTrousJ et check 18
+					)
+
+					// $("#nbTrousJ" + i).prop("disabled", true);
+					// $("#nbTrousJ" + i).prop("checked", false);
 				}
 			}	
 		}
@@ -1757,25 +1795,39 @@ function scroll_to_now(){
 }	// scroll_to_now
 
 function startEditEventForm(ev){
+	console.log("startEditEventForm, ev.id: ", ev.id)
 
-	var resa_form = document.getElementById('resa_form_div');
-	
-	// On réinitialise tous les champs du formulaire
-	reset_form(ev);
+	// var resa_form = document.getElementById('resa_form_div');
+	//
+	// ////////////////////////////////////////////////////////
+	// // On réinitialise tous les champs du formulaire
+	// reset_form(ev);
+	//
+	// ////////////////////////////////////////////////////////
+	// // initialise la popup avec les valeurs de la partie
+	// // init des champs hidden
+	// $("#id_reservation").val(ev.id);
+	// // $("#date_resa").val(mysql_format(ev.start_date));
+	// $("#date_resa").val(shortDate_format(ev.start_date));
+	// $("#heure_resa").val(shortTime_format(ev.start_date));
+	// $("#trou_depart").val(ev.sh);
+	// $("#event_type" ).val(2);	// event_type == 2 => resa provisoire
+	// $("#crud_mode").val("read");
+	// // init de l'affichage
+	// $("#eventStartDate").html(french_format(ev.start_date));
+	// $("#game_type_div").hide();
+	//
+	// ////////////////////////////////////////////////////////
+	// // Ouvre la div d'edition de la reservation
+	// scheduler.startLightbox(ev.id, resa_form);
+	// close_onClick_outside();		// capture un clic en dehors pour fermer la popup
 
-	// Ouvre la div d'edition de la reservation
-	scheduler.startLightbox(ev.id, resa_form);
+	openReservationLightbox(ev);
 
-	$(".dhx_cal_cover").click(function(){	// capture un clic en dehors pour fermer la popup
-		$("#annuler_button").trigger("click");
-	});
-
-	$("#id_reservation").val(ev.id);
-	$("#eventStartDate").html(french_format(ev.start_date));
-	$("#date_resa").val(mysql_format(ev.start_date));
-	$("#trou_depart").val(ev.sh);
+	////////////////////////////////////////////////////////
+	// On lance la récupération du detail de la partie
 	$.ajax({
-				async: true,
+		async: true,
 		type: "POST",
 		url: "/resajax/loaddetailsform",
 		dataType: "json",
@@ -1805,12 +1857,14 @@ function startEditEventForm(ev){
 						default: $("#game_type_div").hide();
 					}
 				}
-				// On crée les slots des joueurs de la partie uniquement
-				joueurIdx = createPlayerDiv(value, joueurIdx);
+				// On crée les 4 slots des joueurs pour toutes les parties
+				joueurIdx = createPlayersDiv(value, joueurIdx);
 				if(!ev.usr_in && joueurIdx > 4){
+					console.log("Erreur 1 dans requete ajax /resajax/loaddetailsform");
 					setDetailFormMode("none");
 				}
 				if(detectUserPlayTimespan(ev)){
+					console.log("Erreur 2 dans requete ajax /resajax/loaddetailsform");
 					setDetailFormMode("none");
 				}
 				update_joueurs_presents();
@@ -1819,7 +1873,7 @@ function startEditEventForm(ev){
 	});
 }	// startEditEventForm
 
-function createPlayerDiv(value, joueurIdx){
+function createPlayerDiv_old(value, joueurIdx){
 	var nj = joueurIdx;
 	var strname = "";
 	// boucle sur les emplacements joueurs de cette partie à partir de l'idx de début
@@ -1855,6 +1909,59 @@ function createPlayerDiv(value, joueurIdx){
 		// On met à jour le switch du nombre de trous
 		var swj = $("#nbTrousJ" + i);
 		swj.prop("disabled", true);
+		// swj.prop("disabled", false);
+		if(value.players[i-nj].nbTrous == 9){
+			swj.prop("checked", false);
+		}else{
+			swj.prop("checked", true);
+		}
+		// On met à jour la checkbox des ressources
+		var cbresj = $(".Chariot_check[value="+(i-1)+"]");
+		cbresj.prop('disabled',true);
+		if(value.players[i-nj].ressources[0] == "Chariot"){
+			cbresj.prop('checked',true);
+		}
+		joueurIdx++;
+	}
+	return joueurIdx;
+}	// createPlayerDiv_old
+
+function createPlayersDiv(value, joueurIdx){
+	var nj = joueurIdx;
+	var strname = "";
+	// boucle sur les emplacements joueurs de cette partie à partir de l'idx de début
+	for(var i=nj; i < nj+value.players.length; i++){
+		// récup du nom du joueur
+		if(value.players[i-nj].id == 0){
+			strname = value.players[i-nj].info +" (Invité)";
+		}else if(value.players[i-nj].id == 1){
+			strname = value.players[i-nj].info +" (Visiteur)";
+		}else{
+			strname = value.players[i-nj].firstname +" " +value.players[i-nj].lastname;
+		}
+		
+		// si partie selectionnée: afficher ou pas le bouton suppr du joueur
+		if(value.isSelected){
+			if(value.usr_in == "1" || vars.isAdmin){
+				$("#btn_clear_user_" + i).show();
+				$("#btn_clear_user_" + i).attr("tag", value.players[i-nj].userHasResa);
+
+				setDetailFormMode("delete");
+			}else{
+				setDetailFormMode("add_me");
+			}
+		}else{
+			$("#joueur"+i).parent().parent().parent().addClass("other_reservation");
+			$("#joueur"+i).addClass("other_reservation");
+		}
+		$("#joueur"+i).val(strname);
+		$("#joueur"+i).prop("disabled", true);
+		$("#id_joueur"+i).val(value.players[i-nj].id);
+
+		// On met à jour le switch du nombre de trous
+		var swj = $("#nbTrousJ" + i);
+		swj.prop("disabled", true);
+		// swj.prop("disabled", false);
 		if(value.players[i-nj].nbTrous == 9){
 			swj.prop("checked", false);
 		}else{
@@ -1870,6 +1977,7 @@ function createPlayerDiv(value, joueurIdx){
 	}
 	return joueurIdx;
 }	// createPlayerDiv
+
 
 function setDetailFormMode(mode){
 	switch(mode){
@@ -1927,7 +2035,7 @@ function setDetailFormMode(mode){
 	}
 }	// setDetailFormMode
 
-function reset_form(ev){
+function reset_form_old(ev){
 	$("#form")[0].reset();
 	$("#id_resa_provi_aller").val("");
 	$("#id_resa_provi_retour").val("");
@@ -1988,7 +2096,7 @@ function reset_form(ev){
 		$("#btn_clear_user_" + i).attr("tag","");
 		// $("span.invite_label"+i).hide();
 		// $("span.visiteur_label"+i).hide();
-		$("#nbTrousJ" + i).prop("disabled", true);
+		$("#nbTrousJ" + i).prop("disabled", false);
 		$("#nbTrousJ" + i).prop("checked", true);
 		// $(".nbTrous9[name=nbTrousJ"+i+"]").prop('disabled', false);
 		// $(".nbTrous18[name=nbTrousJ"+i+"]").prop('disabled', false);
@@ -1997,10 +2105,133 @@ function reset_form(ev){
 	setDetailFormMode("none")
 	update_joueurs_presents();
 	$('.Chariot_check').prop('disabled',false);
+}	// reset_form_old
+
+function reset_form(ev){
+	$("#form")[0].reset();
+	$("#id_resa_provi_aller").val("");
+	$("#id_resa_provi_retour").val("");
+	$("#id_reservation").val("");
+	scheduler.updateEvent(ev.id);
+	
+	for (var i=1; i <= 4; i++){
+
+		$( "#id_joueur" + i).val("");
+
+		$("#joueur" + i).prop("placeholder", 'Chercher un nom de membre ...');
+		$("#joueur" + i).autocomplete("enable");
+
+		$("#joueur" + i).parent().parent().parent().removeClass("other_reservation");
+		$("#joueur" + i).removeClass("other_reservation");
+
+		// $("#joueur" + i).removeClass("disabled");
+		// $("#joueur" + i).css('color', 'black');
+		// $("#joueur" + i).prop("disabled", false);
+
+		if(vars.isAdmin){
+			Change_PlayerDiv(i,	// Numero du slot
+				true,			// Div joueur entiere
+				true, "",		// joueur name, et name
+				"",				// id_user
+				true, true,		// nbTrousJ et check 18
+				true, false,	// Chariot et check
+				false, "",		// btn_clear_user et son tag
+				true, false,	// Visitor et check
+				true, false		// Invited et check
+			)
+		}else{
+			Change_PlayerDiv(i,	// Numero du slot
+				true,			// Div joueur entiere
+				true, "",		// joueur name, et name
+				null,				// id_user
+				true, true,		// nbTrousJ
+				true, false,	// Chariot
+				false, "",		// btn_clear_user et son tag
+				false, false,	// Visitor
+				false, false	// Invited
+			)
+			if(i == 1){
+				Change_PlayerDiv(1,	// Numero du slot
+					true,			// Div joueur entiere
+					false,"",
+					$("#current_user_id").val()	// joueur name, id_user
+				)
+			}
+		}
+	}
+
+	setDetailFormMode("none")
+	update_joueurs_presents();
 }	// reset_form
 
+function Change_PlayerDiv(slot,
+	enabledDiv,
+	enabledUser, nameUser,
+	idUser,
+	enabledNbHoleSwitch,valueNbHoleSwitch,
+	enabledRes1,valueRes1,
+	enableClear, tagClear,
+	enabledVisitor,valueVisitor,
+	enabledInvited,valueInvited
+){
+	// Set default value if parameters is not defined: null => don't change
+	enabledDiv = defaultFor(enabledDiv, null);
+	enabledUser = defaultFor(enabledUser, null);
+	nameUser = defaultFor(nameUser, null);
+	idUser = defaultFor(idUser, null);
+	enableClear = defaultFor(enableClear, null);
+	tagClear = defaultFor(tagClear, null);
+	enabledNbHoleSwitch = defaultFor(enabledNbHoleSwitch, null);
+	valueNbHoleSwitch = defaultFor(valueNbHoleSwitch, null);
+	enabledRes1 = defaultFor(enabledRes1, null);
+	valueRes1 = defaultFor(valueRes1, null);
+	enabledVisitor = defaultFor(enabledVisitor, null);
+	valueVisitor = defaultFor(valueVisitor, null);
+	enabledInvited = defaultFor(enabledInvited, null);
+	valueInvited = defaultFor(valueInvited, null);
 
+	if(!enabledDiv){
+		enabledUser 		= false;
+		enabledNbHoleSwitch	= false;
+		enabledRes1			= false;
+		enableClear			= false;
+		enabledVisitor		= false;
+		enabledInvited		= false;
+	}
 
+	if(idUser !== null)
+		$("#id_joueur" + slot).val(idUser);
+
+	if(enabledUser !== null)
+		$("#joueur" + slot).prop("disabled", !enabledUser);
+
+	if(enabledNbHoleSwitch !== null)
+		$("#nbTrousJ" + slot).prop("disabled", !enabledNbHoleSwitch);
+	if(valueNbHoleSwitch !== null)
+		$("#nbTrousJ" + slot).prop("checked", valueNbHoleSwitch);
+
+	if(enabledRes1 !== null)
+		$("#Chariot_" + slot).prop("disabled", !enabledRes1);
+	if(valueRes1 !== null)
+		$("#Chariot_" + slot).prop("checked", valueRes1);
+
+	if(enableClear !== null)
+		if(enableClear === true)
+			$("#btn_clear_user_" + slot).show();
+		else
+			$("#btn_clear_user_" + slot).hide();
+	if(tagClear !== null)
+		$("#btn_clear_user_" + slot).attr("tag",tagClear);
+
+	if(enabledVisitor !== null)
+		$("#joueur" + slot + "_visiteur").prop("disabled", !enabledVisitor);
+	if(valueVisitor !== null)
+		$("#joueur" + slot + "_visiteur").prop("checked", valueVisitor);
+	if(enabledInvited !== null)
+		$("#joueur" + slot + "_invite").prop("disabled", !enabledInvited);
+	if(valueInvited !== null)
+		$("#joueur" + slot + "_invite").prop("checked", valueVisitor);
+}
 
 
 
@@ -2008,6 +2239,10 @@ function reset_form(ev){
 /////////////////////////////////////////////////////////////////////////////////
 // COMMON FUNCTIONS
 /////////////////////////////////////////////////////////////////////////////////
+
+function defaultFor(arg, val) {
+	return typeof arg !== 'undefined' ? arg : val;
+}	// Assign default value "val" to parameter "arg"
 
 function CreateResaProvi(formdata){
 	if($("#id_resa_provi_aller" ).val() != ""){	// il y a deja une resa provisoire on ne fait rien
@@ -2095,24 +2330,18 @@ function validate_name(object){
 		if($("#id_reservation").val() != ""){
 			setDetailFormMode("update");
 		}
-		// var num = parseInt(object[0].name.substring(object[0].name.length-1)); // numero du joueur
-		// if($("#game_type").val() == "2"){	// parcours 18-retour
-		// 	$(".nbTrous9[name=nbTrousJ"+num+"]").prop('disabled', true);
-		// 	// $(".nbTrous9[name=nbTrousJ"+num+"]").prop("checked", false);
-		// 	$(".nbTrous18[name=nbTrousJ"+num+"]").prop('disabled', true);
-		// 	// $(".nbTrous18[name=nbTrousJ"+num+"]").prop("checked", true);
-		// }
 	}
 }	// validate_name 
 
 function unvalidate_name(object){
 	object.css('color', 'black');
-	// var idSelector = "#id_"+object.prop('id_reservation');
-	// if( !$("#" + object.prop('id_reservation') + "_visiteur").checked &&
-	// !$("#" + object.prop('id_reservation') + "_invite").checked) {
-	// 	$(idSelector).removeAttr("value");
-	// }
 }	// unvalidate_name
+
+function close_onClick_outside(){
+	$(".dhx_cal_cover").click(function(){
+		$("#annuler_button").trigger("click");
+	});
+}
 
 /////////////////////////////////////////////////////////////////////////////////
 

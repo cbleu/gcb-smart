@@ -418,10 +418,10 @@ class Controller_Golf_App extends Controller_Golf_Main
 		$this->template->content->parcours		= $this->parcours;
 		
 		if($this->isLogged && !$this->isAdmin){
-			$this->template->content->current_user_fullname =  " ".$this->user->firstname." ".$this->user->lastname." (".$this->user->indgolf.")";
+			// $this->template->content->current_user_fullname =  " ".$this->user->firstname." ".$this->user->lastname." (".$this->user->indgolf.")";
 			$this->template->content->current_user_id =  $this->user->id;
 		}else{
-			$this->template->content->current_user_fullname =  "";
+			// $this->template->content->current_user_fullname =  "";
 			$this->template->content->current_user_id =  "";
 		}
 		// Set active page in menu

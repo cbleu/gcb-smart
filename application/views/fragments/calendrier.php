@@ -89,6 +89,7 @@
 						<div class="col-md-12">
 							<div class="form-group">
 
+								<!-- ONGLETS ALLER/RETOUR -->
 								<ul id="nav_tab_parcours" class="nav nav-tabs bordered">
 									<li class="active">
 										<a href="#tab_parcours" data-toggle="tab" aria-expanded="true">
@@ -106,8 +107,10 @@
 									</li>
 								</ul>
 
+								<!-- CONTENU DES ONGLETS -->
 								<div id="parcours_div" class="tab-content">
 
+									<!-- CONTENU ONGLET ALLER -->
 									<div class="tab-pane fade active in" id="tab_parcours">
 
 										<!-- Global Hidden Inputs for that reservation -->
@@ -118,7 +121,8 @@
 										<input type="hidden" name="event_type" id="event_type" class="serialize" />
 										<input type="hidden" name="crud_mode" id="crud_mode" value="none" class="serialize" />
 										<input type="hidden" name="user" id="user" class="serialize" />
-										<input type="hidden" name="current_full_name" id="current_full_name" value="<?= $current_user_fullname?>" class="serialize" />
+										<!-- <input type="hidden" name="current_full_name" id="current_full_name" value="<?// echo $current_user_fullname?>" class="serialize" /> -->
+										<!-- <input type="hidden" name="current_full_name" id="current_full_name" value="<?= $thisUserFullName?>" class="serialize" /> -->
 										<input type="hidden" name="current_user_id" id="current_user_id" value="<?= $current_user_id?>" class="serialize" />
 										<input type="hidden" name="isFormValid" id="isFormValid"  class="serialize" value="false">
 										<input type="hidden" name="id_resa_provi_aller" id="id_resa_provi_aller"  class="serialize">
@@ -139,7 +143,8 @@
 															$user_value = " value='' ";
 															$user_id	= "2";	// utilisateur temporaire pour le moment
 														}else{
-															$user_value = " value='" .$current_user_fullname ."' disabled ";
+															// $user_value = " value='" .$current_user_fullname ."' disabled ";
+															$user_value = " value='" .$thisUserFullName ."' disabled ";
 															$user_id	= $current_user_id;
 														}
 													}else {
@@ -186,22 +191,22 @@
 																<div class="col-md-8 player_div">
 																	<? if($isAdmin){?>
 
-																	<label class="radio radio-inline">
-																		<input type="checkbox" id="joueur<?= $i;?>_visiteur" class="radiobox"/>
-																		<span class="visiteur_label<?=$i;?>"> Visiteur</span>
-																	</label>
-																	<? }?>
-
-																	<? if($i > 1) {?>
 																		<label class="radio radio-inline">
-																			<input type="checkbox" id="joueur<?= $i;?>_invite" class="radiobox"/>
-																			<span class="invite_label<?=$i;?>"> Invité</span>
+																			<input type="checkbox" id="joueur<?= $i;?>_visiteur" class="radiobox"/>
+																			<span class="visiteur_label<?=$i;?>"> Visiteur</span>
 																		</label>
+
+																		<? if($i > 1) {?>
+																			<label class="radio radio-inline">
+																				<input type="checkbox" id="joueur<?= $i;?>_invite" class="radiobox"/>
+																				<span class="invite_label<?=$i;?>"> Invité</span>
+																			</label>
+																		<? }?>
 																	<? }?>
 
 																<? for($k = 0; $k < count($ressources); $k++) {?>
 																	<label class="radio radio-inline">
-																	<input type='checkbox' name='<?=$ressources[$k]['ressource'];?>[]' value='<?=$i-1;?>' class='radiobox <?=$ressources[$k]['ressource'];?>_check serialize'/> 
+																	<input type='checkbox' name='<?=$ressources[$k]['ressource'];?>[]' value='<?=$i-1;?>' id='<?=$ressources[$k]['ressource'];?>_<?=$i;?>' class='radiobox <?=$ressources[$k]['ressource'];?>_check serialize'/> 
 																	<?=$ressources[$k]['ressource'];?>
 																	</label>
 																<?} // for k?>
