@@ -7,6 +7,8 @@ class EGP_GameReservation
 	public $isValid			= true;
 	public $message			= "";
 
+	public $permanent		= false;	// Reservation provisoire ou permanente
+
 	public $nb_joueurs		= 0;		// nb de joueurs present au debut de la partie: parcours aller
 	public $nb_trous		= 9;		// nb de trous pour la partie
 	public $date;						// Date du jour de la partie
@@ -429,7 +431,7 @@ class EGP_GameReservation
 			$this->postnbusers	= Arr::get($this->method, 'nb_joueurs');
 		}
 		
-		if(!$this->CheckPostedPlayers()){	// probleme dans les joueurs
+		if(!$this->CheckPostNbPlayers()){	// probleme dans les joueurs
 			return array(
 				'valid' => $this->isValid,
 				'message' => $this->message
@@ -477,6 +479,8 @@ class EGP_GameReservation
 		
 		$this->method = $post;		// on récupère les paramètres de la requete
 		
+		$this->isPermanent = $permanent;
+		
 		$this->postdate 	= Arr::get($this->method, 'date_resa');
 		$this->postheure 	= Arr::get($this->method, 'heure_resa');
 		$this->nb_trous 	= Arr::get($this->method, 'nb_trous');
@@ -514,7 +518,9 @@ class EGP_GameReservation
 		// Récupération et validation des joueurs				//
 		
 		for($i = 0; $i < $this->max_joueurs; $i++) {
-			$formplayerid = Arr::get($this->method, 'id_joueur'.($i+1));
+			if(Arr::get($this->method, 'crud_J'.($i+1)) != "add")
+				continue;
+			$formplayerid = Arr::get($this->method, 'id_J'.($i+1));
 			if($formplayerid != null && $formplayerid >= 0) {
 				// $formplayernbtrous = Arr::get($this->method, 'nbTrousJ'.($i+1));
 				$formplayernbtrous = Arr::get($this->method, 'nb_trous_J'.($i+1));	// 2015-06-22 update for new form
@@ -534,11 +540,13 @@ class EGP_GameReservation
 				// TODO ici ajouter la création du pointeur player vers le slotAller
 			}
 		}
-		if(!$this->CheckPostedPlayers()){	// probleme dans les joueurs
-			return array(
-				'valid' => $this->isValid,
-				'message' => $this->message
-			);
+		if($permanent){
+			if(!$this->CheckPostNbPlayers()){	// probleme dans les joueurs
+				return array(
+					'valid' => $this->isValid,
+					'message' => $this->message
+				);
+			}
 		}
 		
 		//////////////////////////////////////////////////////////
@@ -614,17 +622,17 @@ class EGP_GameReservation
 		return $this->isValid;
 	}	// CheckPostDateAndTime
 	
-	public function CheckPostedPlayers()	// check du nombres de joueurs => entre 1 et 4
+	public function CheckPostNbPlayers()	// check du nombres de joueurs => entre 1 et 4
 	{
 		if(	$this->nb_joueurs < 1 || $this->nb_joueurs > $this->max_joueurs){
 			$this->message = "ERREUR : Nombre de joueurs non valide";
-			Log::instance()->add(Log::NOTICE, "GameReservation::CheckPostedPlayers: " .$this->message);
+			Log::instance()->add(Log::NOTICE, "GameReservation::CheckPostNbPlayers: " .$this->message);
 			$this->isValid = false;
 		}else{
 			$this->isValid = true;
 		}
 		return $this->isValid;
-	}	// CheckPostedPlayers
+	}	// CheckPostNbPlayers
 		
 	private function UpdatePlayersParcours()
 	{
@@ -689,14 +697,15 @@ class EGP_GameReservation
 		$this->parcours['aller']['nb_players']	= $this->nb_joueurs;
 		$this->parcours['aller']['duree']		= $dureeAller;
 		$this->parcours['aller']['fin']			= $horairedefin_aller;
-		if ($nbretour > 0){
+		// if ($nbretour > 0){	// on crée le parcour retour pour les resa provis
+			// TODO Ameliorer les resa provi !
 			$this->parcours['retour']['id']			= $partie['parcour_retour'];
 			$this->parcours['retour']['slot']		= $horaireduslot_retour;
 			$this->parcours['retour']['trou_depart']= $trou_retour;
 			$this->parcours['retour']['nb_players']	= $nbretour;
 			$this->parcours['retour']['duree']		= $dureeRetour;
 			$this->parcours['retour']['fin']		= $horairedefin_retour;
-		}
+		// }
 	}	// UpdatePlayersParcours
 	
 	public function CreateDigest()

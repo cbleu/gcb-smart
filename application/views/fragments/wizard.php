@@ -161,10 +161,10 @@
 															<div class="controls">
 																<? if($isAdmin && $i ==1){?>
 																	<input type="text" placeholder="Chercher un nom..." id="joueur<?=$i;?>" name="joueur<?=$i;?>" class="joueur_input serialize" value="" style="height: 30px"/>
-																	<input type="hidden" name="id_joueur1" id="id_joueur1" class="serialize" value="2">
+																	<input type="hidden" name="id_J1" id="id_J1" class="serialize" value="2">
 																<? }else{ ?>
 																	<input type="text" placeholder="Chercher un nom..." id="joueur<?=$i;?>" name="joueur<?=$i;?>" class="joueur_input serialize" value="<?=$players[$i]['name'];?>" <?=$players[$i]['tags'];?> style="height: 30px"/>
-																	<input type="hidden" name="id_joueur<?=$i;?>" id="id_joueur<?=$i;?>" class="serialize" value="<?=$players[$i]['id'];?>">
+																	<input type="hidden" name="id_J<?=$i;?>" id="id_J<?=$i;?>" class="serialize" value="<?=$players[$i]['id'];?>">
 																<? } ?>
 																<input type="hidden" name="nbTrousJ<?=$i;?>" id="nbTrousJ<?=$i;?>" class="serialize" value="">
 																<?php for($k = 0; $k < count($ressources); $k++) {
@@ -229,7 +229,7 @@
 															</div>
 														</div>
 
-														<input type="hidden" id="id_joueur1" name="id_joueur1" class="serialize" value="1">
+														<input type="hidden" id="id_J1" name="id_J1" class="serialize" value="1">
 														<input type="hidden" id="places_dispo" value="4">
 
 														<!-- <? for($k = 0; $k < count($ressources); $k++) { ?>

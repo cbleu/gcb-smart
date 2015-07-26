@@ -18,14 +18,14 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 	public function after()
 	{
 		// Set the response content-type here
-		$this->response->headers('Content-Type','application/json');
+		// $this->response->headers('Content-Type','application/json');
 		parent::after();
 	}
 
 	////////////////////////////////
 	// ACTION FUNCS ////////////////
 	////////////////////////////////
-	
+
 	public function action_eventsparcours()
 	{
 		$rouge			= '#ff0000';
@@ -419,7 +419,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		echo json_encode($total_joueurs_counts);
 	}	// action_getdispo
 	
-	public function action_resaprovi()
+	public function action_addprovi()
 	{
 		$isValid = false;
 		$response = array();
@@ -440,8 +440,8 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		//////////////////////////////////////////////////////////////////////////
 		// Renvoi de la reponse
 		echo json_encode($response);
-	}	// action_resaprovi
-	
+	}	// action_addprovi
+
 	public function action_cancelresaprovi()
 	{
 		$isValid = false;
@@ -768,6 +768,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		//////////////////////////////////////////////////////////
 		// Creation de la page de résultat
 		echo json_encode(array(
+		// echo array(
 			'valid' => $valid,
 			'message' => $message,
 		));
@@ -809,7 +810,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		echo json_encode($returnArray);
 	}	// action_update
 	
-	public function action_update_OLD()
+/*	public function action_update_OLD()
 	{
 		$message = "Veuillez vous identifier";
 		$valid = false;
@@ -1259,7 +1260,8 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 			'message' => $message,
 		));
 	}	// action_update_OLD
-	
+*/
+
 	public function action_delete()
 	{
 		if (!$this->isLogged) {

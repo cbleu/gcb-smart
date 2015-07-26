@@ -152,8 +152,8 @@ function initWizard()
 						var input = document.createElement("input");
 						input.type = "hidden";
 						input.className = "serialize";
-						input.name = "id_joueur" + i;
-						input.id = "id_joueur" + i;
+						input.name = "id_J" + i;
+						input.id = "id_J" + i;
 						input.value = "1";
 						parentdiv.appendChild(input);
 					}
@@ -393,8 +393,8 @@ function initWizard()
 							var input = document.createElement("input");
 							input.type = "hidden";
 							input.className = "serialize";
-							input.name = "id_joueur" + i;
-							input.id = "id_joueur" + i;
+							input.name = "id_J" + i;
+							input.id = "id_J" + i;
 							input.value = "1";
 							parentdiv.appendChild(input);
 						}
@@ -710,7 +710,7 @@ function restrict_user_nb()
 		for(var i = 4; i > place_dispo; i--) {
 			if(vars.isLogged){
 				$("#joueur"+i).val("");
-				$("#id_joueur"+i).val("");
+				$("#id_J"+i).val("");
 				$("#joueur"+i).prop("disabled", true);
 				$(".cb_ressource_"+i).prop("disabled", true);
 				$(".cb_ressource_"+i).prop("checked", false);
@@ -731,8 +731,8 @@ function update_joueurs()
 	// joueurs_presents_ = Array();
 	$("#nb_joueurs").val(update_joueurs_presents());
 	for (var i=1; i<=4; i++){
-		if($("#id_joueur"+i).val() !== ""){
-			// joueurs_presents_.push($("#id_joueur"+i).val());
+		if($("#id_J"+i).val() !== ""){
+			// joueurs_presents_.push($("#id_J"+i).val());
 			// $("#nb_joueurs").val(joueurs_presents_.length);
 			$("#nbTrousJ" + i).val($("#nb_trous").val());
 		}
@@ -902,7 +902,10 @@ function initCalendrier()
 		// appendTo: "#form, #details_form_div",		// added by cesar to display menu on top of the form
 		minLength: 2,
 		select: function( event, ui ) {
-			var idSelector = "#id_"+$(this).prop('id');
+			var idxj = parseInt(this.name.substr(this.name.length-1));
+		
+			// var idSelector = "#id_"+$(this).prop('id');
+			var idSelector = "#id_J" + idxj;
 			$(idSelector).val(ui.item.key);
 			lastNameValue = ui.item.value;
 			validate_name($(this));
@@ -924,14 +927,14 @@ function initCalendrier()
 				$("#joueur"+localid).prop("placeholder", 'Nom de l\'invité (facultatif)');
 				$("#joueur"+localid).autocomplete("disable");
 				$("#joueur"+localid).focus().val("");
-				$("#id_joueur"+localid).val("0");	// id invite = 0
+				$("#id_J"+localid).val("0");	// id invite = 0
 			}
 			else {
 				$("#joueur"+localid).prop("placeholder", 'Chercher un nom de membre ...');
 				$("#joueur"+localid).autocomplete("enable");
 				$("#joueur"+localid).val("");
 				$("#joueur"+localid).focus();
-				$("#id_joueur"+localid).val("");
+				$("#id_J"+localid).val("");
 			}
 		}// bloc admin
 	});
@@ -944,14 +947,14 @@ function initCalendrier()
 				$("#joueur"+localid).prop("placeholder", 'Nom du visiteur (facultatif)');
 				$("#joueur"+localid).autocomplete("disable");
 				$("#joueur"+localid).focus().val("");
-				$("#id_joueur"+localid).val("1");	// id visiteur = 1
+				$("#id_J"+localid).val("1");	// id visiteur = 1
 			}
 			else {
 				$("#joueur"+localid).prop("placeholder", 'Chercher un nom de membre ...');
 				$("#joueur"+localid).autocomplete("enable");
 				$("#joueur"+localid).val("");
 				$("#joueur"+localid).focus();
-				$("#id_joueur"+localid).val("");
+				$("#id_J"+localid).val("");
 			}
 		}// bloc admin
 	});
@@ -984,21 +987,37 @@ function initCalendrier()
 				$("#joueur"+i+"_visiteur").prop('disabled', false);
 				setDetailFormMode("update");
 			}else if(player_number == 0 && $("#joueur"+i).val() == "") {
-				// $("#joueur"+i).val($("#current_full_name").val());
-				$("#joueur"+i).val(vars.thisUserFullName);
-				$("#joueur"+i).prop('disabled', true);
-				$("#id_joueur"+i).val($("#current_user_id").val());
-				setDetailFormMode("update");
+				// $("#joueur"+i).val(vars.thisUserFullName);
+				// $("#joueur"+i).prop('disabled', true);
+				// $("#id_J"+i).val($("#current_user_id").val());
+				$("#crud_J"+i).val("add");
+				Change_PlayerDiv(i,	// Numero du slot
+					true,			// Div joueur entiere
+					true, vars.thisUserFullName,	// joueur name, et name
+					$("#current_user_id").val(),	// id_user
+					true, true,		// nbTrousJ
+					true, false		// Chariot
+				)
+				SetOtherReservation(i, false);
+				setDetailFormMode("add");
 				player_number = i;
-				// var id_name = "#joueur"+i;
-				// joueurs_presents_[parseInt(id_name.substring(id_name.length-1)) - 1] = $("#id_joueur"+i).val();
-				joueurs_presents_[i] = $("#id_joueur"+i).val();
-				// for(var j = 1; j < i ;j++){
-					// $("#id_joueur"+j).val("");	// on efface l'id des joueurs des autres parties pour action_update
-				// }
+				joueurs_presents_[i] = $("#id_J"+i).val();
 			}else if(player_number != 0) {
-				$("#joueur"+i).prop('disabled', false);
-				// $("#joueur"+i+"_invite").prop('disabled', false);
+				// $("#joueur"+i).prop('disabled', false);
+				Change_PlayerDiv(i,	// Numero du slot
+					true,			// Div joueur entiere
+					true, "",		// joueur name, et name
+					null,				// id_user
+					true, true,		// nbTrousJ
+					true, false		// Chariot
+				)
+				SetOtherReservation(i, false);
+			}else{
+				// On effectue la mise à jour du slot joueur
+				Change_PlayerDiv(i,			// Numero du slot
+					false					// Div joueur entiere désactivée
+				)
+				SetOtherReservation(i, true);
 			}
 		}
 	});
@@ -1378,6 +1397,10 @@ function initScheduler()
 		console.log("For recurring event ONLY: onEventChanged");
 		console.log("onEventChanged: ",id, ev);
 		
+		if (ev.evt !== "3"){
+			console.log("Warning not an event ! return... ");
+			return;
+		}
 		// When user choose update a copy,
 		// we don't update the original event, we only create a new one
 		if(ev.id.indexOf('#') !== -1 ){
@@ -1505,6 +1528,7 @@ function initScheduler()
 		var ev = scheduler.getEvent(event_id);
 		// if(click_disabled || ev.evt == "evenement" || ev.evt == "provi" || scheduler.config.readonly ) {
 		// if(click_disabled || ev.evt > 1 || scheduler.config.readonly ) {
+		
 		// TODO faire la gestion de l'edition des evenements ev.evt==3
 		if(click_disabled || scheduler.config.readonly ) {
 			return false;
@@ -1701,11 +1725,11 @@ function reservationLightbox(id) {
 	//
 	// close_onClick_outside();
 
-	// Desactive les 18 trous si pas possible
-	getPlayersBySlotFor(ev);	// check la dispo pour les 18 trous
-
 	// On lance la résa provisoire des slots aller et retour au max de joueurs
 	CreateResaProvi($("#form .serialize"));
+
+	// Desactive les 18 trous si pas possible
+	getPlayersBySlotFor(ev);	// check la dispo pour les 18 trous
 
 	// // On repositionne le type d'event sur le forumulaire pour une resa joueur
 	// $("#event_type" ).val(1);	// event_type == 1 => resa joueur
@@ -1730,7 +1754,7 @@ function openReservationLightbox(ev) {
 	$("#heure_resa").val(shortTime_format(ev.start_date));
 	$("#trou_depart").val(ev.sh);
 	$("#event_type" ).val(2);	// event_type 1 => joueur 2 => resa provi 3 => event
-	$("#crud_mode").val("read");
+	$("#crud_mode").val("add");
 	// init de l'affichage
 	$("#eventStartDate").html(french_format(ev.start_date));
 	$("#game_type_div").hide();
@@ -1775,7 +1799,7 @@ function getPlayersBySlotFor(ev){
 				for(var i = 4; i > 4-occupation_array[ev.sh][date_key]; i--) {
 
 					Change_PlayerDiv(i,	// Numero du slot
-						true,			// Div joueur entiere
+						null,			// Div joueur entiere
 						null, null,		// joueur name, et name
 						null,				// id_user
 						false, false		// nbTrousJ et check 18
@@ -1796,31 +1820,6 @@ function scroll_to_now(){
 
 function startEditEventForm(ev){
 	console.log("startEditEventForm, ev.id: ", ev.id)
-
-	// var resa_form = document.getElementById('resa_form_div');
-	//
-	// ////////////////////////////////////////////////////////
-	// // On réinitialise tous les champs du formulaire
-	// reset_form(ev);
-	//
-	// ////////////////////////////////////////////////////////
-	// // initialise la popup avec les valeurs de la partie
-	// // init des champs hidden
-	// $("#id_reservation").val(ev.id);
-	// // $("#date_resa").val(mysql_format(ev.start_date));
-	// $("#date_resa").val(shortDate_format(ev.start_date));
-	// $("#heure_resa").val(shortTime_format(ev.start_date));
-	// $("#trou_depart").val(ev.sh);
-	// $("#event_type" ).val(2);	// event_type == 2 => resa provisoire
-	// $("#crud_mode").val("read");
-	// // init de l'affichage
-	// $("#eventStartDate").html(french_format(ev.start_date));
-	// $("#game_type_div").hide();
-	//
-	// ////////////////////////////////////////////////////////
-	// // Ouvre la div d'edition de la reservation
-	// scheduler.startLightbox(ev.id, resa_form);
-	// close_onClick_outside();		// capture un clic en dehors pour fermer la popup
 
 	openReservationLightbox(ev);
 
@@ -1854,12 +1853,14 @@ function startEditEventForm(ev){
 						case 2:
 							$("#game_type_div").html("Parcours Retour");
 						break;
-						default: $("#game_type_div").hide();
+						default:
+							$("#game_type_div").hide();
 					}
 				}
+
 				// On crée les 4 slots des joueurs pour toutes les parties
 				joueurIdx = createPlayersDiv(value, joueurIdx);
-				if(!ev.usr_in && joueurIdx > 4){
+				if(!ev.u && joueurIdx > 4){
 					console.log("Erreur 1 dans requete ajax /resajax/loaddetailsform");
 					setDetailFormMode("none");
 				}
@@ -1867,12 +1868,20 @@ function startEditEventForm(ev){
 					console.log("Erreur 2 dans requete ajax /resajax/loaddetailsform");
 					setDetailFormMode("none");
 				}
-				update_joueurs_presents();
 			});
+			for(var i = joueurIdx; i <= max_joueurs; i++){
+				// On effectue la mise à jour du slot joueur
+				Change_PlayerDiv(i,			// Numero du slot
+					false					// Div joueur entiere
+				)
+				SetOtherReservation(i, true);
+			}
+			update_joueurs_presents();
 		}
 	});
 }	// startEditEventForm
 
+/*
 function createPlayerDiv_old(value, joueurIdx){
 	var nj = joueurIdx;
 	var strname = "";
@@ -1899,12 +1908,12 @@ function createPlayerDiv_old(value, joueurIdx){
 				setDetailFormMode("add_me");
 			}
 		}else{
-			$("#joueur"+i).parent().parent().parent().addClass("other_reservation");
+			$("#joueur"+i).parent().parent().parent().addClass("c");
 			$("#joueur"+i).addClass("other_reservation");
 		}
 		$("#joueur"+i).val(strname);
 		$("#joueur"+i).prop("disabled", true);
-		$("#id_joueur"+i).val(value.players[i-nj].id);
+		$("#id_J"+i).val(value.players[i-nj].id);
 
 		// On met à jour le switch du nombre de trous
 		var swj = $("#nbTrousJ" + i);
@@ -1925,10 +1934,12 @@ function createPlayerDiv_old(value, joueurIdx){
 	}
 	return joueurIdx;
 }	// createPlayerDiv_old
-
-function createPlayersDiv(value, joueurIdx){
+*/
+/*
+function createPlayersDivnew(value, joueurIdx){
 	var nj = joueurIdx;
 	var strname = "";
+	
 	// boucle sur les emplacements joueurs de cette partie à partir de l'idx de début
 	for(var i=nj; i < nj+value.players.length; i++){
 		// récup du nom du joueur
@@ -1951,12 +1962,12 @@ function createPlayersDiv(value, joueurIdx){
 				setDetailFormMode("add_me");
 			}
 		}else{
-			$("#joueur"+i).parent().parent().parent().addClass("other_reservation");
+			$("#joueur"+i).parent().parent().addClass("other_reservation");
 			$("#joueur"+i).addClass("other_reservation");
 		}
 		$("#joueur"+i).val(strname);
 		$("#joueur"+i).prop("disabled", true);
-		$("#id_joueur"+i).val(value.players[i-nj].id);
+		$("#id_J"+i).val(value.players[i-nj].id);
 
 		// On met à jour le switch du nombre de trous
 		var swj = $("#nbTrousJ" + i);
@@ -1976,8 +1987,77 @@ function createPlayersDiv(value, joueurIdx){
 		joueurIdx++;
 	}
 	return joueurIdx;
-}	// createPlayerDiv
+}	// createPlayerDivnew
+*/
 
+function createPlayersDiv(value, joueurIdx){
+	console.log("createPlayersDiv joueurIdx:", joueurIdx);
+	var nj = joueurIdx;
+	var mode = "none";
+	
+	// boucle sur les emplacements joueurs de cette partie à partir de l'idx de début
+	for(var i=nj; i < nj+value.players.length; i++){
+
+		var strname = "";
+		var btncleartag = null;
+		var swnbt;
+		var cbres;
+
+		// récup du nom du joueur
+		if(value.players[i-nj].id == 0){
+			strname = value.players[i-nj].info +" (Invité)";
+		}else if(value.players[i-nj].id == 1){
+			strname = value.players[i-nj].info +" (Visiteur)";
+		}else{
+			strname = value.players[i-nj].firstname +" " +value.players[i-nj].lastname;
+		}
+
+		if(value.isSelected){
+			// Partie selectionnée: afficher ou pas le bouton suppr du joueur
+			if(value.usr_in == "1" || vars.isAdmin){
+				btncleartag = value.players[i-nj].userHasResa;
+				mode = "delete";
+				setDetailFormMode(mode);
+			}else{
+				mode = "add_me";
+				setDetailFormMode(mode);
+			}
+		}else{
+			// Partie non selectionnée
+			SetOtherReservation(i, true);
+		}
+
+		// On met à jour le switch du nombre de trous
+		if(value.players[i-nj].nbTrous == 18){
+			swnbt = true;
+		}else{
+			swnbt = false;
+		}
+		// On met à jour la checkbox des ressources
+		if(value.players[i-nj].ressources[0] == "Chariot"){
+			cbres = true;
+		}else{
+			cbres = false;
+		}
+
+		// On effectue la mise à jour du slot joueur
+		Change_PlayerDiv(i,			// Numero du slot
+			false,					// Div joueur entiere
+			false, strname,			// joueur name, et name
+			value.players[i-nj].id,	// id_user
+			false, swnbt,			// nbTrousJ et check 18
+			false, cbres,			// Chariot et check
+			false, false,			// Visitor et check
+			false, false			// Invited et check
+		)
+		SetBtnClear(i, btncleartag);
+		
+		// Incremente le slot courant du joueur
+		joueurIdx++;
+	}
+	
+	return joueurIdx;
+}	// createPlayerDiv
 
 function setDetailFormMode(mode){
 	switch(mode){
@@ -2035,78 +2115,6 @@ function setDetailFormMode(mode){
 	}
 }	// setDetailFormMode
 
-function reset_form_old(ev){
-	$("#form")[0].reset();
-	$("#id_resa_provi_aller").val("");
-	$("#id_resa_provi_retour").val("");
-	$("#id_reservation").val("");
-	scheduler.updateEvent(ev.id);
-	
-	// if(vars.isAdmin){
-	// 	$("#joueur1").prop("disabled", false);
-	// }else{
-	// 	$("#joueur1").prop("disabled", true);
-	// }
-	// $("#joueur2").prop("disabled", false);
-	// $("#joueur3").prop("disabled", false);
-	// $("#joueur4").prop("disabled", false);
-	
-	// $("#joueur1").prop("placeholder", 'Chercher un nom de membre ...');
-	// $("#joueur2").prop("placeholder", 'Chercher un nom de membre ...');
-	// $("#joueur3").prop("placeholder", 'Chercher un nom de membre ...');
-	// $("#joueur4").prop("placeholder", 'Chercher un nom de membre ...');
-	
-	// $("#joueur1").css('color', 'black');
-	// $("#joueur2").css('color', 'black');
-	// $("#joueur3").css('color', 'black');
-	// $("#joueur4").css('color', 'black');
-		
-	// if(vars.isAdmin){
-	// 	$("#id_joueur1").val("2");	// si admin on laisse vide
-	// }else{
-	// 	$("#id_joueur1").val($("#current_user_id").val());
-	// }
-	$("#id_joueur2, #id_joueur3, #id_joueur4").val("");
-	$("#id_joueur2, #id_joueur3, #id_joueur4").prop("placeholder", 'Chercher un nom de membre ...');
-	
-	$("#joueur1, #joueur2, #joueur3, #joueur4").autocomplete("enable");
-	// $("#joueur1, #joueur2, #joueur3, #joueur4").parent().removeClass("other_reservation");
-	// $("#joueur1, #joueur2, #joueur3, #joueur4").removeClass("other_reservation");
-
-	$("#joueur1, #joueur2, #joueur3, #joueur4").parent().parent().parent().removeClass("other_reservation");
-	$("#joueur1, #joueur2, #joueur3, #joueur4").removeClass("other_reservation");
-
-	$("#joueur1, #joueur2, #joueur3, #joueur4").removeClass("disabled");
-	$("#joueur1, #joueur2, #joueur3, #joueur4").css('color', 'black');
-	$("#joueur1, #joueur2, #joueur3, #joueur4").prop("disabled", false);
-	
-	$("#id_joueur1, #id_joueur2, #id_joueur3, #id_joueur4").val("");
-	if(vars.isAdmin){
-		$("#joueur1").prop("disabled", false);
-		$("#id_joueur1").val("2");	// si admin on laisse vide
-	}else{
-		$("#joueur1").prop("disabled", true);
-		$("#id_joueur1").val($("#current_user_id").val());
-	}
-	
-	for (var i=1; i <= 4; i++){
-		// $("label[for=joueur"+i+"] span.action_span span.leave_button").hide();
-		// $("label[for=joueur"+i+"] span.action_span span.leave_button").attr("tag","");
-		$("#btn_clear_user_" + i).hide();
-		$("#btn_clear_user_" + i).attr("tag","");
-		// $("span.invite_label"+i).hide();
-		// $("span.visiteur_label"+i).hide();
-		$("#nbTrousJ" + i).prop("disabled", false);
-		$("#nbTrousJ" + i).prop("checked", true);
-		// $(".nbTrous9[name=nbTrousJ"+i+"]").prop('disabled', false);
-		// $(".nbTrous18[name=nbTrousJ"+i+"]").prop('disabled', false);
-		// $(".nbTrous18[name=nbTrousJ"+i+"]").prop('checked', true);
-	}
-	setDetailFormMode("none")
-	update_joueurs_presents();
-	$('.Chariot_check').prop('disabled',false);
-}	// reset_form_old
-
 function reset_form(ev){
 	$("#form")[0].reset();
 	$("#id_resa_provi_aller").val("");
@@ -2116,17 +2124,14 @@ function reset_form(ev){
 	
 	for (var i=1; i <= 4; i++){
 
-		$( "#id_joueur" + i).val("");
+		// $( "#id_J" + i).val("");
 
 		$("#joueur" + i).prop("placeholder", 'Chercher un nom de membre ...');
 		$("#joueur" + i).autocomplete("enable");
 
-		$("#joueur" + i).parent().parent().parent().removeClass("other_reservation");
-		$("#joueur" + i).removeClass("other_reservation");
+		SetOtherReservation(i, false);
 
-		// $("#joueur" + i).removeClass("disabled");
-		// $("#joueur" + i).css('color', 'black');
-		// $("#joueur" + i).prop("disabled", false);
+		SetBtnClear(i, false);
 
 		if(vars.isAdmin){
 			Change_PlayerDiv(i,	// Numero du slot
@@ -2135,7 +2140,7 @@ function reset_form(ev){
 				"",				// id_user
 				true, true,		// nbTrousJ et check 18
 				true, false,	// Chariot et check
-				false, "",		// btn_clear_user et son tag
+				// false, "",		// btn_clear_user et son tag
 				true, false,	// Visitor et check
 				true, false		// Invited et check
 			)
@@ -2146,7 +2151,7 @@ function reset_form(ev){
 				null,				// id_user
 				true, true,		// nbTrousJ
 				true, false,	// Chariot
-				false, "",		// btn_clear_user et son tag
+				// false, "",		// btn_clear_user et son tag
 				false, false,	// Visitor
 				false, false	// Invited
 			)
@@ -2164,13 +2169,38 @@ function reset_form(ev){
 	update_joueurs_presents();
 }	// reset_form
 
+function SetOtherReservation(slot, enableOther){
+	enableOther = defaultFor(enableOther, null);
+
+	console.log("SetOtherReservation slot ", slot, ": ", enableOther);
+	if(enableOther){
+		$("#joueur" + slot).parent().parent().addClass("other_reservation");
+		$("#joueur" + slot).addClass("other_reservation");
+	}else{
+		$("#joueur" + slot).parent().parent().removeClass("other_reservation");
+		$("#joueur" + slot).removeClass("other_reservation");
+	}
+}
+
+function SetBtnClear(slot, clearTag){
+	clearTag = defaultFor(clearTag, null);
+
+	if(clearTag){
+		$("#btn_clear_user_" + slot).show();
+		$("#btn_clear_user_" + slot).attr("tag",clearTag);
+	}else{
+		$("#btn_clear_user_" + slot).hide();
+		$("#btn_clear_user_" + slot).attr("tag","");
+	}
+
+}
+
 function Change_PlayerDiv(slot,
 	enabledDiv,
 	enabledUser, nameUser,
 	idUser,
 	enabledNbHoleSwitch,valueNbHoleSwitch,
 	enabledRes1,valueRes1,
-	enableClear, tagClear,
 	enabledVisitor,valueVisitor,
 	enabledInvited,valueInvited
 ){
@@ -2179,8 +2209,6 @@ function Change_PlayerDiv(slot,
 	enabledUser = defaultFor(enabledUser, null);
 	nameUser = defaultFor(nameUser, null);
 	idUser = defaultFor(idUser, null);
-	enableClear = defaultFor(enableClear, null);
-	tagClear = defaultFor(tagClear, null);
 	enabledNbHoleSwitch = defaultFor(enabledNbHoleSwitch, null);
 	valueNbHoleSwitch = defaultFor(valueNbHoleSwitch, null);
 	enabledRes1 = defaultFor(enabledRes1, null);
@@ -2194,16 +2222,18 @@ function Change_PlayerDiv(slot,
 		enabledUser 		= false;
 		enabledNbHoleSwitch	= false;
 		enabledRes1			= false;
-		enableClear			= false;
 		enabledVisitor		= false;
 		enabledInvited		= false;
 	}
 
 	if(idUser !== null)
-		$("#id_joueur" + slot).val(idUser);
+		$("#id_J" + slot).val(idUser);
 
 	if(enabledUser !== null)
 		$("#joueur" + slot).prop("disabled", !enabledUser);
+
+	if(nameUser !== null)
+		$("#joueur" + slot).val(nameUser);
 
 	if(enabledNbHoleSwitch !== null)
 		$("#nbTrousJ" + slot).prop("disabled", !enabledNbHoleSwitch);
@@ -2214,14 +2244,6 @@ function Change_PlayerDiv(slot,
 		$("#Chariot_" + slot).prop("disabled", !enabledRes1);
 	if(valueRes1 !== null)
 		$("#Chariot_" + slot).prop("checked", valueRes1);
-
-	if(enableClear !== null)
-		if(enableClear === true)
-			$("#btn_clear_user_" + slot).show();
-		else
-			$("#btn_clear_user_" + slot).hide();
-	if(tagClear !== null)
-		$("#btn_clear_user_" + slot).attr("tag",tagClear);
 
 	if(enabledVisitor !== null)
 		$("#joueur" + slot + "_visiteur").prop("disabled", !enabledVisitor);
@@ -2250,11 +2272,14 @@ function CreateResaProvi(formdata){
 		return;
 	}
 	$("#event_type" ).val(2);	// event_type == 2 => resa provisoire
+	// $("#nb_joueurs" ).val(4);	// On pre-reserve toutes les places
 	// $("#game_type" ).val(1);	// game_type == 1 => partie 18T Aller
 	$.ajax({	// requete ajax pour reserver provisoirement les slots horaires
+
 		async: true,
 		type: "POST",
-		url: "/resajax/resaprovi",
+		// url: "/resajax/resaprovi",
+		url: "/resajax/addprovi",
 		dataType: "json",
 		data:  formdata.serialize(),
 		success: function( data ) {
@@ -2294,12 +2319,12 @@ function ReleaseResaProvi(formdata){
 }	// ReleaseResaProvi
 	
 function validate_form(){
-	if($("#id_joueur1").val() <= 0) {
+	if($("#id_J1").val() <= 0) {
 		alert("La réservation doit contenir au moins le Joueur 1.");
 		return false;
 	}
 	for(var i = 2; i <= 4; i++) {
-		if($("#joueur" + i).val() != "" && ($("#id_joueur" + i).val() == "" || $("#id_joueur" + i).val() < 0)) {
+		if($("#joueur" + i).val() != "" && ($("#id_J" + i).val() == "" || $("#id_J" + i).val() < 0)) {
 			if(vars.isAdmin){
 				alert("Il semble que le joueur " + i + " ne soit pas un membre. Veuillez cocher la case invité le cas échéant.");
 				return false;
@@ -2315,10 +2340,12 @@ function validate_form(){
 function update_joueurs_presents(){
 	joueurs_presents_ = Array();
 	for (var i=1; i<=4; i++){
-		if($("#id_joueur"+i).val() !== ""){
-			joueurs_presents_.push($("#id_joueur"+i).val());
+		if($("#id_J"+i).val() !== ""){
+			// $("#crud_J"+i).val("add");
+			joueurs_presents_.push($("#id_J"+i).val());
 		}
 	}
+	$("#nb_joueurs").val(joueurs_presents_.length);
 	console.log("update_joueurs_presents :", joueurs_presents_.length);
 	return joueurs_presents_.length;
 }	// update_joueurs_presents

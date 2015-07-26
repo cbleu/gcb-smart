@@ -120,13 +120,14 @@
 										<input type="hidden" name="trou_depart" id="trou_depart" class="serialize" />
 										<input type="hidden" name="event_type" id="event_type" class="serialize" />
 										<input type="hidden" name="crud_mode" id="crud_mode" value="none" class="serialize" />
-										<input type="hidden" name="user" id="user" class="serialize" />
+										<!-- <input type="hidden" name="user" id="user" class="serialize" /> -->
 										<!-- <input type="hidden" name="current_full_name" id="current_full_name" value="<?// echo $current_user_fullname?>" class="serialize" /> -->
-										<!-- <input type="hidden" name="current_full_name" id="current_full_name" value="<?= $thisUserFullName?>" class="serialize" /> -->
+										<!-- <input type="hidden" name="current_full_name" id="current_full_name" value="<?// echo $thisUserFullName?>" class="serialize" /> -->
 										<input type="hidden" name="current_user_id" id="current_user_id" value="<?= $current_user_id?>" class="serialize" />
 										<input type="hidden" name="isFormValid" id="isFormValid"  class="serialize" value="false">
 										<input type="hidden" name="id_resa_provi_aller" id="id_resa_provi_aller"  class="serialize">
 										<input type="hidden" name="id_resa_provi_retour" id="id_resa_provi_retour" class="serialize">
+										<input type="hidden" name="nb_joueurs" id="nb_joueurs" value="1" class="serialize">
 
 										<div type="text" id="eventStartDate"></div>
 										<div type="text" id="game_type_div"></div>
@@ -142,11 +143,14 @@
 														if($isAdmin){
 															$user_value = " value='' ";
 															$user_id	= "2";	// utilisateur temporaire pour le moment
-														}else{
+														}else if($isLogged){
 															// $user_value = " value='" .$current_user_fullname ."' disabled ";
 															$user_value = " value='" .$thisUserFullName ."' disabled ";
 															$user_id	= $current_user_id;
-														}
+														} else {
+														$user_value	= "";
+														$user_id	= "";
+													}
 													}else {
 														$user_value	= "";
 														$user_id	= "";
@@ -154,7 +158,7 @@
 
 													<!-- User Hidden Inputs for that reservation -->
 													<input type="hidden" name="crud_J<?= $i;?>" id="crud_J<?= $i;?>" value="none" class="serialize" />
-													<input type="hidden" name="id_joueur<?=$i;?>" id="id_joueur<?=$i;?>" value="<?=$user_id;?>" class=" serialize" />
+													<input type="hidden" name="id_J<?=$i;?>" id="id_J<?=$i;?>" value="<?=$user_id;?>" class=" serialize" />
 													<input type="hidden" name="nb_trous_J<?= $i;?>" id="nb_trous_J<?= $i;?>" value="18" class=" serialize" >
 
 													<div class="<?= ($i % 2 == 0) ? "joueur_pair" : "joueur_impair"; ?> player_div" name="">
@@ -236,11 +240,12 @@
 							<div class="form-group">
 
 								<div class="submit_div">
-									<input type="submit" id="reserver_button" value="Réserver" style="display:none;"/>
-									<input type="button" id="add_new_button"  value="Ajouter une partie" style="display:none;"/>
-									<input type="button" id="update_button"   value="Mettre à jour" style="display:none;"/>
-									<input type="button" id="delete_button"   value="Supprimer" style="display:none;"/>
-									<input type="button" id="annuler_button"  value="Annuler"/>
+									<input type="submit" id="reserver_button"	value="Réserver" style="display:none;"/>
+									<input type="button" id="edit_button"		value="Modifier" style="display:none;"/>
+									<input type="button" id="add_new_button"	value="Ajouter une partie" style="display:none;"/>
+									<input type="button" id="update_button"		value="Mettre à jour" style="display:none;"/>
+									<input type="button" id="delete_button"		value="Supprimer" style="display:none;"/>
+									<input type="button" id="annuler_button"	value="Annuler"/>
 								</div>
 
 							</div>
