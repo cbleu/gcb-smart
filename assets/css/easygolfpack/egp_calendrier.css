@@ -480,3 +480,10 @@ input[disabled], select[disabled], textarea[disabled], input[readonly], select[r
 ul.ui-autocomplete.ui-menu {
 	z-index: 1000;
 }
+
+
+.has-success .form-control {
+	background-color: #dff0d8;
+	color: green;
+}
+

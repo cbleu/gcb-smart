@@ -156,12 +156,15 @@
 														$user_id	= "";
 													}?>
 
-													<!-- User Hidden Inputs for that reservation -->
-													<input type="hidden" name="crud_J<?= $i;?>" id="crud_J<?= $i;?>" value="none" class="serialize" />
-													<input type="hidden" name="id_J<?=$i;?>" id="id_J<?=$i;?>" value="<?=$user_id;?>" class=" serialize" />
-													<input type="hidden" name="nb_trous_J<?= $i;?>" id="nb_trous_J<?= $i;?>" value="18" class=" serialize" >
 
 													<div class="<?= ($i % 2 == 0) ? "joueur_pair" : "joueur_impair"; ?> player_div" name="">
+
+														<div class="input-group hidden-group">
+															<!-- User Hidden Inputs for that reservation -->
+															<input type="hidden" name="crud_J<?= $i;?>" id="crud_J<?= $i;?>" value="none" class="serialize" />
+															<input type="hidden" name="id_J<?=$i;?>" id="id_J<?=$i;?>" value="<?=$user_id;?>" class=" serialize" />
+															<input type="hidden" name="nb_trous_J<?= $i;?>" id="nb_trous_J<?= $i;?>" value="18" class=" serialize" >
+														</div>
 
 														<div class="input-group name-group">
 
