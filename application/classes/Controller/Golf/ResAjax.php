@@ -484,15 +484,11 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		if($funcresult['valid']) {
 			//////////////////////////////////////////////////////////////////////////
 			// Requete valide: Création de la réservation
-			// $returnArray = $actual_resa->MakeResaProvi();
 			$isValid = true;
 			$returnArray[$id_reservation]['isSelected'] = true;
-			// $returnArray[$id_reservation]['current_user_in_resa'] = $current_user_in_resa;
 			$returnArray[$id_reservation]['usr_in'] = $current_user_in_resa;
 			$returnArray[$id_reservation]['type'] = $actual_resa->slotCurrent->type;
-			// $returnArray[$id_reservation]['players'] = $actual_resa->slotCurrent->players;
 			$returnArray[$id_reservation]['players'] = $actual_resa->players;
-			// $returnArray['players'] = $actual_resa->players;
 			$returnArray[$id_reservation]['slotAller'] = $actual_resa->slotAller->id;
 			if(isset($actual_resa->slotRetour)){
 				$returnArray[$id_reservation]['slotRetour'] = $actual_resa->slotRetour->id;

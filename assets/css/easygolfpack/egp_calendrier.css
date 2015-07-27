@@ -381,7 +381,7 @@ float: left;
 
 .players_div .control-label,
 .players_div .radio-inline{
-	margin:	10px 0px 0px 0px;
+	margin:	4px 0px 0px 0px;
 }
 
 .guest_checkbox, .visiteur_checkbox {
@@ -416,7 +416,7 @@ float: left;
 }
 .joueur_pair {
 /*	padding:10px;*/
-	padding: 10px 0px 10px 0px;
+	padding: 10px 0px 4px 0px;
 /*	padding-left: 20px;*/
 	background-color:#F6FCFF;
 	border-top:1px solid #E6E6E6;
@@ -424,9 +424,7 @@ float: left;
 	margin:-1px;
 }
 .joueur_impair {
-	padding: 10px 0px 10px 0px;
-/*	padding: 10px;*/
-/*	padding-left: 20px;*/
+	padding: 10px 0px 4px 0px;
 	border-top:1px solid #E6E6E6;
 	border-bottom:1px solid #E6E6E6;
 	margin:-1px;

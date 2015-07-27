@@ -141,16 +141,16 @@
 
 													<?if($i == 1) {	// Joueur 1: Utilisateur courant
 														if($isAdmin){
-															$user_value = " value='' ";
+															$user_value = "";
 															$user_id	= "2";	// utilisateur temporaire pour le moment
 														}else if($isLogged){
 															// $user_value = " value='" .$current_user_fullname ."' disabled ";
-															$user_value = " value='" .$thisUserFullName ."' disabled ";
+															$user_value = $thisUserFullName;
 															$user_id	= $current_user_id;
 														} else {
-														$user_value	= "";
-														$user_id	= "";
-													}
+															$user_value	= "";
+															$user_id	= "";
+														}
 													}else {
 														$user_value	= "";
 														$user_id	= "";
@@ -163,7 +163,7 @@
 
 													<div class="<?= ($i % 2 == 0) ? "joueur_pair" : "joueur_impair"; ?> player_div" name="">
 
-														<div class="input-group">
+														<div class="input-group name-group">
 
 															<?if($i != 1) {?>
 																<span class="input-group-btn btn_clear_user" id="btn_clear_user_<?=$i;?>" hidden>
@@ -175,7 +175,7 @@
 
 															<span class="input-group-addon"><?= $i;?></span>
 
-															<input class="form-control" name="joueur<?= $i;?>" id="joueur<?= $i;?>" <?=$user_value;?> type="text">
+															<input class="form-control serialize" name="joueur<?= $i;?>" id="joueur<?= $i;?>" value="<?=$user_value;?>" type="text">
 
 															<span class="input-group-addon">
 																<span class="onoffswitch">
@@ -189,7 +189,7 @@
 
 														</div>
 
-														<div class="input-group">
+														<div class="input-group options-group">
 															<div class="form-group">
 																<label class="col-md-4 player_div control-label">options:</label>
 																<div class="col-md-8 player_div">
