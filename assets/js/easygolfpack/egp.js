@@ -991,47 +991,6 @@ function initCalendrier()
 			}
 		});
 	}); 
-		
-/*
-	// $("#add_new_button").click(function(){
-	// 	var player_number = 0;
-	// 	for(var i = 1; i <= max_joueurs; i++) {
-	// 		if(vars.isAdmin && $("#joueur"+i).val() == "") {
-	// 			$("#joueur"+i).prop('disabled', false);
-	// 			$("#joueur"+i+"_invite").prop('disabled', false);
-	// 			$("#joueur"+i+"_visiteur").prop('disabled', false);
-	// 			setDetailFormMode("update");
-	// 		}else if(player_number == 0 && $("#joueur"+i).val() == "") {
-	// 			$("#crud_J"+i).val("Create");
-	// 			Change_PlayerDiv(i,	// Numero du slot
-	// 				true,			// Div joueur entiere
-	// 				true, vars.thisUserFullName,	// joueur name, et name
-	// 				$("#current_user_id").val(),	// id_user
-	// 				true, true,		// nbTrousJ
-	// 				true, false		// Chariot
-	// 			)
-	// 			SetOtherReservation(i, false);
-	// 			setDetailFormMode("add");
-	// 			player_number = i;
-	// 			update_joueurs_presents();
-	// 		}else if(player_number != 0) {
-	// 			Change_PlayerDiv(i,	// Numero du slot
-	// 				true,			// Div joueur entiere
-	// 				true, "",		// joueur name, et name
-	// 				null,				// id_user
-	// 				true, true,		// nbTrousJ
-	// 				true, false		// Chariot
-	// 			)
-	// 			SetOtherReservation(i, false);
-	// 		}else{	// slot avec déjà un autre joueur d'une ancienne partie
-	// 			Change_PlayerDiv(i,			// Numero du slot
-	// 				false					// Div joueur entiere désactivée
-	// 			)
-	// 			SetOtherReservation(i, true);
-	// 		}
-	// 	}
-	// });
-*/
 
 	$("#add_new_button").click(function(){
 		var isCurrentUserAdded = false;
