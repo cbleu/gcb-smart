@@ -183,7 +183,7 @@
 
 															<span class="input-group-addon">
 																<span class="onoffswitch">
-																	<input type="checkbox" name="nbTrousJ<?= $i;?>" class="onoffswitch-checkbox nbTrousJ" id="nbTrousJ<?= $i;?>" checked>
+																	<input type="checkbox" name="nbTrousJ<?= $i;?>" class="onoffswitch-checkbox nbTrousJ" id="nbTrousJ<?= $i;?>">
 																	<label class="onoffswitch-label" for="nbTrousJ<?= $i;?>">
 																		<span class="onoffswitch-inner" data-swchon-text="18T" data-swchoff-text="9T"></span>
 																		<span class="onoffswitch-switch"></span>

@@ -2244,7 +2244,7 @@ function reset_form(ev){
 			Change_PlayerDiv(i,	// Numero du slot
 				true,			// Div joueur entiere
 				true, "",		// joueur name, et name
-				null,				// id_user
+				"",				// id_user
 				true, true,		// nbTrousJ
 				true, false,	// Chariot
 				// false, "",		// btn_clear_user et son tag
@@ -2254,10 +2254,10 @@ function reset_form(ev){
 			if(i == 1){
 				Change_PlayerDiv(1,	// Numero du slot
 					true,			// Div joueur entiere
-					// false,"",
-					false,vars.thisUserFullName,
-					$("#current_user_id").val()	// joueur name, id_user
+					false,vars.thisUserFullName,// joueur et name
+					$("#current_user_id").val()	// id_user
 				)
+				validateSlotJ(i, true);
 			}
 		}
 	}
@@ -2351,8 +2351,15 @@ function Change_PlayerDiv(slot,
 
 	if(enabledNbHoleSwitch !== null)
 		$("#nbTrousJ" + slot).prop("disabled", !enabledNbHoleSwitch);
-	if(valueNbHoleSwitch !== null)
-		$("#nbTrousJ" + slot).prop("checked", valueNbHoleSwitch);
+	if(valueNbHoleSwitch !== null){
+		if(valueNbHoleSwitch){
+			$("#nbTrousJ" + slot).prop("checked", valueNbHoleSwitch);
+			$("#nb_trous_J" + slot).val(18);
+		}else{
+			$("#nbTrousJ" + slot).prop("checked", valueNbHoleSwitch);
+			$("#nb_trous_J" + slot).val(9);
+		}
+	}
 
 	if(enabledRes1 !== null)
 		$("#Chariot_" + slot).prop("disabled", !enabledRes1);
