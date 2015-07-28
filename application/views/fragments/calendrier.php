@@ -168,13 +168,13 @@
 
 														<div class="input-group name-group">
 
-															<?if($i != 1) {?>
+															<!-- <?//if($i != 1) {?> -->
 																<span class="input-group-btn btn_clear_user" id="btn_clear_user_<?=$i;?>" hidden>
 																	<button class="btn btn-danger" type="button">
 																		<i class="fa fa-remove"></i>
 																	</button>
 																</span>
-															<?}?>
+															<!-- <?//}?> -->
 
 															<span class="input-group-addon"><?= $i;?></span>
 

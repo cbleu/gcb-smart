@@ -1032,41 +1032,51 @@ function initCalendrier()
 	// 	}
 	// });
 */
+
 	$("#add_new_button").click(function(){
-		var player_number = 0;
+		var isCurrentUserAdded = false;
 		for(var i = 1; i <= max_joueurs; i++) {
-			// if($("#id_J"+i).val() == "") {
-			// 	Change_PlayerDiv(i,	// Numero du slot
-			// 		true,			// Div joueur entiere
-			// 		true, "",		// joueur name, et name
-			// 		"",				// id_user
-			// 		true, true,		// nbTrousJ
-			// 		true, false		// Chariot
-			// 	)
-			// }else if(player_number == 0 && $("#joueur"+i).val() == "") {
-			if(player_number == 0 && $("#id_J"+i).val() == "") {
-				$("#crud_J"+i).val("Create");
-				Change_PlayerDiv(i,	// Numero du slot
-					true,			// Div joueur entiere
-					false, vars.thisUserFullName,	// joueur name, et name
-					$("#current_user_id").val(),	// id_user
-					true, true,		// nbTrousJ
-					true, false		// Chariot
-				)
-				SetOtherReservation(i, false);
-				player_number = i;
-				update_joueurs_presents();
-			}else if(player_number != 0) {
+			if($("#id_J"+i).val() == "") {
+				// Si le slot est vide
+				if(!isCurrentUserAdded && !vars.isAdmin) {
+					// Si le joueur courant n'a pas encore été ajouté, on l'ajoute
+					$("#crud_J"+i).val("Create");
+					Change_PlayerDiv(i,	// Numero du slot
+						true,			// Div joueur entiere
+						false, vars.thisUserFullName,	// joueur name, et name
+						$("#current_user_id").val(),	// id_user
+						true, true,		// nbTrousJ
+						true, false		// Chariot
+					)
+					isCurrentUserAdded = true;
+					validateSlotJ(i);
+				}
+				// On clean le slot pour un potentiel joueur
 				$("#crud_J"+i).val("none");
-				Change_PlayerDiv(i,	// Numero du slot
-					true,			// Div joueur entiere
-					true, "",		// joueur name, et name
-					"",				// id_user
-					true, true,		// nbTrousJ
-					true, false		// Chariot
-				)
+				if(vars.isAdmin){
+					Change_PlayerDiv(i,	// Numero du slot
+						true,			// Div joueur entiere
+						true, "",		// joueur name, et name
+						"",				// id_user
+						true, true,		// nbTrousJ
+						true, false,	// Chariot
+						true, false,	// Visitor
+						true, false		// Invited
+					)
+				}else{
+					Change_PlayerDiv(i,	// Numero du slot
+						true,			// Div joueur entiere
+						true, "",		// joueur name, et name
+						"",				// id_user
+						true, true,		// nbTrousJ
+						true, false,	// Chariot
+						false, false,	// Visitor
+						false, false	// Invited
+					)
+				}
 				SetOtherReservation(i, false);
-			}else{	// slot avec déjà un autre joueur d'une ancienne partie
+			}else{
+				// slot avec déjà un autre joueur d'une ancienne partie
 				$("#crud_J"+i).val("none");
 				Change_PlayerDiv(i,			// Numero du slot
 					false					// Div joueur entiere désactivée
@@ -1076,7 +1086,8 @@ function initCalendrier()
 		}
 		setFormMode("Create");
 	});
-		
+
+
 	$("#update_button").click(function(){	// ajax 
 		var resa_form = document.getElementById('resa_form_div');
 		if(!validate_form()) {
@@ -1941,7 +1952,7 @@ function loadEventsDetails(ev){
 				joueurIdx = createPlayersDiv(value, joueurIdx);
 
 
-				if(!ev.u && joueurIdx > max_joueurs){
+				if(!ev.u && joueurIdx > max_joueurs && !vars.isAdmin){
 					console.log("Joueur absent et slot full => mode none");
 					// setDetailFormMode("none");
 					setFormMode("Read");
@@ -2019,7 +2030,6 @@ function scroll_to_now(){
 function createPlayersDiv(value, joueurIdx){
 	console.log("createPlayersDiv: 1er joueur en slot :", joueurIdx, " (joueurIdx)");
 	var nj = joueurIdx;
-	var mode = "none";
 	
 	// boucle sur les emplacements joueurs de cette partie à partir de l'idx de début
 	for(var i=nj; i < nj+value.players.length; i++){
@@ -2041,11 +2051,10 @@ function createPlayersDiv(value, joueurIdx){
 		if(value.isSelected){
 			// Partie selectionnée: afficher ou pas le bouton suppr du joueur
 			if(value.usr_in == "1" || vars.isAdmin){
-				btncleartag = value.players[i-nj].userHasResa;
-				// mode = "delete";
+				if(value.players.length > 1)	// affiche le btn uniquement si + que 1 joueur
+					btncleartag = value.players[i-nj].userHasResa;
 				setFormMode("Delete");
 			}else{
-				// mode = "add_me";
 				setFormMode("Add_me");
 			}
 		}else{
