@@ -178,7 +178,8 @@
 
 															<span class="input-group-addon"><?= $i;?></span>
 
-															<input class="form-control serialize" name="joueur<?= $i;?>" id="joueur<?= $i;?>" value="<?=$user_value;?>" type="text">
+															<!-- <input class="form-control serialize" name="joueur<?= $i;?>" id="joueur<?= $i;?>" value="<?=$user_value;?>" type="text"> -->
+															<input class="form-control serialize" name="joueur<?= $i;?>" id="joueur<?= $i;?>" type="text">
 
 															<span class="input-group-addon">
 																<span class="onoffswitch">

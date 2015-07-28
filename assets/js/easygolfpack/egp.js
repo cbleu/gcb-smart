@@ -6,31 +6,20 @@
 */
 
 var vars = {};
-var nbJoueurs = 0;
-var joueurs_presents_ = new Array();
-var hoursIntervals = [];	// tableau des slots utilisés.
-var hoursPlayers = [];		// tableau des joueurs dans les slots.
 var max_joueurs = 4;
 var lastNameValue = "";
-var minicalendar;
+var joueurs_presents_ = new Array();
 
-var event_height = 30;
+// var nbJoueurs = 0;
 // var occupation_array = new Array();	//Tableau du nombre de joueurs par slot horaire pour les trous 1 et 10
-
-var newUsers = new Array();
-var table_length = function(obj){
+// var newUsers = new Array();
+/*var table_length = function(obj){
 	var len = 0;
 	for(var key in obj){
 		len++;
 	}
 	return len;
-}
-
-// To keep a reference to the default lightbox to manage recurring events
-var recurring_lightbox;
-var reservation_lightbox;
-
-var isOn_user_play = false;
+}*/
 
 var shortTime_format 		= scheduler.date.date_to_str("%H:%i");
 var shortDate_format 		= scheduler.date.date_to_str("%d/%m/%Y");
@@ -46,7 +35,6 @@ var french_format 			= scheduler.date.date_to_str("%H:%i le %d %F %Y");
 {
 	'use strict';
 
-	
 	// Code exécuté après chargement complet du DOM
 	$(document).ready(function(){
 		console.log( 'doc.ready current breakpoint:', viewport.current() );
@@ -99,6 +87,10 @@ function initVars()
 /////////////////////////////////////////////////////////////////////////////////
 // WIZARD
 /////////////////////////////////////////////////////////////////////////////////
+
+var hoursIntervals = [];	// tableau des slots utilisés.
+var hoursPlayers = [];		// tableau des joueurs dans les slots.
+var minicalendar;
 
 function initWizard()
 {
@@ -296,6 +288,7 @@ function initWizard()
 	$("#joueur1, #joueur2, #joueur3, #joueur4").change(function(){
 		if(lastNameValue != "" && $(this).val() != lastNameValue) {
 			unvalidate_name($(this));
+			// unvalidateSlotJ(i);
 		}
 		// update_joueurs();
 		update_joueurs_presents();
@@ -693,7 +686,7 @@ function restrict_user_nb()
 	}
 	// reset le grisage utilisateur
 	if(vars.isLogged){
-		for(var i = 4; i > 0; i--) {
+		for(var i = max_joueurs; i > 0; i--) {
 			if($("#joueur"+i).attr('tag') != "locked") {
 				$("#joueur"+i).prop("disabled",false);
 			}
@@ -707,7 +700,7 @@ function restrict_user_nb()
 	var check = 0;
 	if(place_dispo != null) {
 		// On desactive les champs utilisateurs en trop si il n'y a pas sufisement de places disponible
-		for(var i = 4; i > place_dispo; i--) {
+		for(var i = max_joueurs; i > place_dispo; i--) {
 			if(vars.isLogged){
 				$("#joueur"+i).val("");
 				$("#id_J"+i).val("");
@@ -730,7 +723,7 @@ function update_joueurs()
 {
 	// joueurs_presents_ = Array();
 	$("#nb_joueurs").val(update_joueurs_presents());
-	for (var i=1; i<=4; i++){
+	for (var i = 1; i <= max_joueurs; i++){
 		if($("#id_J"+i).val() !== ""){
 			// joueurs_presents_.push($("#id_J"+i).val());
 			// $("#nb_joueurs").val(joueurs_presents_.length);
@@ -793,8 +786,13 @@ function DisplayDigest()
 
 
 
-/////////////////////////////////////////////////////////////////////////////////
 
+
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -804,6 +802,15 @@ function DisplayDigest()
 /////////////////////////////////////////////////////////////////////////////////
 // CALENDRIER
 /////////////////////////////////////////////////////////////////////////////////
+
+var event_height = 30;
+var isOn_user_play = false;
+// To keep a reference to the default lightbox to manage recurring events
+var recurring_lightbox;
+var reservation_lightbox;
+
+var isAnEmptyClick;
+var action_data;
 
 function initCalendrier()
 {
@@ -841,36 +848,40 @@ function initCalendrier()
 		}
 	});
 
+	// Switch du nombre de trous: uniquement visuel => la donnée est dans #nb_trous_J
 	$(".nbTrousJ").change(function(){
 		var idxJ = this.name.slice( -1); 
 		// console.log("idxJ:", idxJ);
-		elstr = "#nb_trous_J" + idxJ;
 		if (this.checked) {	// this is true if the switch is on
-			$(elstr).val(18);
+			$("#nb_trous_J" + idxJ).val(18);
 		}
 		else {
-			$(elstr).val(9);
+			$("#nb_trous_J" + idxJ).val(9);
 		}
 	});
 
 	$("#joueur1, #joueur2, #joueur3, #joueur4").focus(function(){
-		lastNameValue = $(this).val();
-		unvalidate_name($(this));
-		// $(this).css('color', 'black');
-		$(this).select();
+		// lastNameValue = $(this).val();
+		// unvalidate_name($(this));
+		// $(this).select();
 	});
 
 	$("#joueur1, #joueur2, #joueur3, #joueur4").change(function(){
+		var idxj = this.name.slice( -1); 
 		if(lastNameValue != "" && $(this).val() != lastNameValue) {
-			unvalidate_name($(this));
+			// unvalidate_name($(this));
+			unvalidateSlotJ(idxj);
+		}else{
+			// validate_name($(this));
+			validateSlotJ(idxj);
 		}
 	});
 	
 	$("#joueur1, #joueur2, #joueur3, #joueur4").focusout(function(){
+		// validate_name($(this));
 		update_joueurs_presents();
 	});
 
-	// $(joueurs_input).autocomplete(autocompleteFunc("#form"));
 	$("#joueur1, #joueur2, #joueur3, #joueur4").autocomplete({
 		source: function( request, response ) {
 			$.ajax({
@@ -900,62 +911,64 @@ function initCalendrier()
 			});
 		},
 		appendTo: "#wizard_form, #form, #details_form_div",
-		// appendTo: "#form, #details_form_div",		// added by cesar to display menu on top of the form
 		minLength: 2,
 		select: function( event, ui ) {
-			var idxj = parseInt(this.name.substr(this.name.length-1));
-		
+			// var idxj = parseInt(this.name.substr(this.name.length-1));
+			var idxj = this.name.slice( -1); 
+
 			// var idSelector = "#id_"+$(this).prop('id');
 			var idSelector = "#id_J" + idxj;
 			$(idSelector).val(ui.item.key);
 			lastNameValue = ui.item.value;
-			validate_name($(this));
+			// $("#crud_J"+idxj).val("Create");
+			// validate_name($(this));
+			validateSlotJ(idxj);
 
 		},
 		open: function() {
-			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+			// $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
 		},
 		close: function() {
-			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+			// $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
 		},
 	});	// $(joueurs_input).autocomplete
 		
 	$("#joueur1_invite, #joueur2_invite, #joueur3_invite, #joueur4_invite").click(function(){
 		if(vars.isAdmin){
-			var localid = parseInt($(this).context.id.slice(6,7));	// on recupere le numero de place du joueur
+			// var idxj = parseInt($(this).context.id.slice(6,7));	// on recupere le numero de place du joueur
+			var idxj = this.id.slice(6, 7); 
 			if(this.checked) {
-				$("#joueur"+localid+"_visiteur").prop("checked", false);
-				$("#joueur"+localid).prop("placeholder", 'Nom de l\'invité (facultatif)');
-				$("#joueur"+localid).autocomplete("disable");
-				$("#joueur"+localid).focus().val("");
-				$("#id_J"+localid).val("0");	// id invite = 0
+				$("#joueur" + idxj + "_visiteur").prop("checked", false);
+				SetUserInputOpt(idxj, false, 'Nom de l\'invité (facultatif)', true);
+				Change_PlayerDiv(idxj, true, true, "", 0);	// id invite = 0
+				// validate_name($("#joueur" + localid));
+				validateSlotJ(idxj);
 			}
 			else {
-				$("#joueur"+localid).prop("placeholder", 'Chercher un nom de membre ...');
-				$("#joueur"+localid).autocomplete("enable");
-				$("#joueur"+localid).val("");
-				$("#joueur"+localid).focus();
-				$("#id_J"+localid).val("");
+				SetUserInputOpt(idxj, true, 'Chercher un nom de membre ...', true);
+				Change_PlayerDiv(idxj, true, true, "", "");
+				// unvalidate_name($("#joueur" + localid));
+				unvalidateSlotJ(idxj);
 			}
 		}// bloc admin
 	});
 
 	$("#joueur1_visiteur, #joueur2_visiteur, #joueur3_visiteur, #joueur4_visiteur").click(function(){
 		if(vars.isAdmin){
-			var localid = parseInt($(this).context.id.slice(6,7));	// on recupere le numero de place du joueur
+			// var localid = parseInt($(this).context.id.slice(6,7));	// on recupere le numero de place du joueur
+			var idxj = this.id.slice(6, 7); 
 			if(this.checked) {
-				$("#joueur"+localid+"_invite").prop("checked", false);
-				$("#joueur"+localid).prop("placeholder", 'Nom du visiteur (facultatif)');
-				$("#joueur"+localid).autocomplete("disable");
-				$("#joueur"+localid).focus().val("");
-				$("#id_J"+localid).val("1");	// id visiteur = 1
+				$("#joueur" + idxj + "_invite").prop("checked", false);
+				SetUserInputOpt(idxj, false, 'Nom du visiteur (facultatif)', true);
+				Change_PlayerDiv(idxj, true, true, "", 1);	// id visiteur = 1
+				// validate_name($("#joueur" + localid));
+				validateSlotJ(idxj);
 			}
 			else {
-				$("#joueur"+localid).prop("placeholder", 'Chercher un nom de membre ...');
-				$("#joueur"+localid).autocomplete("enable");
-				$("#joueur"+localid).val("");
-				$("#joueur"+localid).focus();
-				$("#id_J"+localid).val("");
+				SetUserInputOpt(idxj, true, 'Chercher un nom de membre ...', true);
+				Change_PlayerDiv(idxj, true, true, "", "");
+				// unvalidate_name($("#joueur" + localid));
+				unvalidateSlotJ(idxj);
 			}
 		}// bloc admin
 	});
@@ -979,48 +992,89 @@ function initCalendrier()
 		});
 	}); 
 		
+/*
+	// $("#add_new_button").click(function(){
+	// 	var player_number = 0;
+	// 	for(var i = 1; i <= max_joueurs; i++) {
+	// 		if(vars.isAdmin && $("#joueur"+i).val() == "") {
+	// 			$("#joueur"+i).prop('disabled', false);
+	// 			$("#joueur"+i+"_invite").prop('disabled', false);
+	// 			$("#joueur"+i+"_visiteur").prop('disabled', false);
+	// 			setDetailFormMode("update");
+	// 		}else if(player_number == 0 && $("#joueur"+i).val() == "") {
+	// 			$("#crud_J"+i).val("Create");
+	// 			Change_PlayerDiv(i,	// Numero du slot
+	// 				true,			// Div joueur entiere
+	// 				true, vars.thisUserFullName,	// joueur name, et name
+	// 				$("#current_user_id").val(),	// id_user
+	// 				true, true,		// nbTrousJ
+	// 				true, false		// Chariot
+	// 			)
+	// 			SetOtherReservation(i, false);
+	// 			setDetailFormMode("add");
+	// 			player_number = i;
+	// 			update_joueurs_presents();
+	// 		}else if(player_number != 0) {
+	// 			Change_PlayerDiv(i,	// Numero du slot
+	// 				true,			// Div joueur entiere
+	// 				true, "",		// joueur name, et name
+	// 				null,				// id_user
+	// 				true, true,		// nbTrousJ
+	// 				true, false		// Chariot
+	// 			)
+	// 			SetOtherReservation(i, false);
+	// 		}else{	// slot avec déjà un autre joueur d'une ancienne partie
+	// 			Change_PlayerDiv(i,			// Numero du slot
+	// 				false					// Div joueur entiere désactivée
+	// 			)
+	// 			SetOtherReservation(i, true);
+	// 		}
+	// 	}
+	// });
+*/
 	$("#add_new_button").click(function(){
 		var player_number = 0;
-		for(var i = 1; i <= 4; i++) {
-			if(vars.isAdmin && $("#joueur"+i).val() == "") {
-				$("#joueur"+i).prop('disabled', false);
-				$("#joueur"+i+"_invite").prop('disabled', false);
-				$("#joueur"+i+"_visiteur").prop('disabled', false);
-				setDetailFormMode("update");
-			}else if(player_number == 0 && $("#joueur"+i).val() == "") {
-				// $("#joueur"+i).val(vars.thisUserFullName);
-				// $("#joueur"+i).prop('disabled', true);
-				// $("#id_J"+i).val($("#current_user_id").val());
-				$("#crud_J"+i).val("add");
+		for(var i = 1; i <= max_joueurs; i++) {
+			// if($("#id_J"+i).val() == "") {
+			// 	Change_PlayerDiv(i,	// Numero du slot
+			// 		true,			// Div joueur entiere
+			// 		true, "",		// joueur name, et name
+			// 		"",				// id_user
+			// 		true, true,		// nbTrousJ
+			// 		true, false		// Chariot
+			// 	)
+			// }else if(player_number == 0 && $("#joueur"+i).val() == "") {
+			if(player_number == 0 && $("#id_J"+i).val() == "") {
+				$("#crud_J"+i).val("Create");
 				Change_PlayerDiv(i,	// Numero du slot
 					true,			// Div joueur entiere
-					true, vars.thisUserFullName,	// joueur name, et name
+					false, vars.thisUserFullName,	// joueur name, et name
 					$("#current_user_id").val(),	// id_user
 					true, true,		// nbTrousJ
 					true, false		// Chariot
 				)
 				SetOtherReservation(i, false);
-				setDetailFormMode("add");
 				player_number = i;
-				joueurs_presents_[i] = $("#id_J"+i).val();
+				update_joueurs_presents();
 			}else if(player_number != 0) {
-				// $("#joueur"+i).prop('disabled', false);
+				$("#crud_J"+i).val("none");
 				Change_PlayerDiv(i,	// Numero du slot
 					true,			// Div joueur entiere
 					true, "",		// joueur name, et name
-					null,				// id_user
+					"",				// id_user
 					true, true,		// nbTrousJ
 					true, false		// Chariot
 				)
 				SetOtherReservation(i, false);
-			}else{
-				// On effectue la mise à jour du slot joueur
+			}else{	// slot avec déjà un autre joueur d'une ancienne partie
+				$("#crud_J"+i).val("none");
 				Change_PlayerDiv(i,			// Numero du slot
 					false					// Div joueur entiere désactivée
 				)
 				SetOtherReservation(i, true);
 			}
 		}
+		setFormMode("Create");
 	});
 		
 	$("#update_button").click(function(){	// ajax 
@@ -1131,7 +1185,7 @@ function initScheduler()
 {
 	var sections=[{key:1, label:"Trou 1"},{key:10, label:"Trou 10"}];
 	var time_step = 10;		// 10 minutes par slot pour le découpage du scheduler
-	var click_disabled = false;
+	// var click_disabled = false;
 	// var isOn_user_play = false;
 	// var shortTime_format = scheduler.date.date_to_str("%H:%i");
 
@@ -1147,12 +1201,12 @@ function initScheduler()
 	scheduler.config.xml_date = "%Y-%m-%d %H:%i";
 	scheduler.config.first_hour = vars.premier_depart;
 	scheduler.config.last_hour = vars.dernier_depart;
-	scheduler.config.multi_day = true;
-	scheduler.config.full_day  = true;
+	scheduler.config.multi_day = true;	// TODO pas utile
+	scheduler.config.full_day  = true;	// TODO pas utile
 	scheduler.config.details_on_create = true;
-	scheduler.config.details_on_dblclick = false;
-	scheduler.config.drag_create = false;
-	scheduler.config.separate_short_events = false;
+	// scheduler.config.details_on_dblclick = false;
+	// scheduler.config.drag_create = true;
+	// scheduler.config.separate_short_events = false;
 	scheduler.config.time_step = time_step;		// x minutes par slot pour le découpage du scheduler
 	scheduler.config.event_duration = scheduler.config.time_step;
 	scheduler.config.hour_size_px = (60 / scheduler.config.time_step) * event_height;
@@ -1275,6 +1329,7 @@ function initScheduler()
 		}
 	};
 	
+	// Fonction de gestion de l'affichage des reservations sur le planning
 	scheduler.renderEvent = function(container, ev) {
 		// Si c'est un evenement de plus de 10 minutes, on l'affiche à la manière classique du calendrier
 		if(ev.evt == 3 && ((ev.start_date.getTime() + 60*10*1000) != ev.end_date.getTime())) {
@@ -1359,10 +1414,13 @@ function initScheduler()
 		return true;
 	}; // => render only player resa not big recurring event
 	
-	// To keep a reference to the default lightbox to manage recurring events
+	/////////////////////////////////////////////////////////////////////
+	// LIGHTBOX
+
+	// keep a reference to the default lightbox for recurring events
 	recurring_lightbox = scheduler.showLightbox;
 	
-	// We configure our custom lightbox for reservations
+	// Configure our custom lightbox for reservations
 	reservation_lightbox = function(id) {reservationLightbox(id);};
 
 	// By default, we use our custom lightbox to handle reservation when events occurs on the calendar
@@ -1373,26 +1431,21 @@ function initScheduler()
 		scheduler.showLightbox = reservation_lightbox;
 	});
 
-	scheduler.attachEvent("onLightbox", function (id){
-
-		if ($("input.color_display").length) {
-			//$("input.color_display").val("");
-			$( "a[rel='" + scheduler.getEvent(id).colour + "']" ).click();
-		}
-		else {
-			// color select do not offer the way to specify an id so we find with specific jquery selector
-			$( "option:contains('#ffffff')" ).parent().colourPicker({
-				ico:    '/assets/admin/images/jquery.colourPicker.gif',
-				title:    false
-			});
-			// $("input.color_display").click();
-		}
-
-	});
-
-
 	/////////////////////////////////////////////////////////////////////
 	// Manage recurring events 
+
+	scheduler.attachEvent("onLightbox", function (id){
+		console.log("onLightbox");
+		if ($("input.color_display").length) {
+			$( "a[rel='" + scheduler.getEvent(id).colour + "']" ).click();
+		} else {
+			// color select do not offer the way to specify an id so we find with specific jquery selector
+			$( "option:contains('#ffffff')" ).parent().colourPicker({
+				ico: '/assets/admin/images/jquery.colourPicker.gif',
+				title: false
+			});
+		}
+	});
 
 	scheduler.attachEvent("onEventChanged", function(id,ev) {
 		console.log("For recurring event ONLY: onEventChanged");
@@ -1512,41 +1565,90 @@ function initScheduler()
 		// $(".dhx_cal_event").height(event_height);
 	});	// restore mini calendar
 
+
+	/////////////////////////////////////////////////////////////////////
+	// Click Events that open the popup (reservation_lightbox)
+
 	scheduler.attachEvent("onEmptyClick", function (date, native_event_object){
+		log("\n------------------------ onEmptyClick ---------------------------\n\n", "start");
+		
+		isAnEmptyClick = true;
+		
+		action_data = scheduler.getActionData(native_event_object);
+		
+		// if(detectUserPlayTimespan(event)){
+		// 	isOn_user_play = true;
+		// 	// return false;
+		// }else{
+		// 	isOn_user_play = false;
+		// 	// return true;
+		// }
+
 		if(vars.isMobile){
 			scheduler.addEventNow({ start_date: date });
 		}
-		
-		if(detectUserPlayTimespan(event)){
-			isOn_user_play = true;
-		}else{
-			isOn_user_play = false;
-			return true;
-		}
+
+		// var fixed_date = fix_date(date);
+		// scheduler.addEventNow(date, scheduler.date.add(date, scheduler.config.time_step, "minute"));
 	});	// => openlightbox to create new event on empty slot
 	
 	scheduler.attachEvent("onClick", function (event_id, native_event_object){
-		var ev = scheduler.getEvent(event_id);
-		// if(click_disabled || ev.evt == "evenement" || ev.evt == "provi" || scheduler.config.readonly ) {
-		// if(click_disabled || ev.evt > 1 || scheduler.config.readonly ) {
+		log("\n------------------------ onClick      ---------------------------\n\n", "start");
 		
-		// TODO faire la gestion de l'edition des evenements ev.evt==3
-		if(click_disabled || scheduler.config.readonly ) {
-			return false;
-		}
-		if( ev.evt == 3 ) {
-			return true;
-		}
-		startEditEventForm(ev);
-		return false;
+		isAnEmptyClick = false;
+
+		action_data = scheduler.getActionData(native_event_object);
+		
+		// openReservationLightbox( scheduler.getEvent(event_id) );
+		
+		reservationLightbox(event_id);
+		
+		return false;	// default action canceled
+		
+		// var ev = scheduler.getEvent(event_id);
+		//
+		// if(click_disabled || scheduler.config.readonly ) {
+		// 	return false;
+		// }
+		// if( ev.evt == 3 ) {
+		// 	return true;	// default action triggered: open lightbox
+		// }
+		// startEditEventForm(ev);
+		// return false;	// default action canceled
 	});	// => openlightbox to edit form
 		
-	scheduler.attachEvent("onDblClick", function (event_id, native_event_object){return false;});	// no double click
+	scheduler.attachEvent("onDblClick", function (event_id, native_event_object){
+		console.log("onDblClick");
+		return false;
+	});	// no double click
 	
-	scheduler.attachEvent("onBeforeDrag", function (event_id, mode, native_event_object){return false;});	// no drag
+
+	/////////////////////////////////////////////////////////////////////
+	// Drag and Drop management
+	
+	var dragged_event;
+	scheduler.attachEvent("onBeforeDrag", function (id, mode, e){
+		if(vars.isAdmin){
+			dragged_event=scheduler.getEvent(id); //use it to get the object of the dragged event
+			return true;
+		}
+		else
+			return false;
+	});
+ 
+	scheduler.attachEvent("onDragEnd", function(){
+		var event_obj = dragged_event;
+		if(event_obj)
+			console.log("onDragEnd ", event_obj);
+		//your custom logic
+	});
+
+	//
+	/////////////////////////////////////////////////////////////////////
+
 	
 	scheduler.attachEvent("onBeforeEventDeleted", function (mode , date){
-		console.log("onBeforeEventDeleted", date);
+		console.log("onBeforeEventDeleted", date.type);
 		if(date.type == "reservation")
 			return false;
 		else
@@ -1575,8 +1677,6 @@ function initScheduler()
 	});
 
 }	// initScheduler
-
-
 
 
 
@@ -1646,13 +1746,12 @@ function loadUserBlockTime(thatDate){
 		});
 		scheduler.setCurrentView();
 	});
-	// $(".dhx_cal_event").height(event_height);
 }	// loadUserBlockTime
 
-function detectUserPlayTimespan(event){
+function detectUserPlayTimespan(target){
 	///////////////////
 	// Detecte un clic sur une periode de jeu de l'utilisateur
-	var target = scheduler.getActionData(event);
+	// var target = scheduler.getActionData(event);
 	if(scheduler.checkInMarkedTimespan({
 		start_date: target.date,
 		end_date: scheduler.date.add(target.date, scheduler.config.time_step, 'minute'),
@@ -1666,74 +1765,103 @@ function detectUserPlayTimespan(event){
 	}
 }	// detectUserPlayTimespan
 
+/*function startEditEventForm(ev){
+	console.log("startEditEventForm, ev.id: ", ev.id)
+
+	openReservationLightbox(ev);
+
+	////////////////////////////////////////////////////////
+	// On lance la récupération du detail de la partie
+	loadEventsDetails(ev);
+}	// startEditEventForm
+*/
+
 function reservationLightbox(id) {
-	console.log("reservationLightbox id: ", id)
+	console.log("Openning Custom Lightbox: reservationLightbox id: ", id)
+
+	////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////
+	// Step 1: On ouvre la popup de resa ou d'evenement recurrent
+	log("\nStep1: Open popup", "bold");
 
 	////////////////////////////////////////////////////////
 	// On recupere l'evenement lié à cet id
 	var ev = scheduler.getEvent(id);
 	
 	////////////////////////////////////////////////////////
-	// Si c'est un evenement on rebascule sur la lightbox d'origine
-	if (ev.evt == 3){
-		scheduler.showLightbox = recurring_lightbox;
-		scheduler.showLightbox(ev.id);
-		return true;
+	// Test si ouverture autorisée
+	if( scheduler.config.readonly ) {
+		log("Stop: readOnly", "warning")
+		return false;
 	}
 
 	////////////////////////////////////////////////////////
-	// Si le slot horaire contient déjà une resa on n'ouvre pas le formulaire d'ajout
-	var from = ev.start_date;
-	var to = scheduler.date.add(ev.end_date, scheduler.config.time_step, 'minute');
-	var evs = scheduler.getEvents(from, to);
-	for (var i = 0; i < evs.length; i++) {
-		if(	isOn_user_play || (evs[i].id != id && (evs[i].start_date + "") == (ev.start_date + "") && evs[i].sh == ev.sh)) {
+	// Test de zone bloquée par une autre partie joueur
+	// if(isAnEmptyClick){
+	if(ev.u != 1){	// Si le user n'est pas dans la partie
+		if(detectUserPlayTimespan(action_data)){	// action_data is defined on event onEmptyClick
 			scheduler.deleteEvent(ev.id);
-			console.log("reservationLightbox: Clic sur un horaire contenant déjà une résa ! return false")
+			log("Stop: Clic sur une zone bloquée par une autre résa", "warning")
 			return false;
 		}
 	}
+	
 
 	////////////////////////////////////////////////////////
-	// On initialise et ouvre la popup
-	openReservationLightbox(ev);
-	
-	// ////////////////////////////////////////////////////////
-	// // On recupère le formulaire dans le DOM
-	// var resa_form = document.getElementById('resa_form_div');
-	//
-	// ////////////////////////////////////////////////////////
-	// // On réinitialise tous les champs du formulaire
-	// reset_form(ev);
-	//
-	// ////////////////////////////////////////////////////////
-	// // initialise la popup avec les valeurs de la partie
-	// // init des champs hidden
-	// $("#id_reservation").val(ev.id);
-	// $("#date_resa").val(shortDate_format(ev.start_date));
-	// $("#heure_resa").val(shortTime_format(ev.start_date));
-	// $("#trou_depart").val(ev.sh);
-	// $("#event_type" ).val(2);	// event_type == 2 => resa provisoire
-	// $("#crud_mode").val("create");
-	// // init de l'affichage
-	// $("#eventStartDate").html(french_format(ev.start_date));
-	// $("#game_type_div").hide();
-	//
-	//
-	// setDetailFormMode("add");
-	//
-	// scheduler.startLightbox(ev.id, resa_form);	// ouverture de la lightbox basee sur resa_form
-	//
-	// close_onClick_outside();
+	// Si c'est un evenement on rebascule sur la lightbox d'origine
+	if (ev.evt == 3){
+		if (vars.isAdmin){
+			scheduler.showLightbox = recurring_lightbox;
+			scheduler.showLightbox(ev.id);
+			// on retourne true pour ouvrir la popup par defaut
+			log("Stop: Affichage recurring_lightbox", "warning")
+			return true;
+		}
+		log("Stop: Evenement non joueur", "warning")
+		return false;
+	}else{
+		// Sinon on initialise et ouvre la popup
+		openReservationLightbox(ev);
+	}
 
-	// On lance la résa provisoire des slots aller et retour au max de joueurs
-	CreateResaProvi($("#form .serialize"));
 
-	// Desactive les 18 trous si pas possible
-	getPlayersBySlotFor(ev);	// check la dispo pour les 18 trous
+	////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////
+	// Step 2: On charge si besoin les parties du serveur
+	log ("\nStep2: Load events","bold");
 
-	// // On repositionne le type d'event sur le forumulaire pour une resa joueur
-	// $("#event_type" ).val(1);	// event_type == 1 => resa joueur
+	if(isAnEmptyClick){
+		// On lance la résa provisoire des slots aller et retour au max de joueurs
+		CreateResaProvi($("#form .serialize"));
+
+		// Desactive les 18 trous si pas possible
+		getPlayersBySlotFor(ev);	// check la dispo pour les 18 trous
+		
+		// TODO passer en mode CRUD=Create
+	}else{
+		// On charge les parties sur ce slot horaire
+		loadEventsDetails(ev);
+
+		// TODO créer une resa provi pour les places encore dispo
+		CreateResaProvi($("#form .serialize"));
+
+		// TODO passer en mode CRUD=Read
+	}
+
+
+	////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////
+	// Step 3: Definir le mode CRUD
+	log("\nStep3: Set CRUD Mode", "bold")
+
+	if(isAnEmptyClick){
+		setFormMode("Create");
+	}else{
+		setFormMode("Read");
+	}
 }	// reservationLightbox
 
 function openReservationLightbox(ev) {
@@ -1755,74 +1883,23 @@ function openReservationLightbox(ev) {
 	$("#heure_resa").val(shortTime_format(ev.start_date));
 	$("#trou_depart").val(ev.sh);
 	$("#event_type" ).val(2);	// event_type 1 => joueur 2 => resa provi 3 => event
-	$("#crud_mode").val("add");
+	// $("#crud_mode").val("add");
+
 	// init de l'affichage
 	$("#eventStartDate").html(french_format(ev.start_date));
 	$("#game_type_div").hide();
 
-	setDetailFormMode("add");
+	// setDetailFormMode("add");
 
+	console.log("\t\tstartLightbox ... ");
 	scheduler.startLightbox(ev.id, resa_form);	// ouverture de la lightbox basee sur resa_form
 
 	close_onClick_outside();
 
 }	// openReservationLightbox
 
-
-function getPlayersBySlotFor(ev){
-	// var mysql_format = scheduler.date.date_to_str("%Y-%m-%d %H:%i");	//moved here by cesar
-	var thatMorning = new Date(ev.start_date);
-	thatMorning.setHours(0);
-	var thatEvening = new Date(ev.start_date);
-	thatEvening.setHours(23);
-
-	$.ajax({
-		async: true,
-		type: "POST",
-		url: "/resajax/getdispo",
-		dataType: "json",
-		data: {
-			begin_date: mysql_format(thatMorning),
-			end_date: mysql_format(thatEvening)
-		},
-		success: function( data ) {
-			var occupation_array = new Array();	//Tableau du nombre de joueurs par slot horaire pour les trous 1 et 10
-			// while(occupation_array.length > 0) {
-			// 	occupation_array.pop();
-			// }
-			$.each(data, function(key, val) {
-				occupation_array[key] = val;
-			});
-			// Activation du switch 9 ou 18 trous en fonction des places restantes
-			// TODO Verif si encore utilisé avec le nouveau switch nbTrousJ
-			var date_key = mysql_format(ev.start_date)+":00";
-			if(date_key in occupation_array[ev.sh]) {
-				for(var i = 4; i > 4-occupation_array[ev.sh][date_key]; i--) {
-
-					Change_PlayerDiv(i,	// Numero du slot
-						null,			// Div joueur entiere
-						null, null,		// joueur name, et name
-						null,				// id_user
-						false, false		// nbTrousJ et check 18
-					)
-
-					// $("#nbTrousJ" + i).prop("disabled", true);
-					// $("#nbTrousJ" + i).prop("checked", false);
-				}
-			}	
-		}
-	});
-}	// getPlayersBySlotFor
-
-function scroll_to_now(){
-	$('.dhx_now_time').html("<a name='now'></a>");
-	location.href = "#now";
-}	// scroll_to_now
-
-function startEditEventForm(ev){
-	console.log("startEditEventForm, ev.id: ", ev.id)
-
-	openReservationLightbox(ev);
+function loadEventsDetails(ev){
+	console.log("loadEvents, ev.id: ", ev.id)
 
 	////////////////////////////////////////////////////////
 	// On lance la récupération du detail de la partie
@@ -1859,16 +1936,20 @@ function startEditEventForm(ev){
 					}
 				}
 
+				//////////////////////////////////////////////////////////
 				// On crée les 4 slots des joueurs pour toutes les parties
 				joueurIdx = createPlayersDiv(value, joueurIdx);
-				if(!ev.u && joueurIdx > 4){
-					console.log("Erreur 1 dans requete ajax /resajax/loaddetailsform");
-					setDetailFormMode("none");
+
+
+				if(!ev.u && joueurIdx > max_joueurs){
+					console.log("Joueur absent et slot full => mode none");
+					// setDetailFormMode("none");
+					setFormMode("Read");
 				}
-				if(detectUserPlayTimespan(ev)){
-					console.log("Erreur 2 dans requete ajax /resajax/loaddetailsform");
-					setDetailFormMode("none");
-				}
+				// if(detectUserPlayTimespan(ev)){
+				// 	console.log("Erreur 2 dans requete ajax /resajax/loaddetailsform");
+				// 	setDetailFormMode("none");
+				// }
 			});
 			for(var i = joueurIdx; i <= max_joueurs; i++){
 				// On effectue la mise à jour du slot joueur
@@ -1882,117 +1963,61 @@ function startEditEventForm(ev){
 	});
 }	// startEditEventForm
 
-/*
-function createPlayerDiv_old(value, joueurIdx){
-	var nj = joueurIdx;
-	var strname = "";
-	// boucle sur les emplacements joueurs de cette partie à partir de l'idx de début
-	for(var i=nj; i < nj+value.players.length; i++){
-		// récup du nom du joueur
-		if(value.players[i-nj].id == 0){
-			strname = value.players[i-nj].info +" (Invité)";
-			// $("span.invite_label"+i).show();
-		}else if(value.players[i-nj].id == 1){
-			strname = value.players[i-nj].info +" (Visiteur)";
-			// $("span.visiteur_label"+i).show();
-		}else{
-			strname = value.players[i-nj].firstname +" " +value.players[i-nj].lastname;
-		}
-		// si partie selectionnée: afficher ou pas le bouton suppr du joueur
-		if(value.isSelected){
-			if(value.usr_in == "1" || vars.isAdmin){
-				$("#btn_clear_user_" + i).show();
-				$("#btn_clear_user_" + i).attr("tag", value.players[i-nj].userHasResa);
+function getPlayersBySlotFor(ev){
 
-				setDetailFormMode("delete");
-			}else{
-				setDetailFormMode("add_me");
-			}
-		}else{
-			$("#joueur"+i).parent().parent().parent().addClass("c");
-			$("#joueur"+i).addClass("other_reservation");
-		}
-		$("#joueur"+i).val(strname);
-		$("#joueur"+i).prop("disabled", true);
-		$("#id_J"+i).val(value.players[i-nj].id);
+	var thatMorning = new Date(ev.start_date);
+	thatMorning.setHours(0);
 
-		// On met à jour le switch du nombre de trous
-		var swj = $("#nbTrousJ" + i);
-		swj.prop("disabled", true);
-		// swj.prop("disabled", false);
-		if(value.players[i-nj].nbTrous == 9){
-			swj.prop("checked", false);
-		}else{
-			swj.prop("checked", true);
-		}
-		// On met à jour la checkbox des ressources
-		var cbresj = $(".Chariot_check[value="+(i-1)+"]");
-		cbresj.prop('disabled',true);
-		if(value.players[i-nj].ressources[0] == "Chariot"){
-			cbresj.prop('checked',true);
-		}
-		joueurIdx++;
-	}
-	return joueurIdx;
-}	// createPlayerDiv_old
-*/
-/*
-function createPlayersDivnew(value, joueurIdx){
-	var nj = joueurIdx;
-	var strname = "";
-	
-	// boucle sur les emplacements joueurs de cette partie à partir de l'idx de début
-	for(var i=nj; i < nj+value.players.length; i++){
-		// récup du nom du joueur
-		if(value.players[i-nj].id == 0){
-			strname = value.players[i-nj].info +" (Invité)";
-		}else if(value.players[i-nj].id == 1){
-			strname = value.players[i-nj].info +" (Visiteur)";
-		}else{
-			strname = value.players[i-nj].firstname +" " +value.players[i-nj].lastname;
-		}
-		
-		// si partie selectionnée: afficher ou pas le bouton suppr du joueur
-		if(value.isSelected){
-			if(value.usr_in == "1" || vars.isAdmin){
-				$("#btn_clear_user_" + i).show();
-				$("#btn_clear_user_" + i).attr("tag", value.players[i-nj].userHasResa);
+	var thatEvening = new Date(ev.start_date);
+	thatEvening.setHours(23);
 
-				setDetailFormMode("delete");
-			}else{
-				setDetailFormMode("add_me");
-			}
-		}else{
-			$("#joueur"+i).parent().parent().addClass("other_reservation");
-			$("#joueur"+i).addClass("other_reservation");
-		}
-		$("#joueur"+i).val(strname);
-		$("#joueur"+i).prop("disabled", true);
-		$("#id_J"+i).val(value.players[i-nj].id);
+	$.ajax({
+		async: true,
+		type: "POST",
+		url: "/resajax/getdispo",
+		dataType: "json",
+		data: {
+			begin_date: mysql_format(thatMorning),
+			end_date: mysql_format(thatEvening)
+		},
+		success: function( data ) {
+			var occupation_array = new Array();	//Tableau du nombre de joueurs par slot horaire pour les trous 1 et 10
+			// while(occupation_array.length > 0) {
+			// 	occupation_array.pop();
+			// }
+			$.each(data, function(key, val) {
+				occupation_array[key] = val;
+			});
+			// Activation du switch 9 ou 18 trous en fonction des places restantes
+			// TODO Verif si encore utilisé avec le nouveau switch nbTrousJ
+			var date_key = mysql_format(ev.start_date)+":00";
+			// if(date_key in occupation_array[ev.sh]) {
+			if(date_key in data[ev.sh]) {
+				// for(var i = 4; i > 4-occupation_array[ev.sh][date_key]; i--) {
+				for(var i = max_joueurs; i > max_joueurs - data[ev.sh][date_key]; i--) {
 
-		// On met à jour le switch du nombre de trous
-		var swj = $("#nbTrousJ" + i);
-		swj.prop("disabled", true);
-		// swj.prop("disabled", false);
-		if(value.players[i-nj].nbTrous == 9){
-			swj.prop("checked", false);
-		}else{
-			swj.prop("checked", true);
+					Change_PlayerDiv(i,	// Numero du slot
+						null,			// Div joueur entiere
+						null, null,		// joueur name, et name
+						null,				// id_user
+						false, false		// nbTrousJ et check 18
+					)
+
+					// $("#nbTrousJ" + i).prop("disabled", true);
+					// $("#nbTrousJ" + i).prop("checked", false);
+				}
+			}	
 		}
-		// On met à jour la checkbox des ressources
-		var cbresj = $(".Chariot_check[value="+(i-1)+"]");
-		cbresj.prop('disabled',true);
-		if(value.players[i-nj].ressources[0] == "Chariot"){
-			cbresj.prop('checked',true);
-		}
-		joueurIdx++;
-	}
-	return joueurIdx;
-}	// createPlayerDivnew
-*/
+	});
+}	// getPlayersBySlotFor
+
+function scroll_to_now(){
+	$('.dhx_now_time').html("<a name='now'></a>");
+	location.href = "#now";
+}	// scroll_to_now
 
 function createPlayersDiv(value, joueurIdx){
-	console.log("createPlayersDiv joueurIdx:", joueurIdx);
+	console.log("createPlayersDiv: 1er joueur en slot :", joueurIdx, " (joueurIdx)");
 	var nj = joueurIdx;
 	var mode = "none";
 	
@@ -2017,11 +2042,11 @@ function createPlayersDiv(value, joueurIdx){
 			// Partie selectionnée: afficher ou pas le bouton suppr du joueur
 			if(value.usr_in == "1" || vars.isAdmin){
 				btncleartag = value.players[i-nj].userHasResa;
-				mode = "delete";
-				setDetailFormMode(mode);
+				// mode = "delete";
+				setFormMode("Delete");
 			}else{
-				mode = "add_me";
-				setDetailFormMode(mode);
+				// mode = "add_me";
+				setFormMode("Add_me");
 			}
 		}else{
 			// Partie non selectionnée
@@ -2060,6 +2085,75 @@ function createPlayersDiv(value, joueurIdx){
 	return joueurIdx;
 }	// createPlayerDiv
 
+function setFormMode(mode){
+	switch(mode){
+	case "Create":
+		console.log("\t\tSet CRUD Mode: ", "Create")
+		// permet de creer une nouvelle partie sur un slot vide
+		$("#crud_mode").val("Create");
+		$("#reserver_button").show();
+		$("#edit_button").hide();
+		$("#add_new_button").hide();
+		$("#update_button").hide();
+		$("#delete_button").hide();
+		break;
+	case "Read":
+		console.log("\t\tSet CRUD Mode: ", "Read")
+		// Affiche les parties d'un slot horaire
+		$("#crud_mode").val("Read");
+		$("#reserver_button").hide();
+		$("#edit_button").show();
+		$("#add_new_button").hide();
+		$("#update_button").hide();
+		$("#delete_button").hide();
+		break;
+	case "Add_me":
+		console.log("\t\tSet CRUD Mode: ", "Create (Add_me)")
+		// permet (de creer) d'ajouter une nouvelle partie sur le meme slot horaire
+		$("#crud_mode").val("Create");
+		$("#reserver_button").hide();
+		$("#add_new_button").show();
+		$("#update_button").hide();
+		if(vars.isAdmin)
+			$("#delete_button").show();
+		else
+			$("#delete_button").hide();
+		$("#joueur1, #joueur2, #joueur3, #joueur4").prop("disabled", true);
+		// $("#joueur1, #joueur2, #joueur3, #joueur4").addClass("disabled");
+		break;
+	case "Update":
+		// permet de mettre à jour une partie déjà presente
+		$("#crud_mode").val("udpate");
+		$("#reserver_button").hide();
+		if(vars.isAdmin){
+			$("#reserver_button").show();
+			$("#add_new_button").show();
+		}else
+			$("#add_new_button").hide();
+		$("#update_button").show();
+		$("#delete_button").hide();
+		break;
+	case "Delete":
+		// permet de supprimer une partie presente
+		$("#crud_mode").val("delete");
+		$("#reserver_button").hide();
+		if(vars.isAdmin)
+			$("#add_new_button").show();
+		else
+			$("#add_new_button").hide();
+		$("#update_button").hide();
+		$("#delete_button").show();
+		break;
+	default:
+		// n'est jamais utilisé
+		$("#reserver_button").hide();
+		$("#add_new_button").hide();
+		$("#update_button").hide();
+		$("#delete_button").hide();
+		break;
+	}
+}	// setFormMode
+
 function setDetailFormMode(mode){
 	switch(mode){
 	case "add":
@@ -2081,7 +2175,7 @@ function setDetailFormMode(mode){
 		else
 			$("#delete_button").hide();			
 		$("#joueur1, #joueur2, #joueur3, #joueur4").prop("disabled", true);
-		$("#joueur1, #joueur2, #joueur3, #joueur4").addClass("disabled");
+		// $("#joueur1, #joueur2, #joueur3, #joueur4").addClass("disabled");
 		break;
 	case "update":
 		// permet de mettre à jour une partie déjà presente
@@ -2117,18 +2211,19 @@ function setDetailFormMode(mode){
 }	// setDetailFormMode
 
 function reset_form(ev){
+	console.log("reset_form ... ");
 	$("#form")[0].reset();
 	$("#id_resa_provi_aller").val("");
 	$("#id_resa_provi_retour").val("");
 	$("#id_reservation").val("");
 	scheduler.updateEvent(ev.id);
 	
-	for (var i=1; i <= 4; i++){
+	for (var i=1; i <= max_joueurs; i++){
 
-		// $( "#id_J" + i).val("");
+		// unvalidate_name($("#joueur" + i));
+		unvalidateSlotJ(i, true);
 
-		$("#joueur" + i).prop("placeholder", 'Chercher un nom de membre ...');
-		$("#joueur" + i).autocomplete("enable");
+		SetUserInputOpt(i, true, 'Chercher un nom de membre ...', true);
 
 		SetOtherReservation(i, false);
 
@@ -2159,22 +2254,24 @@ function reset_form(ev){
 			if(i == 1){
 				Change_PlayerDiv(1,	// Numero du slot
 					true,			// Div joueur entiere
-					false,"",
+					// false,"",
+					false,vars.thisUserFullName,
 					$("#current_user_id").val()	// joueur name, id_user
 				)
 			}
 		}
 	}
 
-	setDetailFormMode("none")
+	setFormMode("Read")
 	update_joueurs_presents();
 }	// reset_form
 
 function SetOtherReservation(slot, enableOther){
 	enableOther = defaultFor(enableOther, null);
 
-	console.log("SetOtherReservation slot ", slot, ": ", enableOther);
+	// console.log("SetOtherReservation slot ", slot, ": ", enableOther);
 	if(enableOther){
+		console.log("SetOtherReservation slot ", slot, ": ", enableOther);
 		$("#joueur" + slot).parent().parent().addClass("other_reservation");
 		$("#joueur" + slot).addClass("other_reservation");
 	}else{
@@ -2196,6 +2293,22 @@ function SetBtnClear(slot, clearTag){
 
 }
 
+function SetUserInputOpt(slot,isAutocomplete,placeHolder,getFocus){
+	// Set default value if parameters is not defined: null => don't change
+	isAutocomplete = defaultFor(isAutocomplete, null);
+	placeHolder = defaultFor(placeHolder, null);
+
+	if(isAutocomplete !== null)
+		if(isAutocomplete)
+			$("#joueur" + slot).autocomplete("enable");
+		else
+			$("#joueur" + slot).autocomplete("disable");
+	if(placeHolder !== null)
+		$("#joueur" + slot).prop("placeholder", placeHolder);
+	if(getFocus)
+		$("#joueur" + slot).focus();
+}
+
 function Change_PlayerDiv(slot,
 	enabledDiv,
 	enabledUser, nameUser,
@@ -2203,8 +2316,8 @@ function Change_PlayerDiv(slot,
 	enabledNbHoleSwitch,valueNbHoleSwitch,
 	enabledRes1,valueRes1,
 	enabledVisitor,valueVisitor,
-	enabledInvited,valueInvited
-){
+	enabledInvited,valueInvited)
+{
 	// Set default value if parameters is not defined: null => don't change
 	enabledDiv = defaultFor(enabledDiv, null);
 	enabledUser = defaultFor(enabledUser, null);
@@ -2324,7 +2437,7 @@ function validate_form(){
 		alert("La réservation doit contenir au moins le Joueur 1.");
 		return false;
 	}
-	for(var i = 2; i <= 4; i++) {
+	for(var i = 2; i <= max_joueurs; i++) {
 		if($("#joueur" + i).val() != "" && ($("#id_J" + i).val() == "" || $("#id_J" + i).val() < 0)) {
 			if(vars.isAdmin){
 				alert("Il semble que le joueur " + i + " ne soit pas un membre. Veuillez cocher la case invité le cas échéant.");
@@ -2340,10 +2453,12 @@ function validate_form(){
 
 function update_joueurs_presents(){
 	joueurs_presents_ = Array();
-	for (var i=1; i<=4; i++){
+	for (var i = 1; i <= max_joueurs; i++){
 		if($("#id_J"+i).val() !== ""){
-			// $("#crud_J"+i).val("add");
-			joueurs_presents_.push($("#id_J"+i).val());
+			if(($("#crud_J"+i).val() == "Create")
+			|| ($("#crud_J"+i).val() == "Update") ){
+				joueurs_presents_.push($("#id_J"+i).val());
+			}
 		}
 	}
 	$("#nb_joueurs").val(joueurs_presents_.length);
@@ -2352,17 +2467,50 @@ function update_joueurs_presents(){
 }	// update_joueurs_presents
 	
 function validate_name(object){
-	object.css('color', 'green');
+	// var idxj = parseInt($(object).context.id.substr($(object).context.id.length -1));
+	var idxj = parseInt($(object)[0].id.substr($(object)[0].id.length -1));
+	object.parent().parent().addClass("has-success");
 	if (vars.thisAction == "calendrier"){
+		console.log("\tvalidate_name #crud_J", idxj);
+		$("#crud_J"+idxj).val("Create");
 		update_joueurs_presents();
-		if($("#id_reservation").val() != ""){
-			setDetailFormMode("update");
-		}
+		// if($("#id_reservation").val() != ""){
+		// 	setDetailFormMode("update");
+		// }
+	}
+}	// validate_name 
+
+function validateSlotJ(index){
+	if (vars.thisAction == "calendrier"){
+		console.log("\tvalidate_name #crud_J", index, ": Create");
+		$("#joueur" + index).parent().parent().addClass("has-success");
+		$("#crud_J" + index).val("Create");
+		update_joueurs_presents();
 	}
 }	// validate_name 
 
 function unvalidate_name(object){
-	object.css('color', 'black');
+	// var idxj = parseInt($(object).context.id.substr($(object).context.id.length -1));
+	var idxj = parseInt($(object)[0].id.substr($(object)[0].id.length -1));
+	// var idxj = parseInt(this.name.substr(this.name.length-1));
+	if(parseInt($("#id_J" + idxj).val()) < 2)
+		return;
+	object.parent().parent().removeClass("has-success");
+	if (vars.thisAction == "calendrier"){
+		$("#crud_J"+idxj).val("none");
+		update_joueurs_presents();
+	}
+}	// unvalidate_name
+
+function unvalidateSlotJ(index, force){
+	if(parseInt($("#id_J" + index).val()) < 2 && !force)	// que pour les joueurs
+		return;
+	if (vars.thisAction == "calendrier"){
+		console.log("\tunvalidate_name #crud_J", index, ": none");
+		$("#joueur" + index).parent().parent().removeClass("has-success");
+		$("#crud_J" + index).val("none");
+		update_joueurs_presents();
+	}
 }	// unvalidate_name
 
 function close_onClick_outside(){
@@ -2373,3 +2521,34 @@ function close_onClick_outside(){
 
 /////////////////////////////////////////////////////////////////////////////////
 
+function log(msg, color){
+	var normal = false;
+	if (color === undefined){
+		normal = true;
+		color = "black";
+	}else{
+		color = color;
+	}
+	// color = color || "black";
+	bgc = "White";
+	switch (color) {
+		case "bold":	 color = color;			bgc = bgc;				break;
+		case "success":  color = "Green";      bgc = "LimeGreen";       break;
+		case "info":     color = "DodgerBlue"; bgc = "Turquoise";       break;
+		case "error":    color = "Red";        bgc = "Black";           break;
+		case "start":    color = "OliveDrab";  bgc = "PaleGreen";       break;
+		case "warning":  color = "Tomato";     bgc = "Black";           break;
+		case "end":      color = "Orchid";     bgc = "MediumVioletRed"; break;
+		default: color = color;
+	}
+
+
+	if (normal || typeof msg == "object"){
+		console.log(msg);
+	} else if (typeof color == "object"){
+		console.log("%c" + msg, "color: PowderBlue;font-weight:bold; background-color: RoyalBlue;");
+		console.log(color);
+	} else {
+		console.log("%c" + msg, "color:" + color + ";font-weight:bold; background-color: " + bgc + ";");
+	}
+}
