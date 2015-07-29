@@ -229,7 +229,8 @@ class EGP_GameReservation
 		// Récupération et validation des joueurs				//
 		
 		for($i = 0; $i < $this->max_joueurs; $i++) {
-			if(Arr::get($this->method, 'crud_J'.($i+1)) != "Create")
+			// if((Arr::get($this->method, 'crud_J'.($i+1)) != "Create") || (Arr::get($this->method, 'crud_J'.($i+1)) != "Edit"))
+			if(Arr::get($this->method, 'crud_J'.($i+1)) == "none")
 				continue;
 			$formplayerid = Arr::get($this->method, 'id_J'.($i+1));
 			if($formplayerid != null && $formplayerid >= 0) {
@@ -245,6 +246,7 @@ class EGP_GameReservation
 					$info = Arr::get($this->method, 'joueur'.($i+1));
 				}
 				$newplayer = new EGP_GamePlayer($formplayerid, $formplayernbtrous, $pl->firstname, $pl->lastname, $info);
+				$newplayer->setCrudState(Arr::get($this->method, 'crud_J'.($i+1)));
 				
 				$this->players[] = $newplayer;	// TODO faire ça sur le slotAller et pas sur le pointeur global !
 				$this->nb_joueurs++;			// TODO faire ça sur le slotAller et pas sur le pointeur global !
@@ -663,7 +665,7 @@ class EGP_GameReservation
 		);
 	}	// MakeReservation
 
-	public function UpdateReservation()
+	public function UpdateReservation($reqResa)
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Concept: Mises à jour possibles
@@ -672,14 +674,163 @@ class EGP_GameReservation
 		// C/ +/- ressources d'un joueur 
 		//////////////////////////////////////////////////////////////////////////
 
-		//////////////////////////////////////////////////////////////////////////
-		// A-1 Ajout d'un joueur
-		
-		// test de la dispo du nouveau nombre de place
-		$actualNbUser = $this->getNbPlayerForSlot($this->slotAller->resa->date_reservation, $this->slotAller->typeParcours->id);
-		
-		$addedUsers = $this->nb_joueurs;
-		
+		foreach($reqResa->players as $reqPlayer){
+			if($reqPlayer->getCrudState() != "Modified"){
+				continue;	// Joueur non modifié, next
+			}
+			// Ce joueur est modifié
+			$finded = false;
+			$ModifiedPlayer;
+			foreach($this->players as $player){
+				if ($player->id != $reqPlayer->id){
+					continue;
+				}else{
+					$finded = true;
+					$ModifiedPlayer = $player;
+					break;
+				}
+			}
+			if(!$finded){
+				return array(
+					'valid' => false,
+					'message' => "ERREUR: Impossible de retrouver le joueur modifié dans cette réservation"
+				);
+			}
+			// OK ici nous avons un joueur à modifier: $ModifiedPlayer et les nouvelles valeurs: $reqPlayer
+			//////////////////////////////////////////////////////////////////////////
+			// A-1 Ajout d'un joueur
+	
+			// test de la dispo du nouveau nombre de place
+			$savedNbUser = $this->getNbPlayerForSlot($this->slotAller->resa->date_reservation, $this->slotAller->typeParcours->id);
+			$reqUsers = $this->nb_joueurs;
+
+			//////////////////////////////////////////////////////////////////////////
+			// A-2 Supression d'un joueur
+	
+			//////////////////////////////////////////////////////////////////////////
+			// B-1 Nb Trous: passage à 18
+			if($reqPlayer->nbTrous > $ModifiedPlayer->nbTrous){
+				// passage en 18 trous
+				
+			}
+	
+			//////////////////////////////////////////////////////////////////////////
+			// B-2 Nb Trous: passage à 9
+			
+			if($reqPlayer->nbTrous < $ModifiedPlayer->nbTrous){
+				// passage en 9 trous
+
+				// Baisser de 1 le nombre de joueurs dans la partie retour
+				$reservation_update_query				= DB_ORM::model('reservation');
+				$reservation_update_query->id			= $this->reservations['id_reservation_retour'];
+				$reservation_update_query->nb_joueurs	= $this->slotRetour->nbPlayers - 1;
+				$reservation_update_query->save(true);
+
+				// Supprimer l'entrée dans la table users_has_reservation pour ce joueur et cette resa
+				$builder = DB_ORM::delete('users_has_reservation')
+					->where('id_users', '=', $ModifiedPlayer->id)
+						->where('id_reservation', '=', $this->reservations['id_reservation_retour']);
+				$sql = $builder->statement();
+				$id = $builder->execute();
+
+				// Mettre à jour les infos du slot
+				$this->slotRetour->nbPlayers--;
+				
+				// Mettre à jour la resa Aller pour supprimer le lien vers la resa enfant si plus aucun retour
+				if($this->slotRetour->nbPlayers <= 0){
+					$reservation_update_query				= DB_ORM::model('reservation');
+					$reservation_update_query->id			= $this->reservations['id_reservation_retour'];
+					$reservation_update_query->id_children	= NULL;
+					$reservation_update_query->save(true);
+				}
+
+				// Mettre a jour l'objet GamePlayer si d'autre modifs dessus comme les ressources
+				$ModifiedPlayer->nbTrous = 9;
+			}
+			//////////////////////////////////////////////////////////////////////////
+			// C-1 Ajout de Ressources
+
+			if(count($reqPlayer->ressourcesIds) >= count($ModifiedPlayer->ressourcesIds)){
+				// Ok j'ai des ressources en plus
+				if(count($reqPlayer->ressourcesIds) == 1){
+					// Ajout de la ressource pour l'aller pour ce joueur
+					// $users_has_reservation_query 					= DB_ORM::model('users_has_reservation');
+					// $users_has_reservation_query->id_users 			= $ModifiedPlayer->id;
+					// $users_has_reservation_query->id_reservation	= $this->reservations['id_reservation_aller'];
+					// $users_has_reservation_query->load();
+					$builder = DB_ORM::select('users_has_reservation')
+						->where('id_users', '=', $ModifiedPlayer->id)
+							->where('id_reservation', '=', $this->reservations['id_reservation_aller']);
+					$sql = $builder->statement();
+					$users_has_reservation_query = $builder->query();
+
+					$builder = DB_ORM::insert('user_reservation_ressources')
+						->column('id_user_has_reservation', $users_has_reservation_query[0]->id)
+							->column('id_ressources', $reqPlayer->ressourcesIds[0]);
+					$sql = $builder->statement();
+					$users_has_reservation_query = $builder->execute();
+
+					// Ajout de la ressource pour le retour pour ce joueur
+					if($ModifiedPlayer->nbTrous == 18){
+						// $users_has_reservation_query 					= DB_ORM::model('users_has_reservation');
+						// $users_has_reservation_query->id_reservation	= $this->reservations['id_reservation_retour'];
+						// $users_has_reservation_query->load();
+						//
+						// $users_has_reservation_query							= DB_ORM::model('user_reservation_ressources');
+						// $users_has_reservation_query->id_user_has_reservation	= $users_has_reservation_query->id;
+						// $users_has_reservation_query->id_ressource	= $reqPlayer->ressourcesIds[0];
+						// $users_has_reservation_query->save(true);
+
+						$builder = DB_ORM::select('users_has_reservation')
+							->where('id_users', '=', $ModifiedPlayer->id)
+								->where('id_reservation', '=', $this->reservations['id_reservation_retour']);
+						$sql = $builder->statement();
+						$users_has_reservation_query = $builder->query();
+
+						$builder = DB_ORM::insert('user_reservation_ressources')
+							->column('id_user_has_reservation', $users_has_reservation_query[0]->id)
+								->column('id_ressources', $reqPlayer->ressourcesIds[0]);
+						$sql = $builder->statement();
+						$users_has_reservation_query = $builder->execute();
+
+					}
+				}
+			}
+	
+			//////////////////////////////////////////////////////////////////////////
+			// C-2 Retrait de ressources
+	
+			if(count($reqPlayer->ressourcesIds) <= count($ModifiedPlayer->ressourcesIds)){
+				// Ok j'ai des ressources en moins
+				if(count($reqPlayer->ressourcesIds) == 0){
+					// Recherche et suppression de la ressource pour l'aller
+					$builder = DB_ORM::select('users_has_reservation')
+						->where('id_users', '=', $ModifiedPlayer->id)
+							->where('id_reservation', '=', $this->reservations['id_reservation_aller']);
+					$sql = $builder->statement();
+					$users_has_reservation_query = $builder->query();
+
+					$builder = DB_ORM::delete('user_reservation_ressources')
+						->where('id_user_has_reservation', '=', $users_has_reservation_query[0]->id);
+					$sql = $builder->statement();
+					$id = $builder->execute();
+
+					// Recherche et suppression de la ressource pour le retour
+					if($ModifiedPlayer->nbTrous == 18){
+						$builder = DB_ORM::select('users_has_reservation')
+							->where('id_users', '=', $ModifiedPlayer->id)
+								->where('id_reservation', '=', $this->reservations['id_reservation_retour']);
+						$sql = $builder->statement();
+						$users_has_reservation_query = $builder->query();
+
+						$builder = DB_ORM::delete('user_reservation_ressources')
+							->where('id_user_has_reservation', '=', $users_has_reservation_query[0]->id);
+						$sql = $builder->statement();
+						$id = $builder->execute();
+					}
+				}
+			}
+		}
 
 	}	// UpdateReservation
 	

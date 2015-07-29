@@ -2,10 +2,10 @@
 
 class EGP_GamePlayer
 {
-	public $id				= 1;	// invité par defaut
-	public $nbTrous			= 9;	// 9 trous par defaut
-	public $userHasResa		= 0;	// l'id de l'entree dans la table user_has_reservation
-	// public $parcourId;				// l'id du parcour dans la table parcours
+	public $id				= 1;		// invité par defaut
+	public $nbTrous			= 9;		// 9 trous par defaut
+	public $userHasResa		= 0;		// l'id de l'entree dans la table user_has_reservation
+	public $crudState		= "Read";	// l'etat du joueur en logique CRUD
 	public $typeParcourIds	= array();	// les ids des demi-parcours dans l'ordre aller/retour de type_parcours
 	public $ressources		= array();	// tableau des noms de ressources
 	public $ressourcesIds	= array();	// tableau des id des types de ressources
@@ -19,6 +19,12 @@ class EGP_GamePlayer
 		$this->firstname= $firstname;
 		$this->lastname = $lastname;
 		$this->info		= $info;
+	}
+	public function setCrudState($state){
+		$this->crudState = $state;
+	}
+	public function getCrudState(){
+		return $this->crudState;
 	}
 }	// Class EGP_GamePlayer
 

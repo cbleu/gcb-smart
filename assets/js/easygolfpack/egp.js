@@ -848,15 +848,27 @@ function initCalendrier()
 		}
 	});
 
+	// Checkbob de la ressource Chariot: uniquement visuel => la donnée est dans #nb_trous_J
+	$("#Chariot_1, #Chariot_2, #Chariot_3, #Chariot_4").change(function(){
+		var idxj = this.id.slice( -1); 
+		if($("#crud_J" + idxj).val() == "Edit"){
+			editSlotJ(idxj, true);
+		}
+	});
+
 	// Switch du nombre de trous: uniquement visuel => la donnée est dans #nb_trous_J
 	$(".nbTrousJ").change(function(){
-		var idxJ = this.name.slice( -1); 
+		var idxj = this.name.slice( -1); 
 		// console.log("idxJ:", idxJ);
 		if (this.checked) {	// this is true if the switch is on
-			$("#nb_trous_J" + idxJ).val(18);
+			$("#nb_trous_J" + idxj).val(18);
 		}
 		else {
-			$("#nb_trous_J" + idxJ).val(9);
+			$("#nb_trous_J" + idxj).val(9);
+		}
+		
+		if($("#crud_J" + idxj).val() == "Edit"){
+			editSlotJ(idxj, true);
 		}
 	});
 
@@ -1076,7 +1088,7 @@ function initCalendrier()
 					true, null,		// nbTrousJ
 					true, null		// Chariot
 				)
-				validateSlotJ(i);
+				editSlotJ(i, false);
 				if(vars.isAdmin){
 					Change_PlayerDiv(i,	// Numero du slot
 						true,			// Div joueur entiere
@@ -2492,10 +2504,24 @@ function update_joueurs_presents(){
 // }	// validate_name
 
 function validateSlotJ(index){
+	changeSlotJ(index,false);
+}
+function editSlotJ(index, isModified){
+	changeSlotJ(index,true, isModified);
+}
+function changeSlotJ(index, editmode, isModified){
+	editmode = defaultFor(editmode, null);
+	
 	if (vars.thisAction == "calendrier"){
 		console.log("\tvalidate_name #crud_J", index, ": Create");
 		$("#joueur" + index).parent().parent().addClass("has-success");
-		$("#crud_J" + index).val("Create");
+		if(editmode)
+			if(isModified)
+				$("#crud_J" + index).val("Modified");
+			else
+				$("#crud_J" + index).val("Edit");
+		else
+			$("#crud_J" + index).val("Create");
 		update_joueurs_presents();
 	}
 }	// validate_name 
