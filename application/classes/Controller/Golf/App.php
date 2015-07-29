@@ -458,6 +458,7 @@ class Controller_Golf_App extends Controller_Golf_Main
 		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_grid_view.js');
 
 		Helpers_Javascript::add('/assets/js/colourPicker/jquery.colourPicker.js');
+		Helpers_Javascript::add('/assets/js/plugin/Add-Clear/addclear.js');
 
 		// load main App Module JS
 		Helpers_Javascript::add('/assets/js/easygolfpack/egp.js');

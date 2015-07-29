@@ -9,6 +9,7 @@ var vars = {};
 var max_joueurs = 4;
 var lastNameValue = "";
 var joueurs_presents_ = new Array();
+var joueurs_dans_partie = new Array();
 
 // var nbJoueurs = 0;
 // var occupation_array = new Array();	//Tableau du nombre de joueurs par slot horaire pour les trous 1 et 10
@@ -21,11 +22,6 @@ var joueurs_presents_ = new Array();
 	return len;
 }*/
 
-var shortTime_format 		= scheduler.date.date_to_str("%H:%i");
-var shortDate_format 		= scheduler.date.date_to_str("%d/%m/%Y");
-var shortDate_mysql_format 	= scheduler.date.date_to_str("%Y-%m-%d");
-var mysql_format 			= scheduler.date.date_to_str("%Y-%m-%d %H:%i");
-var french_format 			= scheduler.date.date_to_str("%H:%i le %d %F %Y");
 
 /////////////////////////////////////////////////////////////////////////////////
 // JQUERY
@@ -286,9 +282,10 @@ function initWizard()
 	});
 
 	$("#joueur1, #joueur2, #joueur3, #joueur4").change(function(){
+		var idxj = this.name.slice( -1); 
 		if(lastNameValue != "" && $(this).val() != lastNameValue) {
-			unvalidate_name($(this));
-			// unvalidateSlotJ(i);
+			// unvalidate_name($(this));
+			unvalidateSlotJ(idxj);
 		}
 		// update_joueurs();
 		update_joueurs_presents();
@@ -297,8 +294,10 @@ function initWizard()
 	});
 
 	$("#joueur1, #joueur2, #joueur3, #joueur4").focusout(function(){
+		var idxj = this.name.slice( -1); 
 		if(lastNameValue != "" && $(this).val() == lastNameValue) {
-			validate_name($(this));
+			// validate_name($(this));
+			validateSlotJ(idxj);
 		}
 		// update_joueurs();
 		update_joueurs_presents();
@@ -336,7 +335,8 @@ function initWizard()
 			var idSelector = "#id_"+$(this).prop('id');
 			$(idSelector).val(ui.item.key);
 			lastNameValue = ui.item.value;
-			validate_name($(this));
+			// validate_name($(this));
+			validateSlotJ($(this).prop('id'));
 		},
 		open: function() {
 			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
@@ -860,6 +860,20 @@ function initCalendrier()
 		}
 	});
 
+	$("#joueur1, #joueur2, #joueur3, #joueur4").addClear({
+		onClear: function(){
+			// alert("call back!");
+			inputfield = document.activeElement.id;
+			$("#" + inputfield).trigger("change");
+		},
+		closeSymbol: "&#10006;",
+		// closeSymbol: "\f057",
+		right: 4,
+		top: 10,
+		color: "#CCC",
+	});
+
+
 	$("#joueur1, #joueur2, #joueur3, #joueur4").focus(function(){
 		// lastNameValue = $(this).val();
 		// unvalidate_name($(this));
@@ -994,6 +1008,7 @@ function initCalendrier()
 
 	$("#add_new_button").click(function(){
 		var isCurrentUserAdded = false;
+
 		for(var i = 1; i <= max_joueurs; i++) {
 			if($("#id_J"+i).val() == "") {
 				// Si le slot est vide
@@ -1009,6 +1024,7 @@ function initCalendrier()
 					)
 					isCurrentUserAdded = true;
 					validateSlotJ(i);
+					continue;
 				}
 				// On clean le slot pour un potentiel joueur
 				$("#crud_J"+i).val("none");
@@ -1036,14 +1052,46 @@ function initCalendrier()
 				SetOtherReservation(i, false);
 			}else{
 				// slot avec déjà un autre joueur d'une ancienne partie
-				$("#crud_J"+i).val("none");
+				$("#crud_J"+i).val("Read");
 				Change_PlayerDiv(i,			// Numero du slot
 					false					// Div joueur entiere désactivée
 				)
 				SetOtherReservation(i, true);
 			}
 		}
-		setFormMode("Create");
+		setFormMode("Create", isCurrentUserAdded);
+	});
+
+
+	$("#edit_button").click(function(){
+		$("#crud_mode").val("Update");
+		for(var i = 1; i <= max_joueurs; i++) {
+			if($("#crud_J"+i).val() == "Read") {
+				// On passe le slot joueur en editable
+				$("#crud_J"+i).val("Edit");
+				Change_PlayerDiv(i,	// Numero du slot
+					true,			// Div joueur entiere
+					true, null,		// joueur et name
+					null,			// id_user
+					true, null,		// nbTrousJ
+					true, null		// Chariot
+				)
+				validateSlotJ(i);
+				if(vars.isAdmin){
+					Change_PlayerDiv(i,	// Numero du slot
+						true,			// Div joueur entiere
+						true, null,		// joueur et name
+						null,			// id_user
+						true, null,		// nbTrousJ
+						true, null,		// Chariot
+						true, false,	// Visitor
+						true, false		// Invited
+					)
+				}
+				SetBtnClear(i, true);
+			}
+		}
+		setFormMode("Update");
 	});
 
 
@@ -1158,6 +1206,13 @@ function initScheduler()
 	// var click_disabled = false;
 	// var isOn_user_play = false;
 	// var shortTime_format = scheduler.date.date_to_str("%H:%i");
+
+	shortTime_format 		= scheduler.date.date_to_str("%H:%i");
+	shortDate_format 		= scheduler.date.date_to_str("%d/%m/%Y");
+	shortDate_mysql_format 	= scheduler.date.date_to_str("%Y-%m-%d");
+	mysql_format 			= scheduler.date.date_to_str("%Y-%m-%d %H:%i");
+	french_format 			= scheduler.date.date_to_str("%H:%i le %d %F %Y");
+
 
 	scheduler.locale.labels.agenda_tab=null;	// on utilise une icone a la place du texte
 
@@ -1791,7 +1846,7 @@ function reservationLightbox(id) {
 		log("Stop: Evenement non joueur", "warning")
 		return false;
 	}else{
-		// Sinon on initialise et ouvre la popup
+		// Sinon on reset,initialise et ouvre la popup
 		openReservationLightbox(ev);
 	}
 
@@ -1809,7 +1864,15 @@ function reservationLightbox(id) {
 		// Desactive les 18 trous si pas possible
 		getPlayersBySlotFor(ev);	// check la dispo pour les 18 trous
 		
-		// TODO passer en mode CRUD=Create
+		// Si non admin, on prepare le 1er slot
+		if(!vars.isAdmin){
+			Change_PlayerDiv(1,	// Numero du slot
+				true,			// Div joueur entiere
+				false,vars.thisUserFullName,// joueur et name
+				$("#current_user_id").val()	// id_user
+			)
+			validateSlotJ(1, true);
+		}
 	}else{
 		// On charge les parties sur ce slot horaire
 		loadEventsDetails(ev);
@@ -1828,9 +1891,9 @@ function reservationLightbox(id) {
 	log("\nStep3: Set CRUD Mode", "bold")
 
 	if(isAnEmptyClick){
-		setFormMode("Create");
+		setFormMode("Create", ev.u ? true:false);
 	}else{
-		setFormMode("Read");
+		setFormMode("Read", ev.u ? true:false);
 	}
 }	// reservationLightbox
 
@@ -1910,11 +1973,10 @@ function loadEventsDetails(ev){
 				// On crée les 4 slots des joueurs pour toutes les parties
 				joueurIdx = createPlayersDiv(value, joueurIdx);
 
-
 				if(!ev.u && joueurIdx > max_joueurs && !vars.isAdmin){
 					console.log("Joueur absent et slot full => mode none");
 					// setDetailFormMode("none");
-					setFormMode("Read");
+					setFormMode("Read", false);
 				}
 				// if(detectUserPlayTimespan(ev)){
 				// 	console.log("Erreur 2 dans requete ajax /resajax/loaddetailsform");
@@ -1929,6 +1991,10 @@ function loadEventsDetails(ev){
 				SetOtherReservation(i, true);
 			}
 			update_joueurs_presents();
+			// Si le slot horaire est plein on desactive la fonction de d'ajout de partie
+			if(joueurs_presents_.length >= max_joueurs){
+				$("#add_new_button").hide();
+			}
 		}
 	});
 }	// startEditEventForm
@@ -2012,12 +2078,11 @@ function createPlayersDiv(value, joueurIdx){
 			if(value.usr_in == "1" || vars.isAdmin){
 				if(value.players.length > 1)	// affiche le btn uniquement si + que 1 joueur
 					btncleartag = value.players[i-nj].userHasResa;
-				setFormMode("Delete");
-			}else{
-				setFormMode("Add_me");
 			}
+			SetCrudJ(i, "Read");
 		}else{
 			// Partie non selectionnée
+			SetCrudJ(i, "none");
 			SetOtherReservation(i, true);
 		}
 
@@ -2044,7 +2109,7 @@ function createPlayersDiv(value, joueurIdx){
 			false, false,			// Visitor et check
 			false, false			// Invited et check
 		)
-		SetBtnClear(i, btncleartag);
+		SetBtnClear(i, false, btncleartag);
 		
 		// Incremente le slot courant du joueur
 		joueurIdx++;
@@ -2053,71 +2118,48 @@ function createPlayersDiv(value, joueurIdx){
 	return joueurIdx;
 }	// createPlayerDiv
 
-function setFormMode(mode){
+function setFormMode(mode,isUserIn){
+	isUserIn = defaultFor(isUserIn, false);	// Le joueur est il dans la partie active
+
+	$("#reserver_button").hide();
+	$("#edit_button").hide();
+	$("#add_new_button").hide();
+	$("#update_button").hide();
+	$("#delete_button").hide();
+
 	switch(mode){
 	case "Create":
 		console.log("\t\tSet CRUD Mode: ", "Create")
-		// permet de creer une nouvelle partie sur un slot vide
+		// permet de creer une nouvelle partie sur un slot vide ou sur ajout de partie
 		$("#crud_mode").val("Create");
 		$("#reserver_button").show();
-		$("#edit_button").hide();
-		$("#add_new_button").hide();
-		$("#update_button").hide();
-		$("#delete_button").hide();
 		break;
 	case "Read":
 		console.log("\t\tSet CRUD Mode: ", "Read")
 		// Affiche les parties d'un slot horaire
+		// 3 config: user / admin / defaut
 		$("#crud_mode").val("Read");
-		$("#reserver_button").hide();
-		$("#edit_button").show();
-		$("#add_new_button").hide();
-		$("#update_button").hide();
-		$("#delete_button").hide();
-		break;
-	case "Add_me":
-		console.log("\t\tSet CRUD Mode: ", "Create (Add_me)")
-		// permet (de creer) d'ajouter une nouvelle partie sur le meme slot horaire
-		$("#crud_mode").val("Create");
-		$("#reserver_button").hide();
-		$("#add_new_button").show();
-		$("#update_button").hide();
-		if(vars.isAdmin)
+		if(isUserIn){
+			$("#edit_button").show();
 			$("#delete_button").show();
-		else
-			$("#delete_button").hide();
-		$("#joueur1, #joueur2, #joueur3, #joueur4").prop("disabled", true);
-		// $("#joueur1, #joueur2, #joueur3, #joueur4").addClass("disabled");
+		}else{
+			$("#add_new_button").show();
+		}
+		if(vars.isAdmin){
+			$("#edit_button").show();
+			$("#add_new_button").show();
+			$("#delete_button").show();
+		}
 		break;
 	case "Update":
+		console.log("\t\tSet CRUD Mode: ", "Update")
 		// permet de mettre à jour une partie déjà presente
 		$("#crud_mode").val("udpate");
-		$("#reserver_button").hide();
-		if(vars.isAdmin){
-			$("#reserver_button").show();
-			$("#add_new_button").show();
-		}else
-			$("#add_new_button").hide();
 		$("#update_button").show();
-		$("#delete_button").hide();
-		break;
-	case "Delete":
-		// permet de supprimer une partie presente
-		$("#crud_mode").val("delete");
-		$("#reserver_button").hide();
-		if(vars.isAdmin)
-			$("#add_new_button").show();
-		else
-			$("#add_new_button").hide();
-		$("#update_button").hide();
 		$("#delete_button").show();
 		break;
 	default:
 		// n'est jamais utilisé
-		$("#reserver_button").hide();
-		$("#add_new_button").hide();
-		$("#update_button").hide();
-		$("#delete_button").hide();
 		break;
 	}
 }	// setFormMode
@@ -2188,7 +2230,6 @@ function reset_form(ev){
 	
 	for (var i=1; i <= max_joueurs; i++){
 
-		// unvalidate_name($("#joueur" + i));
 		unvalidateSlotJ(i, true);
 
 		SetUserInputOpt(i, true, 'Chercher un nom de membre ...', true);
@@ -2204,7 +2245,6 @@ function reset_form(ev){
 				"",				// id_user
 				true, true,		// nbTrousJ et check 18
 				true, false,	// Chariot et check
-				// false, "",		// btn_clear_user et son tag
 				true, false,	// Visitor et check
 				true, false		// Invited et check
 			)
@@ -2215,29 +2255,21 @@ function reset_form(ev){
 				"",				// id_user
 				true, true,		// nbTrousJ
 				true, false,	// Chariot
-				// false, "",		// btn_clear_user et son tag
 				false, false,	// Visitor
 				false, false	// Invited
 			)
-			if(i == 1){
-				Change_PlayerDiv(1,	// Numero du slot
-					true,			// Div joueur entiere
-					false,vars.thisUserFullName,// joueur et name
-					$("#current_user_id").val()	// id_user
-				)
-				validateSlotJ(i, true);
-			}
 		}
 	}
-
 	setFormMode("Read")
-	update_joueurs_presents();
 }	// reset_form
+
+function SetCrudJ(slot, mode){
+	$("#crud_J" + slot).val(mode);
+}
 
 function SetOtherReservation(slot, enableOther){
 	enableOther = defaultFor(enableOther, null);
 
-	// console.log("SetOtherReservation slot ", slot, ": ", enableOther);
 	if(enableOther){
 		console.log("SetOtherReservation slot ", slot, ": ", enableOther);
 		$("#joueur" + slot).parent().parent().addClass("other_reservation");
@@ -2248,15 +2280,21 @@ function SetOtherReservation(slot, enableOther){
 	}
 }
 
-function SetBtnClear(slot, clearTag){
+function SetBtnClear(slot, enableBtn, clearTag){
+	enableBtn = defaultFor(enableBtn, null);
 	clearTag = defaultFor(clearTag, null);
 
-	if(clearTag){
-		$("#btn_clear_user_" + slot).show();
-		$("#btn_clear_user_" + slot).attr("tag",clearTag);
-	}else{
-		$("#btn_clear_user_" + slot).hide();
-		$("#btn_clear_user_" + slot).attr("tag","");
+	if(enableBtn !== null){
+		if(enableBtn)
+			$("#btn_clear_user_" + slot).show();
+		else
+			$("#btn_clear_user_" + slot).hide();
+	}
+	if(clearTag !== null){
+		if(clearTag)
+			$("#btn_clear_user_" + slot).attr("tag",clearTag);
+		else
+			$("#btn_clear_user_" + slot).attr("tag","");
 	}
 
 }
@@ -2361,13 +2399,10 @@ function CreateResaProvi(formdata){
 		return;
 	}
 	$("#event_type" ).val(2);	// event_type == 2 => resa provisoire
-	// $("#nb_joueurs" ).val(4);	// On pre-reserve toutes les places
-	// $("#game_type" ).val(1);	// game_type == 1 => partie 18T Aller
 	$.ajax({	// requete ajax pour reserver provisoirement les slots horaires
 
 		async: true,
 		type: "POST",
-		// url: "/resajax/resaprovi",
 		url: "/resajax/addprovi",
 		dataType: "json",
 		data:  formdata.serialize(),
@@ -2385,7 +2420,7 @@ function CreateResaProvi(formdata){
 				$("#id_resa_provi_retour" ).val(data.id_reservation_retour);
 			}
 		}	// success
-	});	// ajax resaprovi
+	});	// ajax addprovi
 }	// CreateResaProvi
 
 function ReleaseResaProvi(formdata){
@@ -2428,32 +2463,33 @@ function validate_form(){
 
 function update_joueurs_presents(){
 	joueurs_presents_ = Array();
+	joueurs_dans_partie = Array();
 	for (var i = 1; i <= max_joueurs; i++){
 		if($("#id_J"+i).val() !== ""){
 			if(($("#crud_J"+i).val() == "Create")
 			|| ($("#crud_J"+i).val() == "Update") ){
-				joueurs_presents_.push($("#id_J"+i).val());
+				joueurs_dans_partie.push($("#id_J"+i).val());	// nb de joueurs dans cette partie
 			}
+			joueurs_presents_.push($("#id_J"+i).val());			// nb total des joueurs sur ce slot horaire
 		}
 	}
-	$("#nb_joueurs").val(joueurs_presents_.length);
-	console.log("update_joueurs_presents :", joueurs_presents_.length);
-	return joueurs_presents_.length;
+	$("#nb_joueurs").val(joueurs_dans_partie.length);
+	console.log("joueurs_presents: ", joueurs_presents_.length, " joueurs_dans_partie: ", joueurs_dans_partie.length);
 }	// update_joueurs_presents
 	
-function validate_name(object){
-	// var idxj = parseInt($(object).context.id.substr($(object).context.id.length -1));
-	var idxj = parseInt($(object)[0].id.substr($(object)[0].id.length -1));
-	object.parent().parent().addClass("has-success");
-	if (vars.thisAction == "calendrier"){
-		console.log("\tvalidate_name #crud_J", idxj);
-		$("#crud_J"+idxj).val("Create");
-		update_joueurs_presents();
-		// if($("#id_reservation").val() != ""){
-		// 	setDetailFormMode("update");
-		// }
-	}
-}	// validate_name 
+// function validate_name(object){
+// 	// var idxj = parseInt($(object).context.id.substr($(object).context.id.length -1));
+// 	var idxj = parseInt($(object)[0].id.substr($(object)[0].id.length -1));
+// 	object.parent().parent().addClass("has-success");
+// 	if (vars.thisAction == "calendrier"){
+// 		console.log("\tvalidate_name #crud_J", idxj);
+// 		$("#crud_J"+idxj).val("Create");
+// 		update_joueurs_presents();
+// 		// if($("#id_reservation").val() != ""){
+// 		// 	setDetailFormMode("update");
+// 		// }
+// 	}
+// }	// validate_name
 
 function validateSlotJ(index){
 	if (vars.thisAction == "calendrier"){
@@ -2464,18 +2500,18 @@ function validateSlotJ(index){
 	}
 }	// validate_name 
 
-function unvalidate_name(object){
-	// var idxj = parseInt($(object).context.id.substr($(object).context.id.length -1));
-	var idxj = parseInt($(object)[0].id.substr($(object)[0].id.length -1));
-	// var idxj = parseInt(this.name.substr(this.name.length-1));
-	if(parseInt($("#id_J" + idxj).val()) < 2)
-		return;
-	object.parent().parent().removeClass("has-success");
-	if (vars.thisAction == "calendrier"){
-		$("#crud_J"+idxj).val("none");
-		update_joueurs_presents();
-	}
-}	// unvalidate_name
+// function unvalidate_name(object){
+// 	// var idxj = parseInt($(object).context.id.substr($(object).context.id.length -1));
+// 	var idxj = parseInt($(object)[0].id.substr($(object)[0].id.length -1));
+// 	// var idxj = parseInt(this.name.substr(this.name.length-1));
+// 	if(parseInt($("#id_J" + idxj).val()) < 2)
+// 		return;
+// 	object.parent().parent().removeClass("has-success");
+// 	if (vars.thisAction == "calendrier"){
+// 		$("#crud_J"+idxj).val("none");
+// 		update_joueurs_presents();
+// 	}
+// }	// unvalidate_name
 
 function unvalidateSlotJ(index, force){
 	if(parseInt($("#id_J" + index).val()) < 2 && !force)	// que pour les joueurs
