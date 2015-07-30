@@ -271,11 +271,18 @@ class EGP_GameReservation
 					->query();
 		foreach($golf_ressources as $res) {
 			$postuserhaveres = array();
-			$postuserhaveres 	= Arr::get($this->method, $res["ressource"]);
-			if($postuserhaveres !== null){
-				foreach($postuserhaveres as $useridx){
-					$this->players[$useridx]->ressources[] = $res["ressource"];
-					$this->players[$useridx]->ressourcesIds[] = $res["id"];
+			// $postuserhaveres 	= Arr::get($this->method, $res["ressource"]);
+			// if($postuserhaveres !== null){
+				// foreach($postuserhaveres as $idj){
+			for($i = 0; $i < $this->max_joueurs; $i++) {
+				$idj = Arr::get($this->method, 'res_J' .($i+1));
+				if($idj != null){
+					foreach($this->players as $pl){
+						if($pl->id == $idj){
+							$pl->ressources[] = $res["ressource"];
+							$pl->ressourcesIds[] = $res["id"];
+						}
+					}
 				}
 			}
 		}

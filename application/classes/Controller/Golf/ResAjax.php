@@ -773,19 +773,30 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 	public function action_update()
 	{
 
+		$id_reservation 		= Arr::get($_POST, 'id_reservation');
+
 		//////////////////////////////////////////////////////////
 		// Récupération et vérification de la requete POST
+		$updatedResa = new EGP_GameReservation(Settings::get('id_trace'));
+		$funcresult = $updatedResa->IsRequestValid($_POST);
+
+		if(!$funcresult['valid']) {
+			echo json_encode($funcresult);
+		}
 		//////////////////////////////////////////////////////////
 		// Initialisation de l'objet resa à mettre a jour
+		$actualResa = new EGP_GameReservation(Settings::get('id_trace'));
 
 		//////////////////////////////////////////////////////////
 		// Chargement de la réservation actuelle
+		$funcresult = $actualResa->loadEventResa($id_reservation);
 		if($funcresult['valid']) {
 			$isValid = true;
 			$returnArray = $funcresult;
 
 			//////////////////////////////////////////////////////////
 			// Si Requete valide: Traitement de la mise à jour
+			$funcresult = $actualResa->UpdateReservation($updatedResa);
 
 		}
 
