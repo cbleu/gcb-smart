@@ -851,10 +851,19 @@ function initCalendrier()
 	// Checkbob de la ressource Chariot: uniquement visuel => la donnée est dans #nb_trous_J
 	$("#Chariot_1, #Chariot_2, #Chariot_3, #Chariot_4").change(function(){
 		var idxj = this.id.slice( -1); 
+		if (this.checked) {	// this is true if the switch is on
+			// $("#res_J" + idxj).val($("#id_J" + idxj).val());
+			setRes(idxj, $("#id_J" + idxj).val())
+		}
+		else {
+			$("#res_J" + idxj).val("");
+			setRes(idxj);
+		}
 		if($("#crud_J" + idxj).val() == "Edit"){
 			editSlotJ(idxj, true);
 		}
 	});
+	
 
 	// Switch du nombre de trous: uniquement visuel => la donnée est dans #nb_trous_J
 	$(".nbTrousJ").change(function(){
@@ -2275,6 +2284,12 @@ function reset_form(ev){
 	setFormMode("Read")
 }	// reset_form
 
+function setRes(slot, value){
+	value = defaultFor(value, null);
+
+	$("#res_J" + slot).val(value);
+}
+
 function SetCrudJ(slot, mode){
 	$("#crud_J" + slot).val(mode);
 }
@@ -2284,10 +2299,10 @@ function SetOtherReservation(slot, enableOther){
 
 	if(enableOther){
 		console.log("SetOtherReservation slot ", slot, ": ", enableOther);
-		$("#joueur" + slot).parent().parent().addClass("other_reservation");
+		$("#joueur" + slot).parent().parent().parent().addClass("other_reservation");
 		$("#joueur" + slot).addClass("other_reservation");
 	}else{
-		$("#joueur" + slot).parent().parent().removeClass("other_reservation");
+		$("#joueur" + slot).parent().parent().parent().removeClass("other_reservation");
 		$("#joueur" + slot).removeClass("other_reservation");
 	}
 }
@@ -2503,25 +2518,29 @@ function update_joueurs_presents(){
 // 	}
 // }	// validate_name
 
-function validateSlotJ(index){
-	changeSlotJ(index,false);
+function validateSlotJ(slot){
+	changeSlotJ(slot,false);
 }
-function editSlotJ(index, isModified){
-	changeSlotJ(index,true, isModified);
+function editSlotJ(slot, isModified){
+	changeSlotJ(slot, true, isModified);
 }
-function changeSlotJ(index, editmode, isModified){
+function changeSlotJ(slot, editmode, isModified){
 	editmode = defaultFor(editmode, null);
 	
 	if (vars.thisAction == "calendrier"){
-		console.log("\tvalidate_name #crud_J", index, ": Create");
-		$("#joueur" + index).parent().parent().addClass("has-success");
+		console.log("\tvalidate_name #crud_J", slot, ": Create");
+		$("#joueur" + slot).parent().parent().addClass("has-success");
 		if(editmode)
 			if(isModified)
-				$("#crud_J" + index).val("Modified");
+				$("#crud_J" + slot).val("Modified");
 			else
-				$("#crud_J" + index).val("Edit");
+				$("#crud_J" + slot).val("Edit");
 		else
-			$("#crud_J" + index).val("Create");
+			$("#crud_J" + slot).val("Create");
+		
+		// On update la demande de la ressource
+		setRes(slot, $("#id_J" + slot).val() );
+		
 		update_joueurs_presents();
 	}
 }	// validate_name 

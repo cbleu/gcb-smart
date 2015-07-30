@@ -161,9 +161,10 @@
 
 														<div class="input-group hidden-group">
 															<!-- User Hidden Inputs for that reservation -->
-															<input type="hidden" name="crud_J<?= $i;?>" id="crud_J<?= $i;?>" value="none" class="serialize" />
+															<input type="hidden" name="crud_J<?= $i;?>" id="crud_J<?= $i;?>" class="serialize" />
 															<input type="hidden" name="id_J<?=$i;?>" id="id_J<?=$i;?>" value="<?=$user_id;?>" class=" serialize" />
-															<input type="hidden" name="nb_trous_J<?= $i;?>" id="nb_trous_J<?= $i;?>" value="18" class=" serialize" >
+															<input type="hidden" name="nb_trous_J<?= $i;?>" id="nb_trous_J<?= $i;?>" class=" serialize" >
+															<input type="hidden" name="res_J<?= $i;?>" id="res_J<?= $i;?>" class=" serialize" >
 														</div>
 
 														<div class="input-group name-group">

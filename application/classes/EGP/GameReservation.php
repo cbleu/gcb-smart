@@ -230,7 +230,7 @@ class EGP_GameReservation
 		
 		for($i = 0; $i < $this->max_joueurs; $i++) {
 			// if((Arr::get($this->method, 'crud_J'.($i+1)) != "Create") || (Arr::get($this->method, 'crud_J'.($i+1)) != "Edit"))
-			if(Arr::get($this->method, 'crud_J'.($i+1)) == "none")
+			if((Arr::get($this->method, 'crud_J'.($i+1)) == "none") || (Arr::get($this->method, 'crud_J'.($i+1)) == "Read"))
 				continue;
 			$formplayerid = Arr::get($this->method, 'id_J'.($i+1));
 			if($formplayerid != null && $formplayerid >= 0) {
