@@ -2,9 +2,9 @@
 
 class  EGP_GameSlot
 {
-    const UNIQ   = 0;
-    const ALLER  = 1;
-    const RETOUR = 2;
+	const UNIQ   = 0;
+	const ALLER  = 1;
+	const RETOUR = 2;
 
 	public $id;
 	public $resa;				// un objet de type DB_ORM::model("reservation")
@@ -18,9 +18,7 @@ class  EGP_GameSlot
 	}
 	
 	public function setSlot($thisresa, $thistype = 0){
-	// public function setSlot($thisid, $thistype = 0){
 		if($thisresa != null){
-			// $this->resa 	= DB_ORM::model("reservation", array($thisid));
 			$this->resa 		= $thisresa;
 			$this->id			= $this->resa->id;
 			$this->typeParcours = DB_ORM::model("type_parcours", array($this->resa->id_type_parcours));

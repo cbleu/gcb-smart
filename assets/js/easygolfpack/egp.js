@@ -1110,6 +1110,16 @@ function initCalendrier()
 					)
 				}
 				SetBtnClear(i, true);
+			}else if($("#crud_J"+i).val() == "none") {
+				// On passe le slot vide en actif
+				Change_PlayerDiv(i,	// Numero du slot
+					true,			// Div joueur entiere
+					true, null,		// joueur et name
+					null,			// id_user
+					true, true,		// nbTrousJ
+					true, false		// Chariot
+				)
+				SetOtherReservation(i, false);
 			}
 		}
 		setFormMode("Update");

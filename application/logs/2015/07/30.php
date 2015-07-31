@@ -393,3 +393,14 @@
 2015-07-30 16:30:16 --- NOTICE: GameReservation::CheckPostDateAndTime: ERREUR : La date à laquelle vous souhaitez réserver est passée. in /Users/cesar/Documents/DEV/GIT/gcb-smart/application/classes/EGP/GameReservation.php:221
 2015-07-30 16:30:27 --- NOTICE: GameReservation::CheckPostDateAndTime: ERREUR : La date à laquelle vous souhaitez réserver est passée. in /Users/cesar/Documents/DEV/GIT/gcb-smart/application/classes/EGP/GameReservation.php:221
 2015-07-30 16:30:30 --- NOTICE: GameReservation::CheckPostDateAndTime: ERREUR : La date à laquelle vous souhaitez réserver est passée. in /Users/cesar/Documents/DEV/GIT/gcb-smart/application/classes/EGP/GameReservation.php:221
+2015-07-30 22:42:12 --- EMERGENCY: ErrorException [ 1 ]: Cannot use object of type EGP_GameSlot as array ~ APPPATH/classes/EGP/GameReservation.php [ 715 ] in file:line
+2015-07-30 22:42:12 --- DEBUG: #0 [internal function]: Kohana_Core::shutdown_handler()
+#1 {main} in file:line
+2015-07-30 22:45:00 --- NOTICE: GameReservation::CheckPostDateAndTime: ERREUR : La date à laquelle vous souhaitez réserver est passée. in /Users/cesar/Documents/DEV/GIT/gcb-smart/application/classes/EGP/GameReservation.php:97
+2015-07-30 22:45:09 --- NOTICE: GameReservation::CheckPostDateAndTime: ERREUR : La date à laquelle vous souhaitez réserver est passée. in /Users/cesar/Documents/DEV/GIT/gcb-smart/application/classes/EGP/GameReservation.php:97
+2015-07-30 22:59:13 --- EMERGENCY: ErrorException [ 1 ]: Cannot use object of type EGP_GameSlot as array ~ APPPATH/classes/EGP/GameReservation.php [ 703 ] in file:line
+2015-07-30 22:59:13 --- DEBUG: #0 [internal function]: Kohana_Core::shutdown_handler()
+#1 {main} in file:line
+2015-07-30 23:36:13 --- EMERGENCY: ErrorException [ 1 ]: Cannot use object of type EGP_GameSlot as array ~ APPPATH/classes/EGP/GameReservation.php [ 703 ] in file:line
+2015-07-30 23:36:13 --- DEBUG: #0 [internal function]: Kohana_Core::shutdown_handler()
+#1 {main} in file:line
