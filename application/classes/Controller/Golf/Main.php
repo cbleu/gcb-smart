@@ -14,7 +14,7 @@ abstract class Controller_Golf_Main extends Controller_Oscrudc
 	public $golf;
 	public $golf_rules;
 	public $ressources;
-	public $parcours;
+	public $golf_courses;
 	public $type_parcours;
 	
 	public $pages;
@@ -41,7 +41,7 @@ abstract class Controller_Golf_Main extends Controller_Oscrudc
 		}
 		$this->golf 			= DB_ORM::model('Golf', array(1));
 		$this->golf_rules 		= DB_SQL::select("default")->from("golf_rules")->query();
-		$this->parcours 		= DB_SQL::select("default")->from("parcours")->query();
+		$this->golf_courses 		= DB_SQL::select("default")->from("golf_courses")->query();
 		$this->type_parcours 	= DB_SQL::select("default")->from("type_parcours")->query();
 		$this->ressources 		= DB_SQL::select("default")->from("ressources")
 			->where("id_golf", "=", $this->golf->id)

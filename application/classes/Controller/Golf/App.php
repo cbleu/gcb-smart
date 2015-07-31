@@ -415,7 +415,7 @@ class Controller_Golf_App extends Controller_Golf_Main
 		// $this->template->title = 'Réservation - Golf Club de Bourbon';
 		$this->template->content = View::factory('/fragments/calendrier');
 		$this->template->content->ressources	= $this->ressources;
-		$this->template->content->parcours		= $this->parcours;
+		$this->template->content->golf_courses		= $this->golf_courses;
 		
 		if($this->isLogged && !$this->isAdmin){
 			// $this->template->content->current_user_fullname =  " ".$this->user->firstname." ".$this->user->lastname." (".$this->user->indgolf.")";
@@ -518,7 +518,7 @@ class Controller_Golf_App extends Controller_Golf_Main
 		$this->template->title = 'Assistant de réservation - Golf Club de Bourbon';
 		$this->template->content = View::factory( '/fragments/wizard');
 		$this->template->content->logged_in_user 		= $this->user;
-		$this->template->content->parcours 				= $this->parcours;
+		$this->template->content->golf_courses 				= $this->golf_courses;
 		$this->template->content->ressources 			= $this->ressources;
 		$this->template->content->maxdate				= $maxDate;
 		$this->template->content->timeStr				= $timeStr;
