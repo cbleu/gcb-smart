@@ -16,8 +16,8 @@ class  EGP_GameSlot
 	public $startTee;			// Trou de départ de ce parcours (table "type_parcours")
 	public $nbTee;				// Nb de trous (tee) dans ce parcours (table "type_parcours")
 
-	public $resa;				// DEPRECATED un objet de type DB_ORM::model("reservation")
-	public $typeParcours;		// DEPRECATED objet de type DB_ORM::model("type_parcours")
+	// public $resa;				// DEPRECATED un objet de type DB_ORM::model("reservation")
+	// public $typeParcours;		// DEPRECATED objet de type DB_ORM::model("type_parcours")
 	// private $nbPlayers = 0;		// DEPRECATED Nb de joueurs sur ce parcours
 	
 	public function  EGP_GameSlot($thisresa = null, $thistype = 0){
@@ -33,8 +33,8 @@ class  EGP_GameSlot
 
 			$this->setParcours($thisresa->id_type_parcours, $thisresa->date_reservation);
 
-			$this->resa 			= $thisresa;	// DEPRECATED
-			$this->typeParcours 	= DB_ORM::model("type_parcours", array($this->resa->id_type_parcours)); 	// DEPRECATED
+			// $this->resa 			= $thisresa;	// DEPRECATED
+			// $this->typeParcours 	= DB_ORM::model("type_parcours", array($this->resa->id_type_parcours)); 	// DEPRECATED
 		}
 	}
 
@@ -47,7 +47,7 @@ class  EGP_GameSlot
 			return false;
 		}
 		if ($begin_date instanceof Datetime){
-			$begin_datetime = $begin_date;
+			$begin_datetime = clone($begin_date);
 		}else{
 			$begin_datetime = new Datetime($begin_date);
 		}
@@ -62,6 +62,8 @@ class  EGP_GameSlot
 
 		$this->begin 			= $begin_datetime;
 		$this->end 				= $end_datetime;
+		
+		return true;
 	}
 	
 	public function nbPlayers(){
@@ -82,6 +84,13 @@ class  EGP_GameSlot
 			return true;
 		}
 		return false;
+	}
+
+	public function setNbProviPlayers($nb){
+		$proviPlayer = new EGP_GamePlayer(0, 18, "", "", "provisoire");
+		for ($i = 0; i < $nb; $i++){
+			$this->addPlayer($proviPlayer);
+		}
 	}
 
 	public function removePlayer($playerId){

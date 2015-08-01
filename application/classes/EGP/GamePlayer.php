@@ -26,5 +26,9 @@ class EGP_GamePlayer
 	public function getCrudState(){
 		return $this->crudState;
 	}
+	public function setRessources($resid, $resname){
+		$this->ressourcesIds[] = $resid;
+		$this->ressources[] = $resname;
+	}
 }	// Class EGP_GamePlayer
 
