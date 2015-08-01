@@ -856,7 +856,7 @@ function initCalendrier()
 			setRes(idxj, $("#id_J" + idxj).val())
 		}
 		else {
-			$("#res_J" + idxj).val("");
+			// $("#res_J" + idxj).val("");
 			setRes(idxj);
 		}
 		if($("#crud_J" + idxj).val() == "Edit"){
@@ -1979,22 +1979,22 @@ function loadEventsDetails(ev){
 			usr_in: ev.u,
 		},
 		success: function(data){
-			var joueurIdx = 1;
+			var slotIndex = 1;
 			
 			// Boucle sur chaque résa presente sur ce slot horaire
 			$.each(data, function(index, value) {
 				if(value.isSelected){
 					$("#game_type_div").show();
-					switch(value.type){
+					switch(value.game_type){
 						case 0:
 							$("#game_type_div").html("Parcours 9 trous");
-						break;
+							break;
 						case 1:
 							$("#game_type_div").html("Parcours Aller");
-						break;
+							break;
 						case 2:
 							$("#game_type_div").html("Parcours Retour");
-						break;
+							break;
 						default:
 							$("#game_type_div").hide();
 					}
@@ -2002,27 +2002,25 @@ function loadEventsDetails(ev){
 
 				//////////////////////////////////////////////////////////
 				// On crée les 4 slots des joueurs pour toutes les parties
-				joueurIdx = createPlayersDiv(value, joueurIdx);
+				slotIndex = createPlayersDiv(value, slotIndex);
 
-				if(!ev.u && joueurIdx > max_joueurs && !vars.isAdmin){
-					console.log("Joueur absent et slot full => mode none");
-					// setDetailFormMode("none");
+				if(!ev.u && slotIndex > max_joueurs && !vars.isAdmin){
+					console.log("Joueur absent et slot full => mode Read");
 					setFormMode("Read", false);
 				}
-				// if(detectUserPlayTimespan(ev)){
-				// 	console.log("Erreur 2 dans requete ajax /resajax/loaddetailsform");
-				// 	setDetailFormMode("none");
-				// }
 			});
-			for(var i = joueurIdx; i <= max_joueurs; i++){
-				// On effectue la mise à jour du slot joueur
+			// mise à jour des slots vides suivants
+			for(var i = slotIndex; i <= max_joueurs; i++){
+				// On effectue la mise à jour du slot joueur vide
 				Change_PlayerDiv(i,			// Numero du slot
 					false					// Div joueur entiere
 				)
-				SetOtherReservation(i, true);
+				// SetOtherReservation(i, true);
 			}
+
+			// TODO A VERIFIER
 			update_joueurs_presents();
-			// Si le slot horaire est plein on desactive la fonction de d'ajout de partie
+			// Si le slot horaire est plein on desactive la fonction d'ajout de partie
 			if(joueurs_presents_.length >= max_joueurs){
 				$("#add_new_button").hide();
 			}
@@ -2083,70 +2081,96 @@ function scroll_to_now(){
 	location.href = "#now";
 }	// scroll_to_now
 
-function createPlayersDiv(value, joueurIdx){
-	console.log("createPlayersDiv: 1er joueur en slot :", joueurIdx, " (joueurIdx)");
-	var nj = joueurIdx;
-	
-	// boucle sur les emplacements joueurs de cette partie à partir de l'idx de début
-	for(var i=nj; i < nj+value.players.length; i++){
+function getKey(data) {
+	for (var prop in data)
+		if (data.propertyIsEnumerable(prop))
+			return prop;
+}
 
+function createPlayersDiv(value, slot){
+	console.log("createPlayersDiv: 1er joueur en slot :", slot, " (slot)");
+	// var nj = joueurIdx;
+
+	var resaPlayers = new Array();
+	switch(value.game_type){
+	case 0:
+	case 1:
+		$.each(value.GameReservation.slotAller.players, function (key, val) {
+			resaPlayers.push(val);
+		});
+		break;
+	case 2:
+		$.each(value.GameReservation.slotRetour.players, function (key, val) {
+			resaPlayers.push(val);
+		});
+		break;
+	default:
+	}
+
+	// boucle sur les emplacements joueurs de cette partie à partir de l'idx de début
+	// for(var i=nj; i < nj+resaPlayers.length; i++){
+	// for(var playerObject in resaPlayers){
+	$.each(resaPlayers, function (key, playerObject) {
+		// var playerObject = resaPlayers[i-1];
+		
 		var strname = "";
 		var btncleartag = null;
 		var swnbt;
 		var cbres;
 
 		// récup du nom du joueur
-		if(value.players[i-nj].id == 0){
-			strname = value.players[i-nj].info +" (Invité)";
-		}else if(value.players[i-nj].id == 1){
-			strname = value.players[i-nj].info +" (Visiteur)";
+		if(playerObject.id == 0){
+			strname = playerObject.info +" (Invité)";
+		}else if(playerObject.id == 1){
+			strname = playerObject.info +" (Visiteur)";
 		}else{
-			strname = value.players[i-nj].firstname +" " +value.players[i-nj].lastname;
+			strname = playerObject.firstname +" " +playerObject.lastname;
 		}
 
 		if(value.isSelected){
 			// Partie selectionnée: afficher ou pas le bouton suppr du joueur
 			if(value.usr_in == "1" || vars.isAdmin){
-				if(value.players.length > 1)	// affiche le btn uniquement si + que 1 joueur
-					btncleartag = value.players[i-nj].userHasResa;
+				if(resaPlayers.length > 1)	// affiche le btn uniquement si + que 1 joueur
+					btncleartag = playerObject.userHasResa;
 			}
-			SetCrudJ(i, "Read");
+			SetCrudJ(slot, "Read");
 		}else{
 			// Partie non selectionnée
-			SetCrudJ(i, "none");
-			SetOtherReservation(i, true);
+			SetCrudJ(slot, "none");
+			SetOtherReservation(slot, true);
 		}
 
 		// On met à jour le switch du nombre de trous
-		if(value.players[i-nj].nbTrous == 18){
+		if(playerObject.nbTrous == 18){
 			swnbt = true;
 		}else{
 			swnbt = false;
 		}
 		// On met à jour la checkbox des ressources
-		if(value.players[i-nj].ressources[0] == "Chariot"){
+		// if(playerObject.ressources[0] == "Chariot"){
+		if(playerObject.ressourcesIds[0] == "2"){	// Chariot
 			cbres = true;
 		}else{
 			cbres = false;
 		}
 
 		// On effectue la mise à jour du slot joueur
-		Change_PlayerDiv(i,			// Numero du slot
+		Change_PlayerDiv(slot,			// Numero du slot
 			false,					// Div joueur entiere
 			false, strname,			// joueur name, et name
-			value.players[i-nj].id,	// id_user
+			playerObject.id,	// id_user
 			false, swnbt,			// nbTrousJ et check 18
 			false, cbres,			// Chariot et check
 			false, false,			// Visitor et check
 			false, false			// Invited et check
 		)
-		SetBtnClear(i, false, btncleartag);
+		SetBtnClear(slot, false, btncleartag);
 		
 		// Incremente le slot courant du joueur
-		joueurIdx++;
-	}
+		slot++;
+	});
 	
-	return joueurIdx;
+	return slot;
 }	// createPlayerDiv
 
 function setFormMode(mode,isUserIn){
@@ -2296,6 +2320,7 @@ function reset_form(ev){
 
 function setRes(slot, value){
 	value = defaultFor(value, null);
+	console.log("setRes slot ", slot, ": ", value);
 
 	$("#res_J" + slot).val(value);
 }
@@ -2549,7 +2574,7 @@ function changeSlotJ(slot, editmode, isModified){
 			$("#crud_J" + slot).val("Create");
 		
 		// On update la demande de la ressource
-		setRes(slot, $("#id_J" + slot).val() );
+		// setRes(slot, $("#id_J" + slot).val() );
 		
 		update_joueurs_presents();
 	}

@@ -480,21 +480,25 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		$current_user_in_resa 	= Arr::get($method, 'usr_in');
 		
 		$actual_resa = new EGP_GameReservation(Settings::get('id_trace'));
-		$funcresult = $actual_resa->loadEventResa($id_reservation);
+		$funcresult = $actual_resa->InitResaByLoading($id_reservation);
 		if($funcresult['valid']) {
 			//////////////////////////////////////////////////////////////////////////
 			// Requete valide: Création de la réservation
 			$isValid = true;
 			$returnArray[$id_reservation]['isSelected'] = true;
 			$returnArray[$id_reservation]['usr_in'] = $current_user_in_resa;
-			$returnArray[$id_reservation]['type'] = $actual_resa->slotCurrent->gameType;
-			$returnArray[$id_reservation]['players'] = $actual_resa->players;
-			$returnArray[$id_reservation]['slotAller'] = $actual_resa->slotAller->id;
-			if(isset($actual_resa->slotRetour)){
-				$returnArray[$id_reservation]['slotRetour'] = $actual_resa->slotRetour->id;
-			}else{
-				$returnArray[$id_reservation]['slotRetour'] = null;
-			}
+			$returnArray[$id_reservation]['game_type'] = $actual_resa->slotAller->gameType;
+			// $returnArray[$id_reservation]['slotAller'] = $actual_resa->slotAller;
+			// $returnArray[$id_reservation]['slotRetour'] = $actual_resa->slotRetour;
+			// $returnArray[$id_reservation]['slotAller'] = $actual_resa->slotAller->id;
+			// if(isset($actual_resa->slotRetour)){
+				// $returnArray[$id_reservation]['slotRetour'] = $actual_resa->slotRetour->id;
+			// }else{
+				// $returnArray[$id_reservation]['slotRetour'] = null;
+			// }
+
+			$returnArray[$id_reservation]['GameReservation'] = $actual_resa;
+
 		}else{
 			$isValid = false;
 			$returnArray = $funcresult;
@@ -505,17 +509,22 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 			//Trouver s'il y a d'autres reservations au même slot
 			$other_reservations = Helpers_Tools::getOtherResaOnTheSameSlotAs($id_reservation);
 			foreach($other_reservations as $otherone){
-				$tmpresa = new EGP_GameReservation(Settings::get('id_trace'));
-				$tmpresult = $tmpresa->loadEventResa($otherone['id']);
+				$other_resa = new EGP_GameReservation(Settings::get('id_trace'));
+				$tmpresult = $other_resa->InitResaByLoading($otherone['id']);
 				if($tmpresult['valid']) {
 					//////////////////////////////////////////////////////////////////////////
 					// Requete valide: Création de la réservation
 					// $returnArray = $actual_resa->MakeResaProvi();
 					$isValid = true;
 					$returnArray[$otherone['id']]['isSelected'] = false;
-					$returnArray[$otherone['id']]['type'] = $tmpresa->slotCurrent->gameType;
+					$returnArray[$otherone['id']]['game_type'] = $other_resa->slotAller->gameType;
 					// $returnArray[$otherone['id']]['players'] = $tmpresa->slotCurrent->players;
-					$returnArray[$otherone['id']]['players'] = $tmpresa->players;
+					// $returnArray[$otherone['id']]['players'] = $tmpresa->players;
+					// $returnArray[$id_reservation]['slotCurrent'] = $other_resa->slotAller;
+					// $returnArray[$id_reservation]['slotRetour'] = $actual_resa->slotRetour;
+
+					$returnArray[$otherone['id']]['GameReservation'] = $other_resa;
+
 				}else{
 					$isValid = false;
 					$returnArray = $funcresult;
@@ -773,29 +782,29 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 	public function action_update()
 	{
 
-		$id_reservation 		= Arr::get($_POST, 'id_reservation');
-
 		//////////////////////////////////////////////////////////
 		// Récupération et vérification de la requete POST
+
 		$updatedResa = new EGP_GameReservation(Settings::get('id_trace'));
-		$funcresult = $updatedResa->IsRequestValid($_POST);
+		$funcresult = $updatedResa->InitResa($_POST);
 
 		if(!$funcresult['valid']) {
 			echo json_encode($funcresult);
 		}
 		//////////////////////////////////////////////////////////
-		// Initialisation de l'objet resa à mettre a jour
-		$actualResa = new EGP_GameReservation(Settings::get('id_trace'));
-
-		//////////////////////////////////////////////////////////
 		// Chargement de la réservation actuelle
-		$funcresult = $actualResa->loadEventResa($id_reservation);
+
+		$id_reservation 		= Arr::get($_POST, 'id_reservation');
+
+		$actualResa = new EGP_GameReservation(Settings::get('id_trace'));
+		$funcresult = $actualResa->InitResaByLoading($id_reservation);
+		
 		if($funcresult['valid']) {
 			$isValid = true;
 			$returnArray = $funcresult;
 
 			//////////////////////////////////////////////////////////
-			// Si Requete valide: Traitement de la mise à jour
+			// Traitement de la mise à jour
 			$funcresult = $actualResa->UpdateReservation($updatedResa);
 
 		}
