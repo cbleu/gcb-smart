@@ -1123,7 +1123,6 @@ class EGP_GameReservation
 
 
 
-
 			//////////////////////////////////////////////////////////////////////////
 			// B-1 Nb Trous: passage à 18
 
@@ -1147,10 +1146,6 @@ class EGP_GameReservation
 					// Ajout du joueur dans le slotRetour
 					$newpl = clone $reqPlayer;	// Création d'un nouveau joueur à partir de $reqPlayer pour le slot retour
 					$this->slotRetour->addPlayer($newpl);
-
-					// $this->slotAller->removePlayer($reqPlayer->id);
-					// $this->slotAller->addPlayer($reqPlayer);
-					// $this->slotRetour->addPlayer($reqPlayer);	// TODO ne pas prendre le joueur de l'aller:$reqPlayer mais celui du retour !
 
 					// Test de la dispo pour 1 joueur sur le slot horaire du retour
 					$nb = $this->getNbPlayerInSlot($this->slotRetour);
@@ -1215,7 +1210,6 @@ class EGP_GameReservation
 						return $collision_result;
 					}
 
-
 					// Test de la dispo pour 1 joueur sur le slot horaire du retour
 					$nb = $this->getNbPlayerInSlot($reqResa->slotRetour);
 					if( $nb + 1 > $this->maxPlayers ){
@@ -1227,9 +1221,6 @@ class EGP_GameReservation
 
 					// Ajout du joueur dans le slotRetour
 					$newpl = clone $reqPlayer;	// Création d'un nouveau joueur à partir de $reqPlayer pour le slot retour
-					// $newpl = new EGP_GamePlayer($reqPlayer->id, 18, $reqPlayer->firstname, $reqPlayer->lastname);
-					// $newpl->setRessources($reqPlayer->ressourcesIds, $reqPlayer->ressources);
-					// $newpl->setCrudState($reqPlayer->crudState)
 					$this->slotRetour->addPlayer($newpl);
 
 					// Creation d'une résa retour pour 1 joueur
@@ -1275,19 +1266,65 @@ class EGP_GameReservation
 			}
 
 
-
-
 			//////////////////////////////////////////////////////////////////////////
 			// B-2 Nb Trous: passage à 9
 			
 			if($reqPlayer->nbTrous < $ModifiedPlayer->nbTrous){
 				// passage en 9 trous
 
-				// Baisser de 1 le nombre de joueurs dans la partie retour
-				$reservation_update_query				= DB_ORM::model('reservation');
-				$reservation_update_query->id			= $this->slotRetour->id;
-				$reservation_update_query->nb_joueurs	= $this->slotRetour->nbPlayers() - 1;
-				$reservation_update_query->save(true);
+				// // Baisser de 1 le nombre de joueurs dans la partie retour
+				// $reservation_update_query				= DB_ORM::model('reservation');
+				// $reservation_update_query->id			= $this->slotRetour->id;
+				// $reservation_update_query->nb_joueurs	= $this->slotRetour->nbPlayers() - 1;
+				// $reservation_update_query->save(true);
+
+				// Mettre à jour les infos du slot retour
+				$this->slotRetour->removePlayer($ModifiedPlayer->id);
+
+				// MAJ nb_joueurs sur resa Retour
+				$builder = DB_ORM::update('reservation')
+					->set('nb_joueurs',$this->slotRetour->nbPlayers())
+						->where('id', '=', $this->slotRetour->id);
+				$sql = $builder->statement();
+				$id = $builder->execute();
+
+				// MAJ ou suppression resa Retour et maj id_children de la resa Aller
+				if($this->slotRetour->nbPlayers() <= 0){
+					// Supprimer la resa retour dans la table reservation
+					$builder = DB_ORM::delete('reservation')
+						->where('id', '=', $this->slotRetour->id);
+					$sql = $builder->statement();
+					$id = $builder->execute();
+
+					// Supprimer sur la resa Aller le lien vers le retour et maj nb_joueurs
+					$builder = DB_ORM::update('reservation')
+						// ->set('nb_joueurs',$this->slotRetour->nbPlayers())
+							->set('id_children', NULL)
+								->where('id', '=', $this->slotAller->id);
+					$sql = $builder->statement();
+					$id = $builder->execute();
+
+					// $reservation_update_query				= DB_ORM::update('reservation');
+					// $reservation_update_query->id			= $this->slotAller->id;
+					// $reservation_update_query->nb_joueurs	= $this->slotRetour->nbPlayers();
+					// $reservation_update_query->id_children	= NULL;
+					// $reservation_update_query->save(true);
+
+				}
+				// }else{
+
+					// $reservation_update_query				= DB_ORM::update('reservation');
+					// $reservation_update_query->id			= $this->slotAller->id;
+					// $reservation_update_query->nb_joueurs	= $this->slotRetour->nbPlayers();
+					// $reservation_update_query->save(true);
+				// }
+
+				// Récupere l'entrée dans la table users_has_reservation pour ce joueur et cette resa
+				$builder = DB_ORM::select('users_has_reservation')
+					->where('id_users', '=', $ModifiedPlayer->id)
+						->where('id_reservation', '=', $this->slotRetour->id);
+				$sql = $builder->statement();
+				$users_has_reservation = $builder->query();
 
 				// Supprimer l'entrée dans la table users_has_reservation pour ce joueur et cette resa
 				$builder = DB_ORM::delete('users_has_reservation')
@@ -1296,27 +1333,20 @@ class EGP_GameReservation
 				$sql = $builder->statement();
 				$id = $builder->execute();
 
-				// Mettre à jour la resa Aller pour supprimer le lien vers la resa enfant si plus aucun retour
-				if(($this->slotRetour->nbPlayers() - 1) <= 0){	// -1 pour anticiper la suppression du joueur au retour
-					// Supprimer la resa retour dans la table reservation
-					$builder = DB_ORM::delete('reservation')
-						->where('id', '=', $this->slotRetour->id);
+				// Suppression de la ressources sur la resa retour si besoin
+				if(isset($users_has_reservation[0])){
+					$builder = DB_ORM::delete('user_reservation_ressources')
+						->where('id_user_has_reservation', '=', $users_has_reservation[0]->id);
 					$sql = $builder->statement();
 					$id = $builder->execute();
-
-					$reservation_update_query				= DB_ORM::model('reservation');
-					$reservation_update_query->id			= $this->slotAller->id;
-					$reservation_update_query->id_children	= NULL;
-					$reservation_update_query->save(true);
-
 				}
-
-				// Mettre à jour les infos du slot
-				$this->slotRetour->removePlayer($ModifiedPlayer->id);
 
 				// Mettre a jour l'objet GamePlayer si d'autre modifs dessus comme les ressources
 				$ModifiedPlayer->nbTrous = 9;
 			}
+
+
+
 			//////////////////////////////////////////////////////////////////////////
 			// C-1 Ajout de Ressources
 

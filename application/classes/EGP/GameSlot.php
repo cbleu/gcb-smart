@@ -97,7 +97,7 @@ class  EGP_GameSlot
 		// for($i = 0; $i < count($this->players); $i++){
 		// 	if($this->players[$i]->id == $playerId){
 		if(isset($this->players[$playerId])){
-			unset($this->player[$playerId]);
+			unset($this->players[$playerId]);
 			return $playerId;
 		}
 		return null;
