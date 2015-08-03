@@ -853,11 +853,11 @@ function initCalendrier()
 		var idxj = this.id.slice( -1); 
 		if (this.checked) {	// this is true if the switch is on
 			// $("#res_J" + idxj).val($("#id_J" + idxj).val());
-			setRes(idxj, $("#id_J" + idxj).val())
+			setRes(idxj, 2, $("#id_J" + idxj).val())
 		}
 		else {
 			// $("#res_J" + idxj).val("");
-			setRes(idxj);
+			setRes(idxj, 2);
 		}
 		if($("#crud_J" + idxj).val() == "Edit"){
 			editSlotJ(idxj, true);
@@ -1905,12 +1905,12 @@ function reservationLightbox(id) {
 			validateSlotJ(1, true);
 		}
 	}else{
-		// On charge les parties sur ce slot horaire
-		loadEventsDetails(ev);
-
 		// TODO créer une resa provi pour les places encore dispo
 		CreateResaProvi($("#form .serialize"));
 
+		// On charge les parties sur ce slot horaire
+		loadEventsDetails(ev);
+		
 		// TODO passer en mode CRUD=Read
 	}
 
@@ -2318,11 +2318,19 @@ function reset_form(ev){
 	setFormMode("Read")
 }	// reset_form
 
-function setRes(slot, value){
+function setRes(slot, idRes, value){
 	value = defaultFor(value, null);
 	console.log("setRes slot ", slot, ": ", value);
 
-	$("#res_J" + slot).val(value);
+	var resValue = 	$("#res_J" + slot).val();
+
+	if (value){
+		// On encode le champ ressources si plusieurs ressources existe pour ce joueur
+		// codage: #{res id}_{id joueur}#{res id}_{id joueur}#{res id}_{id joueur}
+		resValue = resValue + "#" + idRes + "_" + value;
+	}
+
+	$("#res_J" + slot).val(resValue);
 }
 
 function SetCrudJ(slot, mode){
@@ -2572,9 +2580,6 @@ function changeSlotJ(slot, editmode, isModified){
 				$("#crud_J" + slot).val("Edit");
 		else
 			$("#crud_J" + slot).val("Create");
-		
-		// On update la demande de la ressource
-		// setRes(slot, $("#id_J" + slot).val() );
 		
 		update_joueurs_presents();
 	}

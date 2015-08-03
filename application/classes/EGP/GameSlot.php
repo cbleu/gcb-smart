@@ -16,12 +16,20 @@ class  EGP_GameSlot
 	public $startTee;			// Trou de départ de ce parcours (table "type_parcours")
 	public $nbTee;				// Nb de trous (tee) dans ce parcours (table "type_parcours")
 
+	private $isProvisoire = true;// Slot provisoire ou pas
+	private $nbProvisoire = 0;	// Nb de places provisoires bloquees
+
 	// public $resa;				// DEPRECATED un objet de type DB_ORM::model("reservation")
 	// public $typeParcours;		// DEPRECATED objet de type DB_ORM::model("type_parcours")
 	// private $nbPlayers = 0;		// DEPRECATED Nb de joueurs sur ce parcours
 	
-	public function  EGP_GameSlot($thisresa = null, $thistype = 0){
+	public function  EGP_GameSlot($thisresa = null, $isProvisoire = false, $thistype = 0){
 		$this->setSlot($thisresa, $thistype);
+		if($isProvisoire){
+			$this->isProvisoire = true;
+		}else{
+			$this->isProvisoire = false;
+		}
 	}
 	
 	public function setSlot($thisresa, $thistype = 0){
@@ -67,7 +75,11 @@ class  EGP_GameSlot
 	}
 	
 	public function nbPlayers(){
-		return count($this->players);
+		if($this->isProvisoire){
+			return $this->nbProvisoire;
+		}else{
+			return count($this->players);
+		}
 	}
 
 	public function addPlayer($player){
@@ -86,11 +98,13 @@ class  EGP_GameSlot
 		return false;
 	}
 
-	public function setNbProviPlayers($nb){
-		$proviPlayer = new EGP_GamePlayer(0, 18, "", "", "provisoire");
-		for ($i = 0; i < $nb; $i++){
-			$this->addPlayer($proviPlayer);
-		}
+	public function setNProviPlayers($nb){
+		$this->nbProvisoire = $nb;
+		// $proviPlayer = new EGP_GamePlayer(0, 18, "", "", "provisoire");
+		// for ($i = 0; i < $nb; $i++){
+		// 	$this->players.push($proviPlayer);
+		// 	// $this->addPlayer($proviPlayer);
+		// }
 	}
 
 	public function removePlayer($playerId){
