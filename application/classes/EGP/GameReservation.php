@@ -1088,6 +1088,9 @@ class EGP_GameReservation
 		);
 	}	// MakeReservation
 
+
+
+
 	public function UpdateReservation($reqResa)
 	{
 		//////////////////////////////////////////////////////////////////////////
@@ -1104,7 +1107,13 @@ class EGP_GameReservation
 			$finded = false;
 
 			//////////////////////////////////////////////////////////////////////////
+			// A/ Nb de joueur
+			// 
+			//////////////////////////////////////////////////////////////////////////
+
+			//////////////////////////////////////////////////////////////////////////
 			// A-1 Ajout d'un joueur
+
 			if($reqPlayer->getCrudState() == "Create"){
 				$finded = true;
 
@@ -1208,14 +1217,6 @@ class EGP_GameReservation
 							$this->message = "Réservation impossible : l'heure de départ est après le dernier départ.";
 						}
 
-						// // On commence par verifier pour les collisions
-						// $collision_result = $this->CollisionParcours($reqResa->slotRetour, $reqPlayer);
-
-						// if(!$collision_result['valid']) {
-						// 	// Collision !!! on annule tout !
-						// 	return $collision_result;
-						// }
-
 						// Test de la dispo pour 1 joueur sur le slot horaire du retour
 						$nb = $this->getNbPlayerInSlot($reqResa->slotRetour);
 						if( $nb + 1 > $this->maxPlayers ){
@@ -1264,24 +1265,36 @@ class EGP_GameReservation
 								'message' => "ERREUR dans l'incscription de la resa fille"
 							);
 						}
-
-						// // Mise à jour du joueur pour le nb de trous
-						// $this->slotAller->players[$reqPlayer->id]->nbTrous = 18;
 					}
-
+		
+				}else{	// Ce joueur est venu remplacer un autre joueur sur le même slot			
 					
-				}else{	// Ce joueur est venu remplacer un autre joueur sur le même slot
-					
-					
+					return array(
+						'isValid' => false,
+						'message' => "ERREUR mise à jour non gérée !"
+					);
 					// TODO A FAIRE
 				}
 
-				// FIN Ajout du joueur
-				// On passe au joueur suivant 
-				continue;
-				
+				//////////////////////////////////////////////////////////////////////////
+				//
+				// FIN A/ Ajout du joueur
+				//
+				continue;	// On passe au joueur suivant 
+				// 
+				//////////////////////////////////////////////////////////////////////////
+
+
 			}else if($reqPlayer->getCrudState() == "Modified"){
+
+			//////////////////////////////////////////////////////////////////////////
+			//
+			// DEBUT Gestion des joueurs MODIFIED (pas CREATE)
+			// 
+			//////////////////////////////////////////////////////////////////////////
+
 				// Ce joueur est modifié
+
 				foreach($this->slotAller->players as $player){
 					if ($player->id != $reqPlayer->id){
 						continue;
@@ -1305,15 +1318,29 @@ class EGP_GameReservation
 			}
 			
 			//////////////////////////////////////////////////////////////////////////
+			// 
 			// OK ici nous avons un joueur à modifier : $ModifiedPlayer
 			// et les nouvelles valeurs pour ce joueur: $reqPlayer
+			// 
+			//////////////////////////////////////////////////////////////////////////
+
 
 			//////////////////////////////////////////////////////////////////////////
 			// A-2 Supression d'un joueur
 
+
 			// Ce cas est traité en amont par la commande "Leave" sur le joueur
 
 
+			//////////////////////////////////////////////////////////////////////////
+
+
+
+			//////////////////////////////////////////////////////////////////////////
+			// 
+			// B/ Nb de Trous
+			// 
+			//////////////////////////////////////////////////////////////////////////
 
 			//////////////////////////////////////////////////////////////////////////
 			// B-1 Nb Trous: passage à 18
@@ -1464,12 +1491,6 @@ class EGP_GameReservation
 			if($reqPlayer->nbTrous < $ModifiedPlayer->nbTrous){
 				// passage en 9 trous
 
-				// // Baisser de 1 le nombre de joueurs dans la partie retour
-				// $reservation_update_query				= DB_ORM::model('reservation');
-				// $reservation_update_query->id			= $this->slotRetour->id;
-				// $reservation_update_query->nb_joueurs	= $this->slotRetour->nbPlayers() - 1;
-				// $reservation_update_query->save(true);
-
 				// Mettre à jour les infos du slot retour
 				$this->slotRetour->removePlayer($ModifiedPlayer->id);
 
@@ -1496,20 +1517,7 @@ class EGP_GameReservation
 					$sql = $builder->statement();
 					$id = $builder->execute();
 
-					// $reservation_update_query				= DB_ORM::update('reservation');
-					// $reservation_update_query->id			= $this->slotAller->id;
-					// $reservation_update_query->nb_joueurs	= $this->slotRetour->nbPlayers();
-					// $reservation_update_query->id_children	= NULL;
-					// $reservation_update_query->save(true);
-
 				}
-				// }else{
-
-					// $reservation_update_query				= DB_ORM::update('reservation');
-					// $reservation_update_query->id			= $this->slotAller->id;
-					// $reservation_update_query->nb_joueurs	= $this->slotRetour->nbPlayers();
-					// $reservation_update_query->save(true);
-				// }
 
 				// Récupere l'entrée dans la table users_has_reservation pour ce joueur et cette resa
 				$builder = DB_ORM::select('users_has_reservation')
@@ -1537,7 +1545,15 @@ class EGP_GameReservation
 				$ModifiedPlayer->nbTrous = 9;
 			}
 
+			//////////////////////////////////////////////////////////////////////////
 
+
+
+			//////////////////////////////////////////////////////////////////////////
+			// 
+			// C/ MAJ des Ressources
+			// 
+			//////////////////////////////////////////////////////////////////////////
 
 			//////////////////////////////////////////////////////////////////////////
 			// C-1 Ajout de Ressources
@@ -1609,9 +1625,14 @@ class EGP_GameReservation
 					}
 				}
 			}
-		}
+		}	// boucle foreach tous les joueurs de la partie reqResa
+
 
 	}	// UpdateReservation
+
+
+
+
 	
 	public function AddToPendingResa()
 	{

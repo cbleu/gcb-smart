@@ -65,6 +65,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 														->on('type_parcours.id', '=', 'reservation.id_type_parcours');
 		$builder->where('date_reservation', 'BETWEEN', array($start, $end));
 		$builder->where('id_evenement','IS', NULL, 'AND');
+		$builder->where('temp_until','IS', NULL, 'AND');	// PATCH 3 pour ne plus prendre les resa provisoire
 		$builder->where('nb_joueurs',">", 0, 'AND');
 		
 		$reservations = $builder->query()->as_array();
@@ -819,6 +820,8 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 			// Traitement de la mise à jour
 			$funcresult = $actualResa->UpdateReservation($updatedResa);
 
+			// On supprime la resa provisoire faite pour le traitement
+			$updatedResa->CancelReservations();
 		}
 
 		

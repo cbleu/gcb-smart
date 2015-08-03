@@ -2323,14 +2323,17 @@ function reset_form(ev){
 
 function setRes(slot, idRes, value){
 	value = defaultFor(value, null);
-	console.log("setRes slot ", slot, ": ", value);
 
 	var resValue = 	$("#res_J" + slot).val();
+	console.log("setRes slot", slot, ": ", resValue, " => ", value);
 
 	if (value){
 		// On encode le champ ressources si plusieurs ressources existe pour ce joueur
 		// codage: #{res id}_{id joueur}#{res id}_{id joueur}#{res id}_{id joueur}
+		// TODO un boucle sur les ressources et faire l'encodage
 		resValue = resValue + "#" + idRes + "_" + value;
+	}else{
+		resValuealue = null;
 	}
 
 	$("#res_J" + slot).val(resValue);
