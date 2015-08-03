@@ -424,20 +424,22 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		$isValid = false;
 		$response = array();
 
+		// $isPermanent = false;
+		// $this->method = $_POST;		// on récupère les paramètres de la requete
+
 		//////////////////////////////////////////////////////////////////////////
 		// Récupération et vérification des elements de la requete POST
 
 		$newResa = new EGP_GameReservation(Settings::get('id_trace'), true); // true: passe en mode provisoire
-		$isPermanent = false;
-		$this->method = $_POST;		// on récupère les paramètres de la requete
 
-		// $funcresult = $newResa->IsRequestValid($_POST, $isPermanent);
-		$funcresult = $newResa->InitResa($_POST, $isPermanent);
+		$funcresult = $newResa->InitResa($_POST);
+
+		//////////////////////////////////////////////////////////////////////////
+		// Création de la réservation provisoire
+		// eventuellement positionnée sur un trou de départ dans le calendrier
 
 		if($funcresult['valid']) {
-			//////////////////////////////////////////////////////////////////////////
 			// Requete valide: Création de la réservation provisoire
-			// eventuellement positionnée sur un trou de départ dans le calendrier
 			$response = $newResa->MakeResaProvi(Arr::get($_POST, 'trou_depart'));
 		}else{
 			$response = $funcresult;
@@ -458,7 +460,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		// Récupération et vérification des elements de la requete POST
 		$newResa = new EGP_GameReservation(Settings::get('id_trace'), true);
 		$isPermanent = false;
-		$funcresult = $newResa->InitResa($_POST, $isPermanent);
+		$funcresult = $newResa->InitResa($_POST);
 
 		if($funcresult['valid']) {
 			//////////////////////////////////////////////////////////////////////////
@@ -677,7 +679,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		//////////////////////////////////////////////////////////////////////////
 		// Récupération et vérification des elements de la requete POST
 		$newResa = new EGP_GameReservation(Settings::get('id_trace'));
-		$funcresult = $newResa->IsRequestValid($_POST);
+		$funcresult = $newResa->IsRequestValid_OLD($_POST);
 		$message = $funcresult['message'];
 		$valid = $funcresult['valid'];
 		if($valid) {
@@ -765,7 +767,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		//////////////////////////////////////////////////////////
 		// Récupération et vérification de la requete POST
 		$newResa = new EGP_GameReservation(Settings::get('id_trace'));
-		// $funcresult = $newResa->IsRequestValid($_POST);
+		// $funcresult = $newResa->IsRequestValid_OLD($_POST);
 		$funcresult = $newResa->InitResa($_POST);
 		$message = $funcresult['message'];
 		$valid = $funcresult['valid'];

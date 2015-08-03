@@ -1085,6 +1085,11 @@ function initCalendrier()
 
 
 	$("#edit_button").click(function(){
+
+		// On cré une resa provi pour les places encore dispo
+		CreateResaProvi($("#form .serialize"));
+
+		// On adapte les slots joueurs
 		$("#crud_mode").val("Update");
 		for(var i = 1; i <= max_joueurs; i++) {
 			if($("#crud_J"+i).val() == "Read") {
@@ -1905,8 +1910,6 @@ function reservationLightbox(id) {
 			validateSlotJ(1, true);
 		}
 	}else{
-		// TODO créer une resa provi pour les places encore dispo
-		CreateResaProvi($("#form .serialize"));
 
 		// On charge les parties sur ce slot horaire
 		loadEventsDetails(ev);
