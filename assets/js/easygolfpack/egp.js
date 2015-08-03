@@ -2331,9 +2331,9 @@ function setRes(slot, idRes, value){
 		// On encode le champ ressources si plusieurs ressources existe pour ce joueur
 		// codage: #{res id}_{id joueur}#{res id}_{id joueur}#{res id}_{id joueur}
 		// TODO un boucle sur les ressources et faire l'encodage
-		resValue = resValue + "#" + idRes + "_" + value;
+		resValue = "#" + idRes + "_" + value;
 	}else{
-		resValuealue = null;
+		resValue = null;
 	}
 
 	$("#res_J" + slot).val(resValue);
@@ -2577,15 +2577,19 @@ function changeSlotJ(slot, editmode, isModified){
 	editmode = defaultFor(editmode, null);
 	
 	if (vars.thisAction == "calendrier"){
-		console.log("\tvalidate_name #crud_J", slot, ": Create");
 		$("#joueur" + slot).parent().parent().addClass("has-success");
-		if(editmode)
-			if(isModified)
+		if(editmode){
+			if(isModified){
 				$("#crud_J" + slot).val("Modified");
-			else
+				console.log("\tvalidate_name #crud_J", slot, ": Modified");
+			}else{
 				$("#crud_J" + slot).val("Edit");
-		else
+				console.log("\tvalidate_name #crud_J", slot, ": Edit");
+			}
+		}else{
 			$("#crud_J" + slot).val("Create");
+			console.log("\tvalidate_name #crud_J", slot, ": Create");
+		}
 		
 		update_joueurs_presents();
 	}
