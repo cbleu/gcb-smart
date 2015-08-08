@@ -7,6 +7,9 @@
 class Controller_Golf_App extends Controller_Golf_Main
 {
 	// public $template = 'egp_template';	// Default template
+
+	public $isMobile;
+
 	//////////////////////////////////////////////////////////
 	// PUBLIC FUNCS											//
 	//////////////////////////////////////////////////////////
@@ -36,6 +39,21 @@ class Controller_Golf_App extends Controller_Golf_Main
 			"Accueil" => "/",
 		);
 		//////////////////////////////////////////////////////////
+
+		// Include and instantiate the class.
+		// require Kohana::find_file('vendor', 'Mobile-Detect/Mobile_Detect');
+
+		$detect = new Device;
+
+		// Any mobile device (phones or tablets).
+		if ( $detect->is_mobile() ) {
+			$this->isMobile = true;
+		}else{
+			$this->isMobile = false;
+		}
+
+		View::bind_global('isMobile', $this->isMobile);
+		Helpers_InputForJs::add('isMobile', $this->isMobile);
 
 	}	// before
 	
@@ -456,6 +474,7 @@ class Controller_Golf_App extends Controller_Golf_Main
 		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_recurring.js');
 		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_agenda_view.js');
 		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_grid_view.js');
+		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_key_nav.js');
 
 		Helpers_Javascript::add('/assets/js/colourPicker/jquery.colourPicker.js');
 		Helpers_Javascript::add('/assets/js/plugin/Add-Clear/addclear.js');

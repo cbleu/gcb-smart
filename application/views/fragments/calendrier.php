@@ -37,24 +37,57 @@
 
 											<div class="dhx_cal_prev_button">&nbsp;</div>
 											<div class="dhx_cal_next_button">&nbsp;</div>
-											<div class="dhx_cal_today_button"></div>
+											<div class="dhx_cal_today_button">&nbsp;</div>
 											<div class="dhx_cal_date"></div>
 
 											<div class="egp_cal_navline_icon egp_minical_icon" id="dhx_minical_icon">
-												<i class="fa fa-calendar fa-2x txt-color-blue"></i>
+												<i class="fa fa-calendar fa-2x "></i>
 											</div>
 
-											<div class="egp_cal_navline_icon egp_unit_icon " id="unit_tab" name="unit_tab">
-												<i class="fa fa-columns fa-2x" style="color: grey;"></i>
-											</div>
+											<? if(!$isMobile) { ?>
 
-											<div class="egp_cal_navline_icon egp_agenda_icon " id="agenda_tab" name="agenda_tab">
-												<i class="fa fa-list-ul fa-2x" style="color: grey;"></i>
-											</div>
 
-											<div class="egp_cal_navline_icon egp_event_icon" id="egp_event_icon">
-												<i class="fa fa-flag fa-2x txt-color-pink"></i>
-											</div>
+												<div class="egp_cal_navline_icon egp_unit_icon " id="unit_tab" name="unit_tab">
+													<i class="fa fa-columns fa-2x" style="color: grey;"></i>
+												</div>
+
+												<div class="egp_cal_navline_icon egp_agenda_icon " id="agenda_tab" name="agenda_tab">
+													<i class="fa fa-list-ul fa-2x" style="color: grey;"></i>
+												</div>
+
+												<? if($isAdmin){ ?>
+													<div class="egp_cal_navline_icon egp_event_icon" id="egp_event_icon">
+														<i class="fa fa-flag fa-2x txt-color-pink"></i>
+													</div>
+												<? } ?>
+
+											<? }else{ ?>
+
+												<div class="egp_cal_navline_icon egp_other_icon" id="dhx_other_icon">
+													<i class="fa fa-th fa-2x"></i>
+													<a href="#" class="dropdown-toggle" data-toggle="dropdown">&nbsp;<b class="caret"></b></a>
+													<ul class="dropdown-menu">
+														<li><a href="#">Aujourd'hui</a></li>
+														<li><a href="#">Affichage Calendrier</a></li>
+														<li><a href="#">Affichage Parties</a></li>
+														<? if($isAdmin){ ?>
+															<li class="divider"></li>
+															<li><a href="#">Ajouter un evenement</a></li>
+															<!-- <li><a href="#"></a></li> -->
+														<? } ?>
+													</ul>
+												</div>
+
+
+<!-- 												<div class="egp_cal_navline_icon egp_other_icon pull-left" id="dhx_other_icon">
+													<a class="dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-tools"></i></a>
+												</div>
+ -->
+<!-- 											<div class="btn-header pull-right egp_cal_navline_icon egp_other_icon" id="dhx_other_icon">
+													<i class="fa fa-tools fa-2x txt-color-blue"></i>
+												</div>
+ -->
+											<? } ?>
 
 											<!-- <div class="dhx_cal_tab" name="myplay_tab" id="myplay_tab" style="left:220px"></div> -->
 										</div>
@@ -73,6 +106,11 @@
 		</div>
 
 	</div> <!-- end row -->
+
+
+
+
+
 
 	<!-- ****************************** -->
 	<!-- popup de reservation           -->

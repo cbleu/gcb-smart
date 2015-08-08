@@ -19,26 +19,17 @@ class EGP_GameReservation
 	public $slotRetour;					// objet de type  EGP_GameSlot ou null
 	public $slotCurrent;				// pointeur sur un des 2 objet de type EGP_GameSlot suivant: slotAller ou slotRetour
 
-	private $maxPlayers;				// Lu depuis Settings::get('max_players_by_game'); 
-	private $userIdMin;					// Lu depuis Settings::get('id_min_user')
-	private $temporaryLifeSetting;		// Lu depuis Settings::get('resa_provi_timeout_xxx')
+	private $isProvisoire	= false;	// Reservation provisoire ou permanente
+	// public $isPermanent		= false;	// DEPRECATED
 
-	public $isProvisoire	= false;	// Reservation provisoire ou permanente
-	public $isPermanent		= false;	// DEPRECATED
+	private $isWizard		= false;	// Res en provenance du wizard
 
 	public $isValid			= true;
 	public $message			= "";
 
-	// DEPRECATED
-	// public $method;						// DEPRECATED
-	// private $trouDepart;				// DEPRECATED
-	// public $date;						// DEPRECATED Date du jour de la partie
-	// public $reservations	= array();	// DEPRECATED Tableau des id des reservations: {id_reservation_aller, id_reservation_retour}
-
-	// public $nb_joueurs		= 0;		// DEPRECATED nb de joueurs present au debut de la partie: parcours aller
-	// public $nb_trousMax		= 9;		// DEPRECATED nb de trous pour la partie
-	// public $players			= array();	// DEPRECATED Tableau des EGP_GamePlayer
-	// public $parcours		= array();	// DEPRECATED Tableau des parcours de la partie: 1 ou 2 parcours 
+	private $maxPlayers;				// Lu depuis Settings::get('max_players_by_game'); 
+	private $userIdMin;					// Lu depuis Settings::get('id_min_user')
+	private $temporaryLifeSetting;		// Lu depuis Settings::get('resa_provi_timeout_xxx')
 
 
 	////////////////////////////////
@@ -62,6 +53,8 @@ class EGP_GameReservation
 		if (intval($value) == 1 || intval($value) == 10){
 			$this->startHole = $value;
 			return true;
+		}else if($this->isWizard){
+			return true;
 		}else{
 			$this->isValid = false;
 			$this->message = "ERREUR, le trou de départ est incohérent !";
@@ -73,7 +66,7 @@ class EGP_GameReservation
 	// INIT FUNCTIONS ////////////
 	////////////////////////////////
 
-	public function EGP_GameReservation($current_trace = 1, $isProvisoire = false)
+	public function EGP_GameReservation($current_trace = 1, $isProvisoire = false, $isWizard = false)
 	{
 		$this->maxPlayers 			= Settings::get('max_players_by_game');
 		$this->userIdMin 			= Settings::get('id_min_user');
@@ -84,8 +77,8 @@ class EGP_GameReservation
 		$this->slotRetour 			= new  EGP_GameSlot(null, $isProvisoire);
 		$this->slotCurrent 			= &$this->slotAller;
 		$this->isProvisoire			= $isProvisoire;
-// }		$this->isPermanent 			= !$isProvisoire;	// DEPRECATED
-}	// EGP_GameReservation
+
+	}	// EGP_GameReservation
 
 	/**
 	 * @param [type]
@@ -107,7 +100,9 @@ class EGP_GameReservation
 		$this->formData['id_resa_provi_retour'] = Arr::get( $post, 'id_resa_provi_retour');
 		$this->formData['current_user_id'] 		= Arr::get( $post, 'current_user_id');
 
-		// $this->isPermanent = $permanent;
+		if(!$this->formData['trou_depart']){
+			$this->isWizard = true;
+		}
 		
 		//////////////////////////////////////////////////////////
 		// Vérification de la date								//
@@ -141,7 +136,7 @@ class EGP_GameReservation
 		//////////////////////////////////////////////////////////
 		// Récupération des parcours							//
 
-		if(!$this->LoadParcoursToSlot()){
+		if(!$this->LoadParcoursToSlot() && !$this->isWizard){
 			return array(
 				'valid' => $this->isValid,
 				'message' => $this->message
@@ -206,11 +201,6 @@ class EGP_GameReservation
 			}
 		}
 
-		// if(!$this->isPermanent){
-		// 	// Resa provisoire
-		// 	$this->slotAller->setNProviPlayers($this->maxPlayers);
-		// }
-
 		if(!$this->isProvisoire){
 			if(!$this->CheckPostNbPlayers()){	// probleme dans les joueurs
 				return array(
@@ -220,27 +210,6 @@ class EGP_GameReservation
 			}
 		}
 
-		// //////////////////////////////////////////////////////////
-		// // Récupération des ressources demandées				//
-		
-		// $golf_ressources = DB_SQL::select("default")
-		// 	->from("ressources")
-		// 		->where("id_golf", "=", Settings::get('current_golf'))
-		// 			->query();
-		// foreach($golf_ressources as $res) {
-		// 	$postuserhaveres = array();
-		// 	for($i = 0; $i < $this->maxPlayers; $i++) {
-		// 		$idxpl = Arr::get( $post, 'res_J' .($i+1));
-		// 		if($idxpl != null){
-		// 			foreach($this->slotAller->players as $pl){
-		// 				if($pl->id == $idxpl){
-		// 					$pl->ressources[] = $res["ressource"];
-		// 					$pl->ressourcesIds[] = $res["id"];
-		// 				}
-		// 			}
-		// 		}
-		// 	}
-		// }
 		
 		//////////////////////////////////////////////////////////
 		//Tout semble ok										//
@@ -437,7 +406,7 @@ class EGP_GameReservation
 		
 		$this->method = $post;		// on récupère les paramètres de la requete
 		
-		$this->isPermanent = $permanent;
+		// $this->isPermanent = $permanent;
 		
 		$this->postdate = Arr::get($this->method, 'date_resa');
 		$this->postheure = Arr::get($this->method, 'heure_resa');
@@ -927,33 +896,21 @@ class EGP_GameReservation
 		foreach($trou_depart_possible as $tdepart) {
 			$this->setStartHole($tdepart);
 
-			$check_result = $this->LockParcours(true);	// true: pour provisoire
+			$check_result = $this->LockParcours();
+
 			if($check_result['valid']) {
 				//////////////////////////////////////////////////////////////////////////
 				// Ok la reservation provi est faite !
 				// Retour d'infos sur la reservation 
 				//////////////////////////////////////////////////////////////////////////
-				return array(
-					'valid' => $this->isValid,
-					'message' => $this->message,
-					'id_reservation_aller' => $this->slotAller->id,
-					'id_reservation_retour' =>  $this->slotRetour->id
-				);
+ 
+ 				return $check_result;
 			}
-			// if($tdepart == 10){
-			// 	//////////////////////////////////////////////////////////////////////////
-			// 	// Aucune dispo => on retourne une erreur
-			// 	//////////////////////////////////////////////////////////////////////////
-			// 	return array(
-			// 		'valid' => $check_result['valid'],	// ici c'est false !
-			// 		'message' => $check_result['message'],
-			// 		'id_reservation_aller' => NULL,
-			// 		'id_reservation_retour' =>  NULL
-			// 	);
-			// }
 		}
+
 		// Aucune dispo => on retourne l'erreur
 		return $check_result;	// contient le message d'erreur de LockParcours
+
 	}	// MakeResaProvi
 	
 	public function MakeReservation($troudepart = null)
@@ -985,6 +942,9 @@ class EGP_GameReservation
 			// ca instancie aussi les parcours pour chaque objet GamePlayer !
 			// $this->setTrouDepart($tdepart);
 			$this->setStartHole($tdepart);
+
+			// On redéfinit les parcours pour le Wizard
+			$this->LoadParcoursToSlot();
 
 			// Soit on transforme la resa provisoire soit on en crée une directement
 			if ($this->slotAller->id == null){
@@ -1028,14 +988,18 @@ class EGP_GameReservation
 		//   Ou si Visiteur, inscription dans la table demande_reservation
 		//////////////////////////////////////////////////////////////////////////
 		// if(isset($this->players[0]) && ($this->players[0]->id > $this->userIdMin)){
-			$elem = reset($this->slotAller->players);
+
+		$elem = reset($this->slotAller->players);	// remet le pointeur au debut du tableau
+
+		// Test si c'est une partie pour des Visiteurs
 		if(isset($this->slotAller->players) && ($elem->id > $this->userIdMin)){
 			// Membres, check collisions ...
 			$collision_result = $this->CheckCollision();
 			if(!$collision_result['valid']) {
 				// Collision !!! on annule tout !
-				$this->CancelResa($this->slotAller->id);
-				$this->CancelResa($this->slotRetour->id);
+				// $this->CancelResa($this->slotAller->id);
+				// $this->CancelResa($this->slotRetour->id);
+				$this->CancelReservations();
 				return array(
 					'valid' => $collision_result['valid'],		// Collision  !
 					'message' => $collision_result['message']
@@ -1050,6 +1014,7 @@ class EGP_GameReservation
 				$user_insert->id_reservation	= $this->slotAller->id;
 				$user_insert->save(TRUE);
 				$idtmp = $user_insert->id;
+
 				//ressources
 				foreach($player->ressourcesIds as $resid){
 					$res_insert								= DB_ORM::model('user_reservation_ressources');
@@ -1063,6 +1028,7 @@ class EGP_GameReservation
 					$user_insert->id_reservation	= $this->slotRetour->id;
 					$user_insert->save(TRUE);
 					$idtmp = $user_insert->id;
+
 					//ressources
 					foreach($player->ressourcesIds as $resid){
 						$res_insert								= DB_ORM::model('user_reservation_ressources');
@@ -1682,7 +1648,11 @@ class EGP_GameReservation
 				'id_reservation_retour' =>  NULL
 			);
 		}else{
-			$this->message =" Reservation provisoire pour " .$this->slotAller->nbPlayers() ." joueurs faite";
+			if($this->isProvisoire){
+				$this->message ="Reservation provisoire Aller: " .$this->slotAller->nbPlayers() ." joueurs,";
+			}else{
+				$this->message ="Reservation Aller: " .$this->slotAller->nbPlayers() ." joueurs,";
+			}
 		}
 
 		// Reserve le parcours Retour
@@ -1700,6 +1670,12 @@ class EGP_GameReservation
 				'id_reservation_aller' => NULL,
 				'id_reservation_retour' =>  NULL
 			);
+		}else{
+			if($this->isProvisoire){
+				$this->message = $this->message ." Retour: " .$this->slotAller->nbPlayers() ." joueurs, faite!";
+			}else{
+				$this->message = $this->message ." Retour: " .$this->slotAller->nbPlayers() ." joueurs, faite!";
+			}
 		}
 
 		// MAJ du parcours Aller pour id_children
@@ -1725,7 +1701,7 @@ class EGP_GameReservation
 		Helpers_Tools::PurgeExpiredResaProvi();
 		
 		// Test de l'horaire ///////////////////////////////////
-		if(!$this->isBeforeLastStart($gameSlot->begin)){
+		if(!$this->isBeforeLastStart($gameSlot->begin) && !$this->isWizard){
 			$this->isValid = false;	// l'horaire est apres l'heure de fermeture
 			$this->message = "Réservation impossible : l'heure de départ est après le dernier départ.";
 			return null;
@@ -2293,6 +2269,9 @@ class EGP_GameReservation
 	
 	public function isBeforeLastStart($startdatetime)
 	{
+		if(!isset($startdatetime)){
+			return false;
+		}
 		$golf = DB_ORM::model('golf', array(1));
 		$golf->load();
 		$compareResa	= new DateTime($startdatetime->format('Y-m-d H:i:s'));

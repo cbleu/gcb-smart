@@ -27,6 +27,7 @@ abstract class Controller_Golf_Main extends Controller_Oscrudc
 	{
 		//////////////////////////////////////////////////////////
 
+
 		$this->isLogged 		= Auth::instance()->logged_in();
 		// $this->isAdmin 			= Auth::instance()->logged_in('admin');
 		$this->isSuperAdmin		= Auth::instance()->logged_in('superadmin');

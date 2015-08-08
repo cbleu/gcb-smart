@@ -126,7 +126,7 @@ hr{
 */
 
 .dhx_agenda_area {
-	background-image: url(../img/agenda_bg_84px.png);
+	background-image: url(/assets/img/scheduler/agenda_bg_84px.png);
 }
 .dhx_agenda_line {
 	height: 84px;
@@ -198,16 +198,31 @@ hr{
 	left: 0%;
 }
 
+.dhx_cal_navline div.egp_other_icon {
+	left: 29px;
+	height: 21px;
+	line-height: 22px;
+}
+
 .dhx_cal_navline div.egp_unit_icon {
-	left: 6%;
+/*	left: 6%;*/
+	left: 32px;
+	height: 21px;
+	line-height: 22px;
 }
 
 .dhx_cal_navline div.egp_agenda_icon {
-	left: 10%;
+/*	left: 10%;*/
+	left: 64px;
+	height: 21px;
+	line-height: 22px;
 }
 
 .dhx_cal_navline div.egp_event_icon {
-	left: 16%;
+/*	left: 16%;*/
+	left: 98px;
+	height: 21px;
+	line-height: 22px;
 }
 
 

@@ -43,6 +43,18 @@ var joueurs_dans_partie = new Array();
 			break;
 		case 'calendrier':
 			initCalendrier();
+
+			if(vars.isMobile){
+				// scheduler.templates.unit_date = "%d %m";
+				$(".dhx_cal_today_button").hide();
+			}else{
+				console.log("isMobile: NO :", vars.isMobile);
+				scheduler.templates.unit_date = "%l %d %F %Y";
+				$(".dhx_cal_today_button").show();
+			}
+
+			console.log("isMobile:", vars.isMobile);
+
 			break;
 		default:
 			break;
@@ -57,16 +69,25 @@ var joueurs_dans_partie = new Array();
 			// Ajustement de l'affichage en step1 du datepicker 
 			var numberOfMonths = $('#datepicker').datepicker( "option", "numberOfMonths" );
 			if( viewport.is("xs") ) {
+				console.log("viewport is xs");
+				$(".dhx_cal_today_button").hide();
 				if (numberOfMonths == 2){
 					$('#datepicker').datepicker( "option", "numberOfMonths", 1 );
 				}
+				// scheduler.templates.unit_date = "%l %F";
+				// scheduler.templates.unit_date = function(date){
+				//          return scheduler.date.date_to_str("%d.%m")(date);
+				//       };
 			}else{
+				scheduler.templates.unit_date = "%l %d %F %Y";
+				$(".dhx_cal_today_button").show();
 				if (numberOfMonths == 1){
 					$('#datepicker').datepicker( "option", "numberOfMonths", 2 );
 				}
 			}
 		});
 	});
+
 
 // })(jQuery);
 })(jQuery, document, window, ResponsiveBootstrapToolkit);
@@ -267,13 +288,33 @@ function initWizard()
 	$('input[name="nb_trous_sw"]').on('switchChange.bootstrapSwitch', function(event, state) {
 		if(state) {
 			$("#nb_trous").val(18);
+			// $("#nb_trous_J1", "#nb_trous_J2", "#nb_trous_J3", "#nb_trous_J4").val(18);
 			fill_DOM_with_Intervals(lastStartFor18hole);
 		}else {
 			$("#nb_trous").val(9);
+			// $("#nb_trous_J1", "#nb_trous_J2", "#nb_trous_J3", "#nb_trous_J4").val(9);
 			fill_DOM_with_Intervals();
 		}
 		$("#nb_trous_optgroup").attr("label", $("#nb_trous").val() + " Trous");
 	});
+
+
+
+
+	// Checkbox de la ressource Chariot: uniquement visuel => la donnée est dans #res_J
+	$("#Chariot_1, #Chariot_2, #Chariot_3, #Chariot_4").change(function(){
+		var idxj = this.id.slice( -1); 
+		if (this.checked) {	// this is true if the switch is on
+			setRes(idxj, 2, $("#id_J" + idxj).val())
+		}
+		else {
+			setRes(idxj, 2);
+		}
+	});
+
+
+
+
 
 	$("#joueur1, #joueur2, #joueur3, #joueur4").focus(function(){
 		lastNameValue = $(this).val();
@@ -300,7 +341,7 @@ function initWizard()
 			validateSlotJ(idxj);
 		}
 		// update_joueurs();
-		update_joueurs_presents();
+		// update_joueurs_presents();
 	});
 
 	$("#joueur1, #joueur2, #joueur3, #joueur4").autocomplete({
@@ -332,11 +373,14 @@ function initWizard()
 		// appendTo: "#wizard_form",		// added by cesar to display menu on top of the form
 		minLength: 2,
 		select: function( event, ui ) {
-			var idSelector = "#id_"+$(this).prop('id');
+			var idxj = this.name.slice( -1); 
+
+			var idSelector = "#id_J" + idxj;
 			$(idSelector).val(ui.item.key);
 			lastNameValue = ui.item.value;
-			// validate_name($(this));
-			validateSlotJ($(this).prop('id'));
+
+			validateSlotJ(idxj);
+
 		},
 		open: function() {
 			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
@@ -719,19 +763,19 @@ function restrict_user_nb()
 	}
 }	// restrict_user_nb
 
-function update_joueurs()
-{
-	// joueurs_presents_ = Array();
-	$("#nb_joueurs").val(update_joueurs_presents());
-	for (var i = 1; i <= max_joueurs; i++){
-		if($("#id_J"+i).val() !== ""){
-			// joueurs_presents_.push($("#id_J"+i).val());
-			// $("#nb_joueurs").val(joueurs_presents_.length);
-			$("#nbTrousJ" + i).val($("#nb_trous").val());
-		}
-	}
-	console.log("update_joueurs: ", $("#nb_joueurs").val());
-}	// update_joueurs
+// function update_joueurs()
+// {
+// 	// joueurs_presents_ = Array();
+// 	$("#nb_joueurs").val(update_joueurs_presents());
+// 	for (var i = 1; i <= max_joueurs; i++){
+// 		if($("#id_J"+i).val() !== ""){
+// 			// joueurs_presents_.push($("#id_J"+i).val());
+// 			// $("#nb_joueurs").val(joueurs_presents_.length);
+// 			$("#nbTrousJ" + i).val($("#nb_trous").val());
+// 		}
+// 	}
+// 	console.log("update_joueurs: ", $("#nb_joueurs").val());
+// }	// update_joueurs
 
 function DisplayDigest()
 {
@@ -821,6 +865,14 @@ function initCalendrier()
 	$(window).resize(function(){
 		resize_calendar();
 	});
+
+
+	$('#refresh').click(function () {
+		// document.location.reload();
+		schedulerLoad();
+		// scheduler.setCurrentView();
+		// scheduler.setCurrentView(scheduler._date, "starter_units");
+	})
 	
 	// When clicking button to add recurring event, we set the lightbox back to default and open it
 	$("#egp_event_icon").click(function(){
@@ -848,7 +900,7 @@ function initCalendrier()
 		}
 	});
 
-	// Checkbob de la ressource Chariot: uniquement visuel => la donnée est dans #nb_trous_J
+	// Checkbox de la ressource Chariot: uniquement visuel => la donnée est dans #nb_trous_J
 	$("#Chariot_1, #Chariot_2, #Chariot_3, #Chariot_4").change(function(){
 		var idxj = this.id.slice( -1); 
 		if (this.checked) {	// this is true if the switch is on
@@ -1196,7 +1248,16 @@ function initCalendrier()
 	});
 		
 	$("#agenda_tab").click(function(){
+		// scheduler.templates.unit_date = function(date){
+		//         return scheduler.templates.day_date(date);
+		// };
+		// scheduler.templates.day_scale_date = function(date){
+  //   		// return scheduler.date.date_to_str(scheduler.config.default_date);
+		// 	return scheduler.date.date_to_str("%d.%m")(date);
+		// };
+		
 		scheduler.setCurrentView(scheduler._date, "agenda");
+
 	});
 		
 	$('#form').ajaxForm({
@@ -1248,6 +1309,7 @@ function initScheduler()
 	shortDate_mysql_format 	= scheduler.date.date_to_str("%Y-%m-%d");
 	mysql_format 			= scheduler.date.date_to_str("%Y-%m-%d %H:%i");
 	french_format 			= scheduler.date.date_to_str("%H:%i le %d %F %Y");
+	veryShortDate_format 	= scheduler.date.date_to_str("%Y-%m");
 
 
 	scheduler.locale.labels.agenda_tab=null;	// on utilise une icone a la place du texte
@@ -1258,7 +1320,11 @@ function initScheduler()
 	scheduler.config.readonly = vars.isLogged ? false : true;
 	scheduler.config.show_loading = true;
 	scheduler.config.fix_tab_position = false;
-	scheduler.config.default_date = "%l %d %F %Y";
+	if( vars.isMobile){
+		scheduler.config.default_date = "%d %F";
+	}else{
+		scheduler.config.default_date = "%l %d %F %Y";
+	}
 	scheduler.config.xml_date = "%Y-%m-%d %H:%i";
 	scheduler.config.first_hour = vars.premier_depart;
 	scheduler.config.last_hour = vars.dernier_depart;
@@ -1298,6 +1364,11 @@ function initScheduler()
 	dhtmlXTooltip.config.className = 'passover'; // sets the CSS classname of the tooltip window
 	dhtmlXTooltip.config.timeout_to_display = 50; // delay of the rendering
 
+	// scheduler.templates.unit_date = "%l %F";
+	// scheduler.templates.unit_date = function(date){
+	//          return scheduler.date.date_to_str("%d.%m")(date);
+	//       };
+
 	scheduler.templates.tooltip_text = function(start,end,ev){
 		var infoplayers = "";
 		if(vars.isLogged){
@@ -1329,7 +1400,8 @@ function initScheduler()
 	
 	scheduler.templates.agenda_text = function(start,end,ev){return ev.j;};
 	scheduler.templates.agenda_date = function(start, end, mode) {
-		return shortDate_mysql_format(start) + " — " + shortDate_mysql_format(end);
+		// return shortDate_mysql_format(start) + " — " + shortDate_mysql_format(end);
+		return veryShortDate_format(start);
 	};
 
 	scheduler.templates.lightbox_header = function(start, end, event){
@@ -1373,7 +1445,7 @@ function initScheduler()
 	});
 
 	scheduler.filter_agenda = function(id, ev){
-		if(ev.evt == 1 && ev.g < 2 && ev.u == 1 )	// une partie joueur ET pas un retour ET avec l'utilisateur
+		// if(ev.evt == 1 && ev.g < 2 && ev.u == 1 )	// une partie joueur ET pas un retour ET avec l'utilisateur
 			return true; // event will be rendered
 	}	// filtre de l'affichage de la vue "Mes reservations"
 
@@ -2542,8 +2614,7 @@ function update_joueurs_presents(){
 	joueurs_dans_partie = Array();
 	for (var i = 1; i <= max_joueurs; i++){
 		if($("#id_J"+i).val() !== ""){
-			if(($("#crud_J"+i).val() == "Create")
-			|| ($("#crud_J"+i).val() == "Update") ){
+			if(($("#crud_J"+i).val() == "Create") || ($("#crud_J"+i).val() == "Update") ){
 				joueurs_dans_partie.push($("#id_J"+i).val());	// nb de joueurs dans cette partie
 			}
 			joueurs_presents_.push($("#id_J"+i).val());			// nb total des joueurs sur ce slot horaire
@@ -2552,6 +2623,7 @@ function update_joueurs_presents(){
 	$("#nb_joueurs").val(joueurs_dans_partie.length);
 	console.log("joueurs_presents: ", joueurs_presents_.length, " joueurs_dans_partie: ", joueurs_dans_partie.length);
 }	// update_joueurs_presents
+
 	
 // function validate_name(object){
 // 	// var idxj = parseInt($(object).context.id.substr($(object).context.id.length -1));
@@ -2592,6 +2664,16 @@ function changeSlotJ(slot, editmode, isModified){
 		}
 		
 		update_joueurs_presents();
+	}else{
+		// WIZARD
+		 
+		$("#joueur" + slot).parent().parent().addClass("has-success");
+		$("#crud_J" + slot).val("Create");
+		console.log("\tvalidate_name #crud_J", slot, ": Create");
+		
+		
+		update_joueurs_presents();
+
 	}
 }	// validate_name 
 
@@ -2612,11 +2694,13 @@ function unvalidateSlotJ(index, force){
 	if(parseInt($("#id_J" + index).val()) < 2 && !force)	// que pour les joueurs
 		return;
 	if (vars.thisAction == "calendrier"){
-		console.log("\tunvalidate_name #crud_J", index, ": none");
 		$("#joueur" + index).parent().parent().removeClass("has-success");
 		$("#crud_J" + index).val("none");
 		update_joueurs_presents();
+	}else{
+		update_joueurs_presents();
 	}
+	console.log("\tunvalidate_name #crud_J", index, ": none");
 }	// unvalidate_name
 
 function close_onClick_outside(){

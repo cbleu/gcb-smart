@@ -148,6 +148,8 @@ Kohana::modules(array(
 	'email'			=> MODPATH.'email',
 	'crud'			=> MODPATH.'crud',
 	'mysqli'		=> MODPATH.'mysqli',
+	// 'mobile-detect'	=> MODPATH.'Mobile-Detect',
+	'kohana-device-master' => MODPATH.'kohana-device-master',
 	// 'paginate'		=> MODPATH.'kohana-paginate',
 	// 'datatables'	=> MODPATH.'kohana-datatables',
 	// 'datatable'		=> MODPATH.'happyDemon-dataTable'

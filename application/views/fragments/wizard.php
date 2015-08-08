@@ -162,14 +162,26 @@
 																<? if($isAdmin && $i ==1){?>
 																	<input type="text" placeholder="Chercher un nom..." id="joueur<?=$i;?>" name="joueur<?=$i;?>" class="joueur_input serialize" value="" style="height: 30px"/>
 																	<input type="hidden" name="id_J1" id="id_J1" class="serialize" value="2">
+																	<input type="hidden" name="crud_J1" id="crud_J1" class="serialize" value="Create">
 																<? }else{ ?>
 																	<input type="text" placeholder="Chercher un nom..." id="joueur<?=$i;?>" name="joueur<?=$i;?>" class="joueur_input serialize" value="<?=$players[$i]['name'];?>" <?=$players[$i]['tags'];?> style="height: 30px"/>
 																	<input type="hidden" name="id_J<?=$i;?>" id="id_J<?=$i;?>" class="serialize" value="<?=$players[$i]['id'];?>">
+																	<input type="hidden" name="crud_J<?=$i;?>" id="crud_J<?=$i;?>" class="serialize" value="none">
 																<? } ?>
 																<input type="hidden" name="nbTrousJ<?=$i;?>" id="nbTrousJ<?=$i;?>" class="serialize" value="">
-																<?php for($k = 0; $k < count($ressources); $k++) {
-																	echo "<input type='checkbox' name='" .$ressources[$k]['ressource'] ."[]' class='" .$ressources[$k]['ressource'] ."_check cb_ressource_" .$i ." serialize' value='" .($i - 1) ."' /> " .$ressources[$k]['ressource'];
-																} ?>
+																<input type="hidden" name="res_J<?=$i;?>" id="res_J<?=$i;?>" class="serialize">
+
+																<?php //for($k = 0; $k < count($ressources); $k++) {
+																	//echo "<input type='checkbox' name='" .$ressources[$k]['ressource'] ."[]' class='" .$ressources[$k]['ressource'] ."_check cb_ressource_" .$i ." serialize' value='" .($i - 1) ."' /> " .$ressources[$k]['ressource'];
+																//} ?>
+
+																<? for($k = 0; $k < count($ressources); $k++) {?>
+																	<label class="radio radio-inline">
+																	<input type='checkbox' name='<?=$ressources[$k]['ressource'];?>[]' id='<?=$ressources[$k]['ressource'];?>_<?=$i;?>' class='radiobox <?=$ressources[$k]['ressource'];?>_check serialize'/> 
+																	<?=$ressources[$k]['ressource'];?>
+																	</label>
+																<?} // for k?>
+
 															</div>
 														</div>
 													<? } ?>
