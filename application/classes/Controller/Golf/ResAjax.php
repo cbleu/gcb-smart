@@ -65,6 +65,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 														->on('type_parcours.id', '=', 'reservation.id_type_parcours');
 		$builder->where('date_reservation', 'BETWEEN', array($start, $end));
 		$builder->where('id_evenement','IS', NULL, 'AND');
+		$builder->where('temp_until','IS', NULL, 'AND');	// PATCH 3 pour ne plus prendre les resa provisoire
 		$builder->where('nb_joueurs',">", 0, 'AND');
 		
 		$reservations = $builder->query()->as_array();
@@ -423,23 +424,31 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 	{
 		$isValid = false;
 		$response = array();
+
+		// $isPermanent = false;
+		// $this->method = $_POST;		// on récupère les paramètres de la requete
+
 		//////////////////////////////////////////////////////////////////////////
 		// Récupération et vérification des elements de la requete POST
-		$newResa = new EGP_GameReservation(Settings::get('id_trace'));
-		$isPermanent = false;
-		$this->method = $_POST;		// on récupère les paramètres de la requete
-		$funcresult = $newResa->IsRequestValid($_POST, $isPermanent);
+
+		$newResa = new EGP_GameReservation(Settings::get('id_trace'), true); // true: passe en mode provisoire
+
+		$funcresult = $newResa->InitResa($_POST);
+
+		//////////////////////////////////////////////////////////////////////////
+		// Création de la réservation provisoire
+		// eventuellement positionnée sur un trou de départ dans le calendrier
+
 		if($funcresult['valid']) {
-			//////////////////////////////////////////////////////////////////////////
 			// Requete valide: Création de la réservation provisoire
-			// eventuellement positionnée sur un trou de départ dans le calendrier
-			$response = $newResa->MakeResaProvi(Arr::get($_POST, 'trou_depart'));
-		}else{
-			$response = $funcresult;
+			$funcresult = $newResa->MakeResaProvi(Arr::get($_POST, 'trou_depart'));
 		}
+
 		//////////////////////////////////////////////////////////////////////////
 		// Renvoi de la reponse
-		echo json_encode($response);
+
+		echo json_encode($funcresult);
+
 	}	// action_addprovi
 
 	public function action_cancelresaprovi()
@@ -448,9 +457,10 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		$response = array();
 		//////////////////////////////////////////////////////////////////////////
 		// Récupération et vérification des elements de la requete POST
-		$newResa = new EGP_GameReservation(Settings::get('id_trace'));
+		$newResa = new EGP_GameReservation(Settings::get('id_trace'), true);
 		$isPermanent = false;
-		$funcresult = $newResa->IsRequestValid($_POST, $isPermanent);
+		$funcresult = $newResa->InitResa($_POST);
+
 		if($funcresult['valid']) {
 			//////////////////////////////////////////////////////////////////////////
 			// Requete valide: suppression de la réservation
@@ -480,25 +490,25 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		$current_user_in_resa 	= Arr::get($method, 'usr_in');
 		
 		$actual_resa = new EGP_GameReservation(Settings::get('id_trace'));
-		$funcresult = $actual_resa->loadEventResa($id_reservation);
+		$funcresult = $actual_resa->InitResaByLoading($id_reservation);
 		if($funcresult['valid']) {
 			//////////////////////////////////////////////////////////////////////////
 			// Requete valide: Création de la réservation
-			// $returnArray = $actual_resa->MakeResaProvi();
 			$isValid = true;
 			$returnArray[$id_reservation]['isSelected'] = true;
-			// $returnArray[$id_reservation]['current_user_in_resa'] = $current_user_in_resa;
 			$returnArray[$id_reservation]['usr_in'] = $current_user_in_resa;
-			$returnArray[$id_reservation]['type'] = $actual_resa->slotCurrent->type;
-			// $returnArray[$id_reservation]['players'] = $actual_resa->slotCurrent->players;
-			$returnArray[$id_reservation]['players'] = $actual_resa->players;
-			// $returnArray['players'] = $actual_resa->players;
-			$returnArray[$id_reservation]['slotAller'] = $actual_resa->slotAller->id;
-			if(isset($actual_resa->slotRetour)){
-				$returnArray[$id_reservation]['slotRetour'] = $actual_resa->slotRetour->id;
-			}else{
-				$returnArray[$id_reservation]['slotRetour'] = null;
-			}
+			$returnArray[$id_reservation]['game_type'] = $actual_resa->slotAller->gameType;
+			// $returnArray[$id_reservation]['slotAller'] = $actual_resa->slotAller;
+			// $returnArray[$id_reservation]['slotRetour'] = $actual_resa->slotRetour;
+			// $returnArray[$id_reservation]['slotAller'] = $actual_resa->slotAller->id;
+			// if(isset($actual_resa->slotRetour)){
+				// $returnArray[$id_reservation]['slotRetour'] = $actual_resa->slotRetour->id;
+			// }else{
+				// $returnArray[$id_reservation]['slotRetour'] = null;
+			// }
+
+			$returnArray[$id_reservation]['GameReservation'] = $actual_resa;
+
 		}else{
 			$isValid = false;
 			$returnArray = $funcresult;
@@ -509,17 +519,22 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 			//Trouver s'il y a d'autres reservations au même slot
 			$other_reservations = Helpers_Tools::getOtherResaOnTheSameSlotAs($id_reservation);
 			foreach($other_reservations as $otherone){
-				$tmpresa = new EGP_GameReservation(Settings::get('id_trace'));
-				$tmpresult = $tmpresa->loadEventResa($otherone['id']);
+				$other_resa = new EGP_GameReservation(Settings::get('id_trace'));
+				$tmpresult = $other_resa->InitResaByLoading($otherone['id']);
 				if($tmpresult['valid']) {
 					//////////////////////////////////////////////////////////////////////////
 					// Requete valide: Création de la réservation
 					// $returnArray = $actual_resa->MakeResaProvi();
 					$isValid = true;
 					$returnArray[$otherone['id']]['isSelected'] = false;
-					$returnArray[$otherone['id']]['type'] = $tmpresa->slotCurrent->type;
+					$returnArray[$otherone['id']]['game_type'] = $other_resa->slotAller->gameType;
 					// $returnArray[$otherone['id']]['players'] = $tmpresa->slotCurrent->players;
-					$returnArray[$otherone['id']]['players'] = $tmpresa->players;
+					// $returnArray[$otherone['id']]['players'] = $tmpresa->players;
+					// $returnArray[$id_reservation]['slotCurrent'] = $other_resa->slotAller;
+					// $returnArray[$id_reservation]['slotRetour'] = $actual_resa->slotRetour;
+
+					$returnArray[$otherone['id']]['GameReservation'] = $other_resa;
+
 				}else{
 					$isValid = false;
 					$returnArray = $funcresult;
@@ -663,7 +678,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		//////////////////////////////////////////////////////////////////////////
 		// Récupération et vérification des elements de la requete POST
 		$newResa = new EGP_GameReservation(Settings::get('id_trace'));
-		$funcresult = $newResa->IsRequestValid($_POST);
+		$funcresult = $newResa->IsRequestValid_OLD($_POST);
 		$message = $funcresult['message'];
 		$valid = $funcresult['valid'];
 		if($valid) {
@@ -746,62 +761,57 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 	
 	public function action_add()
 	{
-		$valid = false;
-		$message = "";
+
 		//////////////////////////////////////////////////////////
 		// Récupération et vérification de la requete POST
+
 		$newResa = new EGP_GameReservation(Settings::get('id_trace'));
-		$funcresult = $newResa->IsRequestValid($_POST);
-		$message = $funcresult['message'];
-		$valid = $funcresult['valid'];
+		$funcresult = $newResa->InitResa($_POST);
 
 		//////////////////////////////////////////////////////////
 		// Si Requete valide: Création de la réservation
-		if($valid) {
-			$resa_result = $newResa->MakeReservation(Arr::get($_POST, 'trou_depart'));
-			if(!$resa_result['valid']) {
-				$message = $resa_result['message'];
-				$valid = false;
-			}
+		if($funcresult['valid']) {
+			$funcresult = $newResa->MakeReservation(Arr::get($_POST, 'trou_depart'));
 		}
 		
 		//////////////////////////////////////////////////////////
 		// Creation de la page de résultat
-		echo json_encode(array(
-		// echo array(
-			'valid' => $valid,
-			'message' => $message,
-		));
+
+		echo json_encode($funcresult);
+
 	}	// action_add
+
 
 	public function action_update()
 	{
-		$isValid = false;
-		$returnArray = array();
 
 		//////////////////////////////////////////////////////////
 		// Récupération et vérification de la requete POST
-		$method = $_POST;
-		$id_reservation 		= Arr::get($method, 'id_reservation');
-		$start_date 			= Arr::get($method, 'start_date');
-		$trou_depart 			= Arr::get($method, 'trou_depart');
-		$current_user_in_resa 	= Arr::get($method, 'usr_in');
-		
-		//////////////////////////////////////////////////////////
-		// Initialisation de l'objet resa à mettre a jour
-		$actual_resa = new EGP_GameReservation(Settings::get('id_trace'));
 
+		$updatedResa = new EGP_GameReservation(Settings::get('id_trace'));
+		$funcresult = $updatedResa->InitResa($_POST);
+
+		if(!$funcresult['valid']) {
+			echo json_encode($funcresult);
+		}
 		//////////////////////////////////////////////////////////
 		// Chargement de la réservation actuelle
-		$funcresult = $actual_resa->loadEventResa($id_reservation);
+
+		$id_reservation 		= Arr::get($_POST, 'id_reservation');
+
+		$actualResa = new EGP_GameReservation(Settings::get('id_trace'));
+		$funcresult = $actualResa->InitResaByLoading($id_reservation);
+		
 		if($funcresult['valid']) {
 			$isValid = true;
 			$returnArray = $funcresult;
 
 			//////////////////////////////////////////////////////////
-			// Si Requete valide: Traitement de la mise à jour
-			$funcresult = $actual_resa->UpdateReservation();
+			// Traitement de la mise à jour
+			$funcresult = $actualResa->UpdateReservation($updatedResa);
 
+			// On supprime la resa provisoire faite pour le traitement
+			$updatedResa->CancelReservations();
 		}
 
 		
@@ -810,457 +820,6 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		echo json_encode($returnArray);
 	}	// action_update
 	
-/*	public function action_update_OLD()
-	{
-		$message = "Veuillez vous identifier";
-		$valid = false;
-		
-		if (!$this->isLogged) {
-			goto end;
-		}
-		$message = "";
-		
-		// TODO : Empécher l'update si la date est déjà passé
-		$logged_in_user = Auth::instance()->get_user();		// TODO: clean
-		$max_joueurs = 4;
-		$method = $_POST;
-		
-		$id_reservation = Arr::get($method, 'id_reservation');
-		
-		$reservation = DB_ORM::model('reservation');
-		$reservation->id = $id_reservation;
-		$reservation->load();
-		
-		$total_nb_joueur_par_slot = 0;
-		
-		$query 	= "SELECT SUM(nb_joueurs) AS nb_joueurs_par_slot";
-		$query .= " FROM reservation WHERE date_reservation = '".$reservation->date_reservation;
-		$query .= "' AND id_type_parcours = ".$reservation->id_type_parcours;
-		
-		$connection = DB_Connection_Pool::instance()->get_connection('default');
-		$results = $connection->query($query);
-		
-		if ($results->is_loaded()) {
-			$total_nb_joueur_par_slot = $results[0]['nb_joueurs_par_slot'];
-			
-			$maxReservationDay = 3;
-			$maxDateTime = new DateTime();
-			$maxDateTime->setTimestamp(strtotime("+3 days 4 hours"));
-			$maxDateTime->setTime(23,59,59);
-			$date_resa = new DateTime($reservation->date_reservation);
-			
-			if($date_resa > $maxDateTime && !Auth::instance()->logged_in('admin')) {
-				$message = "ERREUR : Vous de pouvez pas modifier une réservation à plus de ".$maxReservationDay." jours.";
-				goto end;
-			}
-		}
-		
-		$results->free();
-		
-		$id_joueurs = array();
-		$nom_joueurs = array();
-		$nb_invite_deja_present = 0;
-		$nb_visiteur_deja_present = 0;
-		for($i = 0; $i < 4; $i++) {
-			$id_joueurs[$i] = Arr::get($method, 'id_joueur'.($i+1));
-			$nom_joueurs[$i] = Arr::get($method, 'joueur'.($i+1));
-			
-			if($id_joueurs[$i] == 0 && $nom_joueurs[$i] === NULL) {
-				$nb_invite_deja_present++;
-			}
-			elseif($id_joueurs[$i] == 1 && $nom_joueurs[$i] === NULL) {
-				$nb_visiteur_deja_present++;
-			}
-		}
-		
-		$id_players_to_add 	= array();
-		$nb_Trous_player	= array();
-		
-		for($i = $total_nb_joueur_par_slot + 1; $i <= $max_joueurs; $i++) {
-			$id_joueur = Arr::get($method, 'id_joueur'.$i);
-			$nb_trous = Arr::get($method, 'nbTrousJ'.$i);
-			
-			if(!($id_joueur === NULL) && $id_joueur != "" && !($nb_trous === NULL)) {
-				array_push($id_players_to_add, $id_joueur);
-				array_push($nb_Trous_player, $nb_trous);
-			}
-		}
-		
-		if(($total_nb_joueur_par_slot + count($id_players_to_add)) > $max_joueurs) {
-			$message = "ERREUR ! Cette partie ne peux plus accueillir ".count($id_players_to_add)." joueurs";
-			goto end;
-		}
-		
-		//////////////////////////////////////////////////////////////////////////
-		// Vérification des parties en cours
-		//////////////////////////////////////////////////////////////////////////
-		$colision_result = $this->collision_check($id_players_to_add, new DateTime($reservation->date_reservation), $reservation->id_type_parcours);
-		
-		if(!$colision_result['valid']) {
-			$valid 		= FALSE;
-			$message 	= $colision_result['message'];
-			goto end;
-		}
-		
-		$ressources_available = DB_SQL::select("default")
-							->from("ressources")
-							->where("id_golf", "=", 1)
-							->query();
-		
-		$ressources = array();
-		$ressources_ids = array();
-		
-		foreach($ressources_available as $r) {
-			$ressources[$r["ressource"]] = Arr::get($method, $r["ressource"]);// checkbox avec comme value le numéro du joueur de 0 à 3.
-			$ressources_ids[$r["id"]] = Arr::get($method, $r["ressource"]);
-		}
-		
-		$user_resa = DB_SQL::select('default')
-					->from('users_has_reservation')
-					->where('id_reservation', '=', $id_reservation)
-					->where('id_users', '=', $logged_in_user->id)
-					->query();
-		
-		// TODO 2 : Gerer les reservations multiples ? 18 trous
-		
-		// Si l'utilisateur courant est dans la reservation
-		// On ajoute simplement les joueurs à la reservation et on incrémente le nombre de joueurs dans la reservation
-		// OU SI c'est un administrateur et qu'il ajoute un invité
-		$update_or_new = "";
-		$invite_i = 0;
-		
-		// On initialise le compteur avec le nb de visiteurs et invité déja présent dans la partie
-		$visiteur_and_invite_incr = array(0 => $nb_invite_deja_present, 1 => $nb_visiteur_deja_present); // 0 - invité / 1 - visiteur
-		
-		if(count($user_resa) > 0 || (Auth::instance()->logged_in('admin') && Arr::get($method, "new") == 0)) {
-			$update_or_new = "update";
-			foreach($id_players_to_add as $id_player) {
-				
-				$user_reservation_to_insert 				= DB_ORM::model('users_has_reservation');
-				$user_reservation_to_insert->id_users 		= $id_player;
-				$user_reservation_to_insert->id_reservation = $reservation->id;
-				
-				if($id_player <= 1) {
-					//	 On récupère les keys du tableau contenant l'id 0 pour invite OU 1 pour visiteur
-					$special_user_keys = array_keys($id_joueurs, $id_player);
-				
-					// on recupère l'index du Nième visiteur (id_users => 1) ou invité (id_users => 0)
-					$index = $visiteur_and_invite_incr[$id_player];
-					// On récupère l'index joueur dans le tableau contenant les 4 joueurs de la partie
-					$joueur_index = $special_user_keys[$index];
-				
-					// On incrément son compteur pour ne pas récupérer le même nom a chaque fois
-					$visiteur_and_invite_incr[$id_player] += 1;
-				
-					// On stocke dans info la valeur contenu dans le champs nom lorsque visiteur ou invité est coché
-					$user_reservation_to_insert->info = $nom_joueurs[$joueur_index];
-				}
-
-				$user_reservation_to_insert->save();
-				
-				//////////////////////////////////////////////////////////////////////////
-				// Ajout des ressources aux réservations joueurs
-				//////////////////////////////////////////////////////////////////////////
-				
-				$keys = array_keys($id_joueurs, $id_player);
-				
-				if(count($keys) == 1 && $keys[0] >= 0) { // Joueur normal ou un seul invite
-					foreach($ressources_ids as $ressource_id => $joueurs_indexes) {
-						// On vérifie dans le tableau de ressources récupéré en POST que l'index est présent.
-						// Si il est présent c'est que la ressource a été coché pour ce joueur donc on ajoute cette ressource a la reservation du joueur
-						
-						if($joueurs_indexes != null && !(array_search($keys[0], $joueurs_indexes) === FALSE)) {
-							$user_reservation_ressources							= DB_ORM::model('user_reservation_ressources');
-							$user_reservation_ressources->id_user_has_reservation 	= $user_reservation_to_insert->id;
-							$user_reservation_ressources->id_ressources			 	= $ressource_id;
-							
-							$user_reservation_ressources->save();
-						}
-					}
-				}
-				else if(count($keys) > 1 && $invite_i < count($keys) && $keys[$invite_i] >= 0) { // Joueurs invites 
-					foreach($ressources_ids as $ressource_id => $joueurs_indexes) {
-						// On vérifie dans le tableau de ressources récupéré en POST que l'index est présent.
-						// Si il est présent c'est que la ressource a été coché pour ce joueur donc on ajoute cette ressource a la reservation du joueur
-						
-						if($joueurs_indexes != NULL && !(array_search($keys[$invite_i], $joueurs_indexes) === FALSE)) {
-							
-							$user_reservation_ressources							= DB_ORM::model('user_reservation_ressources');
-							$user_reservation_ressources->id_user_has_reservation 	= $user_reservation_to_insert->id;
-							$user_reservation_ressources->id_ressources			 	= $ressource_id;
-							
-							$user_reservation_ressources->save();
-						}
-					}
-					$invite_i++; // TODO : Problème si un invité fait 9 trous et que le suivant fait 18 trous ses ressources ne sont pas pris en compte...
-				}
-			}
-			
-			$reservation->nb_joueurs += count($id_players_to_add);
-			$reservation->save();
-		}
-		else { // sinon on crée une autre réservation à part
-			$update_or_new = "new";
-			$first_reservation_query = DB_SQL::insert('default')
-											->into('reservation')
-											->column('id_type_parcours', $reservation->id_type_parcours)
-											->column('date_reservation', $reservation->date_reservation)
-											//->column('nb_chariots', 0)
-											->column('nb_joueurs', count($id_players_to_add))
-											//->column('nb_voiturettes', 0)
-											->column('id_parent', 0);
-
-			$id_new_resa = $first_reservation_query->execute(TRUE);
-			
-			foreach($id_players_to_add as $id_player) {
-				
-				$user_reservation_to_insert 				= DB_ORM::model('users_has_reservation');
-				$user_reservation_to_insert->id_users 		= $id_player;
-				$user_reservation_to_insert->id_reservation = $id_new_resa;
-				
-				if($id_player <= 1) {
-					//	 On récupère les keys du tableau contenant l'id 0 pour invite OU 1 pour visiteur
-					$special_user_keys = array_keys($id_joueurs, $id_player);
-				
-					// on recupère l'index du Nième visiteur (id_users => 1) ou invité (id_users => 0)
-					$index = $visiteur_and_invite_incr[$id_player];
-					// On récupère l'index joueur dans le tableau contenant les 4 joueurs de la partie
-					$joueur_index = $special_user_keys[$index];
-				
-					// On incrément son compteur pour ne pas récupérer le même nom a chaque fois
-					$visiteur_and_invite_incr[$id_player] += 1;
-				
-					// On stocke dans info la valeur contenu dans le champs nom lorsque visiteur ou invité est coché
-					$user_reservation_to_insert->info = $nom_joueurs[$joueur_index];
-				}
-
-				$user_reservation_to_insert->save();
-				
-				//////////////////////////////////////////////////////////////////////////
-				// Ajout des ressources aux réservations joueurs
-				//////////////////////////////////////////////////////////////////////////
-				
-				$keys = array_keys($id_joueurs, $id_player);
-				
-				if(count($keys) == 1 && $keys[0] >= 0) { // Joueur normal ou un seul invite
-					foreach($ressources_ids as $ressource_id => $joueurs_indexes) {
-						// On vérifie dans le tableau de ressources récupéré en POST que l'index est présent.
-						// Si il est présent c'est que la ressource a été coché pour ce joueur donc on ajoute cette ressource a la reservation du joueur
-						
-						if($joueurs_indexes != NULL && !(array_search($keys[0], $joueurs_indexes) === FALSE)) {
-							$user_reservation_ressources							= DB_ORM::model('user_reservation_ressources');
-							$user_reservation_ressources->id_user_has_reservation 	= $user_reservation_to_insert->id;
-							$user_reservation_ressources->id_ressources			 	= $ressource_id;
-							
-							$user_reservation_ressources->save();
-						}
-					}
-				}
-				else if(count($keys) > 1 && $invite_i < count($keys) && $keys[$invite_i] >= 0) { // Joueurs invites 
-					foreach($ressources_ids as $ressource_id => $joueurs_indexes) {
-						// On vérifie dans le tableau de ressources récupéré en POST que l'index est présent.
-						// Si il est présent c'est que la ressource a été coché pour ce joueur donc on ajoute cette ressource a la reservation du joueur
-						
-						if($joueurs_indexes != NULL && !(array_search($keys[$invite_i], $joueurs_indexes) === FALSE)) {
-							
-							$user_reservation_ressources							= DB_ORM::model('user_reservation_ressources');
-							$user_reservation_ressources->id_user_has_reservation 	= $user_reservation_to_insert->id;
-							$user_reservation_ressources->id_ressources			 	= $ressource_id;
-							
-							$user_reservation_ressources->save();
-						}
-					}
-					$invite_i++; // TODO : Problème si un invité fait 9 trous et que le suivant fait 18 trous ses ressources ne sont pas pris en compte...
-				}
-				
-			}
-		}
-		
-		// Si il y a des 18 trous
-		
-		$players_18_trous_index = array();
-		
-		for($i = 0; $i < count($nb_Trous_player); $i++) {
-			if($nb_Trous_player[$i] == 18) {
-				array_push($players_18_trous_index, $i);
-			}
-		}
-		
-		if(count($players_18_trous_index) > 0) {
-
-			$tp = DB_SQL::select('default')
-				->from('parcours')
-				->column('type_parcours.id')
-				->join(NULL, 'combinaison_parcours')
-					->on("combinaison_parcours.id_parcours", "=", "parcours.id")
-				->join(NULL, 'type_parcours')
-					->on("combinaison_parcours.id_type_parcours", "=", "type_parcours.id")
-				->where("type_parcours.trou_depart", "<>", $reservation->type_parcours->trou_depart)
-				->where("parcours.nb_trous_total", "=", 18 , "AND")
-				->where("combinaison_parcours.ordre", "=", 2, "AND")
-				->query();
-
-			$id_type_parcrours = $tp[0]['id'];
-
-			$date_linked_reservation = new DateTime($reservation->date_reservation);
-			$date_linked_reservation->add(new DateInterval('PT'.$reservation->type_parcours->duree.'S'));
-
-			// On vérifi qu'il reste sufisement de place sur le slot horraire
-
-			$query 	= "SELECT SUM(nb_joueurs) AS nb_joueurs_par_slot";
-			$query .= " FROM reservation WHERE date_reservation = '".$date_linked_reservation->format('Y-m-d H:i:s');
-			$query .= "' AND id_type_parcours = ".$id_type_parcrours;
-
-			$connection = DB_Connection_Pool::instance()->get_connection('default');
-			$results = $connection->query($query);
-
-			if ($results->is_loaded()) {
-				$total_nb_joueur_par_slot = $results[0]['nb_joueurs_par_slot'];
-			}
-
-			$results->free();
-
-			if(($total_nb_joueur_par_slot + count($players_18_trous_index)) > $max_joueurs) {
-				$message = "ERREUR ! la deuxième réservation ne peux plus accueillir ".count($id_players_to_add)." joueurs";
-				goto end;
-			}
-
-
-			$user_resa = DB_SQL::select('default')
-				->column('reservation.id')
-				->from('users_has_reservation')
-				->join(NULL, 'reservation')
-				->on('users_has_reservation.id_reservation', '=', 'reservation.id')
-				//->where('id_reservation', '=', $id_reservation)
-				->where('reservation.date_reservation', '=', $date_linked_reservation->format('Y-m-d H:i:s'));
-				
-				if(!Auth::instance()->logged_in('admin')) {
-					$user_resa = $user_resa->where('users_has_reservation.id_users', '=', $logged_in_user->id, "AND");
-				}
-				
-				$user_resa = $user_resa->where('reservation.id_type_parcours', '=', $id_type_parcrours, "AND")
-							->query();		
-
-			$id_reservation_add_or_to_add = 0;
-
-			if(count($user_resa) > 0) {
-				$id_reservation_add_or_to_add = $user_resa[0]['id'];
-			}
-			
-			
-
-			if($update_or_new == "new" || $id_reservation_add_or_to_add == 0 || (Auth::instance()->logged_in('admin') && Arr::get($method, "new") == 1)) {
-				// On ajoute directement une nouvelle réservation
-				$first_reservation_query = DB_SQL::insert('default')
-					->into('reservation')
-					->column('id_type_parcours', $id_type_parcrours)
-					->column('date_reservation', $date_linked_reservation->format('Y-m-d H:i:s'))
-					//->column('nb_chariots', 0)
-					->column('nb_joueurs', 0);
-					//->column('nb_voiturettes', 0)
-					
-				if($update_or_new == "new") {
-					$first_reservation_query->column('id_parent', $id_new_resa);
-				}
-				else {
-					$first_reservation_query->column('id_parent', $reservation->id);
-				}
-				
-
-				$id_reservation_add_or_to_add = $first_reservation_query->execute(TRUE);
-			}
-
-			
-			// On ajoute les joueurs à la réservation ajouté ou la reservation existante
-			if($id_reservation_add_or_to_add != 0) {
-				
-				$reservation_updated 		= DB_ORM::model('reservation');
-				$reservation_updated->id 	= $id_reservation_add_or_to_add;
-				$reservation_updated->load();
-				
-				$invite_i = 0;
-				$visiteur_and_invite_incr = array(0 => $nb_invite_deja_present, 1 => $nb_visiteur_deja_present); // 0 - invité / 1 - visiteur
-				foreach($players_18_trous_index as $index) {
-
-					$id_player = $id_players_to_add[$index];
-
-					$user_reservation_to_insert 				= DB_ORM::model('users_has_reservation');
-					$user_reservation_to_insert->id_users 		= $id_player;
-					$user_reservation_to_insert->id_reservation = $id_reservation_add_or_to_add;
-					
-					if($id_player <= 1) {
-						//	 On récupère les keys du tableau contenant l'id 0 pour invite OU 1 pour visiteur
-						$special_user_keys = array_keys($id_joueurs, $id_player);
-
-						// on recupère l'index du Nième visiteur (id_users => 1) ou invité (id_users => 0)
-						$index = $visiteur_and_invite_incr[$id_player];
-						// On récupère l'index joueur dans le tableau contenant les 4 joueurs de la partie
-						$joueur_index = $special_user_keys[$index];
-
-						// On incrément son compteur pour ne pas récupérer le même nom a chaque fois
-						$visiteur_and_invite_incr[$id_player] += 1;
-
-						// On stocke dans info la valeur contenu dans le champs nom lorsque visiteur ou invité est coché
-						$user_reservation_to_insert->info = $nom_joueurs[$joueur_index];
-					}
-
-					$user_reservation_to_insert->save();
-					
-					$reservation_updated->nb_joueurs++;
-
-					//////////////////////////////////////////////////////////////////////////
-					// Ajout des ressources aux réservations joueurs
-					//////////////////////////////////////////////////////////////////////////
-
-					$keys = array_keys($id_joueurs, $id_player);
-
-					if(count($keys) == 1 && $keys[0] >= 0) { // Joueur normal ou un seul invite
-						foreach($ressources_ids as $ressource_id => $joueurs_indexes) {
-							// On vérifie dans le tableau de ressources récupéré en POST que l'index est présent.
-							// Si il est présent c'est que la ressource a été coché pour ce joueur donc on ajoute cette ressource a la reservation du joueur
-
-							if($joueurs_indexes != NULL && !(array_search($keys[0], $joueurs_indexes) === FALSE)) {
-								$user_reservation_ressources							= DB_ORM::model('user_reservation_ressources');
-								$user_reservation_ressources->id_user_has_reservation 	= $user_reservation_to_insert->id;
-								$user_reservation_ressources->id_ressources			 	= $ressource_id;
-
-								$user_reservation_ressources->save();
-							}
-						}
-					}
-					else if(count($keys) > 1 && $invite_i < count($keys) && $keys[$invite_i] >= 0) { // Joueurs invites 
-						foreach($ressources_ids as $ressource_id => $joueurs_indexes) {
-							// On vérifie dans le tableau de ressources récupéré en POST que l'index est présent.
-							// Si il est présent c'est que la ressource a été coché pour ce joueur donc on ajoute cette ressource a la reservation du joueur
-
-							if($joueurs_indexes != NULL && !(array_search($keys[$invite_i], $joueurs_indexes) === FALSE)) {
-
-								$user_reservation_ressources							= DB_ORM::model('user_reservation_ressources');
-								$user_reservation_ressources->id_user_has_reservation 	= $user_reservation_to_insert->id;
-								$user_reservation_ressources->id_ressources			 	= $ressource_id;
-
-								$user_reservation_ressources->save();
-							}
-						}
-
-						$invite_i++; // TODO : Problème si un invité fait 9 trous et que le suivant fait 18 trous ses ressources ne sont pas pris en compte...
-					}
-				}
-				$reservation_updated->save();
-			}
-		}
-		
-		$valid = true;
-		$message = "Réservation mise à jour avec succès.";
-		
-		end:
-		
-		echo json_encode(array(
-			'valid' => $valid,
-			'message' => $message,
-		));
-	}	// action_update_OLD
-*/
 
 	public function action_delete()
 	{

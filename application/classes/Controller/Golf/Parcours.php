@@ -21,8 +21,8 @@ class Controller_Golf_Parcours extends Controller_Oscrudc
         parent::before();
 				
 		$this->crud = new Oscrud();
-		$this->crud->set_table('parcours');
-		$this->crud->set_subject('Parcours');
+		$this->crud->set_table('golf_courses');
+		$this->crud->set_subject('Parcours de Golf');
 		//$crud->unset_columns('productDescription');
 		//$crud->callback_column('buyPrice',array($this,'valueToEuro'));
     }

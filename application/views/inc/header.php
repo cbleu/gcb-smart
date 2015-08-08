@@ -24,38 +24,19 @@
 
 
 		<link rel="stylesheet" type="text/css" media="screen" href="<?php echo ASSETS_URL; ?>/css/responsive-bootstrap-toolkit.css">
-		<!-- <link rel="stylesheet" type="text/css" media="screen" href="<?php echo ASSETS_URL; ?>/css/bootstrap-toggle.min.css"> -->
 		<link rel="stylesheet" type="text/css" media="screen" href="<?php echo ASSETS_URL; ?>/css/bootstrap-switch.min.css">
-
-		<!-- SmartAdmin RTL Support is under construction-->
-		<!-- <link rel="stylesheet" type="text/css" media="screen" href="<?php echo ASSETS_URL; ?>/css/smartadmin-rtl.min.css"> -->
-
-		<!-- We recommend you use "your_style.css" to override SmartAdmin
-		     specific styles this will also ensure you retrain your customization with each SmartAdmin update.
-		<link rel="stylesheet" type="text/css" media="screen" href="<?php echo ASSETS_URL; ?>/css/your_style.css"> -->
-
-		<!-- <?php
-			// if ($page_css) {
-			// 	foreach ($page_css as $css) {
-			// 		echo '<link rel="stylesheet" type="text/css" media="screen" href="'.ASSETS_URL.'/css/'.$css.'">';
-			// 	}
-			// }
-		?> -->
 
 		<!-- EGP CSS INCLUDES-->
 		<?php foreach(Helpers_Stylesheet::get() as $cssFile) { ?>
 			<link rel="stylesheet" href="<?= $cssFile ?>" type="text/css" media="screen" charset="utf-8">
 		<?php } ?>	
 
-		<!-- Demo purpose only: goes with demo.js, you can delete this css when designing your own WebApp -->
-		<!-- <link rel="stylesheet" type="text/css" media="screen" href="<?php echo ASSETS_URL; ?>/css/demo.min.css"> -->
-
 		<!-- FAVICONS -->
 		<link rel="shortcut icon" href="<?php echo ASSETS_URL; ?>/img/favicon/favicon_48x48.ico" type="image/x-icon">
 		<link rel="icon" href="<?php echo ASSETS_URL; ?>/img/favicon/favicon_48x48.ico" type="image/x-icon">
 
 		<!-- GOOGLE FONT -->
-		<!-- <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700"> -->
+		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700">
 
 		<!-- Specifying a Webpage Icon for Web Clip
 			 Ref: https://developer.apple.com/library/ios/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html -->
@@ -102,54 +83,60 @@
 		?>
 				<!-- HEADER -->
 				<header id="header">
-					<div id="logo-group">
+					<div id="logo-group" class="pull-left">
 
 						<!-- PLACE YOUR LOGO HERE -->
-						<span id="logo"> <img src="<?php echo ASSETS_URL; ?>/img/EGP/logo.png" alt="EasyGolfPack"> </span>
+						<span id="logo">
+						<a href="javascript:void(0);" id="show-shortcut" data-action="toggleShortcut">
+						 <img src="<?php echo ASSETS_URL; ?>/img/EGP/logo.png" alt="EasyGolfPack">
+						</a>
+						  </span>
 						<!-- END LOGO PLACEHOLDER -->
 
-						<!-- Note: The activity badge color changes when clicked and resets the number to 0
-						Suggestion: You may want to set a flag when this happens to tick off all checked messages / notifications -->
-						<span id="activity" class="activity-dropdown"> <i class="fa fa-user"></i> <b class="badge"> 21 </b> </span>
+						<? if($isLogged){?>
+							<!-- Note: The activity badge color changes when clicked and resets the number to 0
+							Suggestion: You may want to set a flag when this happens to tick off all checked messages / notifications -->
+							<span id="activity" class="activity-dropdown"> <i class="fa fa-user"></i> <b class="badge"> 21 </b> </span>
 
-						<!-- AJAX-DROPDOWN : control this dropdown height, look and feel from the LESS variable file -->
-						<div class="ajax-dropdown">
+							<!-- AJAX-DROPDOWN : control this dropdown height, look and feel from the LESS variable file -->
+							<div class="ajax-dropdown">
 
-							<!-- the ID links are fetched via AJAX to the ajax container "ajax-notifications" -->
-							<div class="btn-group btn-group-justified" data-toggle="buttons">
-								<label class="btn btn-default">
-									<input type="radio" name="activity" id="<?php echo APP_URL; ?>/ajax/notify/mail.php">
-									Msgs (14) </label>
-								<label class="btn btn-default">
-									<input type="radio" name="activity" id="<?php echo APP_URL; ?>/ajax/notify/notifications.php">
-									notify (3) </label>
-								<label class="btn btn-default">
-									<input type="radio" name="activity" id="<?php echo APP_URL; ?>/ajax/notify/tasks.php">
-									Tasks (4) </label>
-							</div>
-
-							<!-- notification content -->
-							<div class="ajax-notifications custom-scroll">
-
-								<div class="alert alert-transparent">
-									<h4>Click a button to show messages here</h4>
-									This blank page message helps protect your privacy, or you can show the first message here automatically.
+								<!-- the ID links are fetched via AJAX to the ajax container "ajax-notifications" -->
+	<!-- 							<div class="btn-group btn-group-justified" data-toggle="buttons">
+									<label class="btn btn-default">
+										<input type="radio" name="activity" id="<?php echo APP_URL; ?>/ajax/notify/mail.php">
+										Msgs (14) </label>
+									<label class="btn btn-default">
+										<input type="radio" name="activity" id="<?php echo APP_URL; ?>/ajax/notify/notifications.php">
+										notify (3) </label>
+									<label class="btn btn-default">
+										<input type="radio" name="activity" id="<?php echo APP_URL; ?>/ajax/notify/tasks.php">
+										Tasks (4) </label>
 								</div>
 
-								<i class="fa fa-lock fa-4x fa-border"></i>
+	 -->							<!-- notification content -->
+								<div class="ajax-notifications custom-scroll">
+
+									<div class="alert alert-transparent">
+										<h4>Click a button to show messages here</h4>
+										This blank page message helps protect your privacy, or you can show the first message here automatically.
+									</div>
+
+									<i class="fa fa-lock fa-4x fa-border"></i>
+
+								</div>
+								<!-- end notification content -->
+
+								<!-- footer: refresh area -->
+								<span> Last updated on: 12/12/2013 9:43AM
+									<button type="button" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Loading..." class="btn btn-xs btn-default pull-right">
+										<i class="fa fa-refresh"></i>
+									</button> </span>
+								<!-- end footer -->
 
 							</div>
-							<!-- end notification content -->
-
-							<!-- footer: refresh area -->
-							<span> Last updated on: 12/12/2013 9:43AM
-								<button type="button" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Loading..." class="btn btn-xs btn-default pull-right">
-									<i class="fa fa-refresh"></i>
-								</button> </span>
-							<!-- end footer -->
-
-						</div>
-						<!-- END AJAX-DROPDOWN -->
+							<!-- END AJAX-DROPDOWN -->
+						<?}?>
 					</div>
 
 					<?php if($isAdmin){?>
@@ -185,12 +172,11 @@
 
 						<!-- collapse menu button -->
 						<div id="hide-menu" class="btn-header pull-right">
-							<span rel="tooltip" data-placement="bottom" data-original-title="<i class='text-info fa fa-info fa-2x'></i>&nbsp; Cacher le menu" data-html="true">
+							<span rel="tooltip" data-placement="bottom" data-original-title="menu" data-html="true">
 								<a href="javascript:void(0);" data-action="toggleMenu" >
 									<i class="fa fa-reorder"></i>
 								</a>
 							</span> 
-							<!-- <span> <a href="javascript:void(0);" title="Collapse Menu" data-action="toggleMenu"><i class="fa fa-reorder"></i></a> </span> -->
 						</div>
 						<!-- end collapse menu -->
 
@@ -225,28 +211,46 @@
 							</li>
 						</ul>
 
-						<!-- logout button -->
-						<div id="logout" class="btn-header transparent pull-right">
-							<span data-title="Deconnexion" rel="tooltip" data-placement="bottom" data-original-title="<i class='text-danger fa fa-warning fa-2x'></i>&nbsp; Déconnexion" data-html="true">
-								<a href="/app/logout" title="Deconnexion" data-action="userLogout" data-logout-msg="Vous pouvez renforcer votre sécurité en fermant la fenetre de ce navigateur si vous n'êtes pas sur votre propre ordinateur.">
-									<i class="fa fa-sign-out"></i>
-								</a>
-							</span> 
-							<!-- <span> <a href="/app/logout" title="Deconnexion" data-action="userLogout" data-logout-msg="Vous pouvez renforcer votre sécurité en fermant la fenetre de ce navigateur si vous n'êtes pas sur votre propre ordinateur."><i class="fa fa-sign-out"></i></a> </span> -->
-						</div>
-						<!-- end logout button -->
+						<? if($isLogged){?>
+							<!-- logout button -->
+							<div id="logout" class="btn-header transparent pull-right">
+								<span data-title="Deconnexion" rel="tooltip" data-placement="bottom" data-original-title="<i class='text-danger fa fa-warning fa-2x'></i>&nbsp; Déconnexion" data-html="true">
+									<a href="/app/logout" title="Deconnexion" data-action="userLogout" data-logout-msg="Vous pouvez renforcer votre sécurité en fermant la fenetre de ce navigateur si vous n'êtes pas sur votre propre ordinateur.">
+										<i class="fa fa-sign-out"></i>
+									</a>
+								</span> 
+							</div>
+							<!-- end logout button -->
+						<? }else{ ?>
+							<!-- login button -->
+<!-- 							<div id="login" class="btn-header pull-right">
+								<span data-title="Login">
+									<a class="dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-minus"></i></a>
+								</span> 
+							</div>
+ -->  
 
-						<?php if(!$isLogged){?>
-							<form class="navbar-form navbar-right" name="login-form" id="login-form" method="post" action="/app/login">
+							<div id="login" class="btn-header pull-right">
+								<span data-title="Login">
+									<!-- <a class="dropdown-toggle" href="#" data-toggle="modal" data-target="#modal_login" aria-expanded="false"> -->
+									<!-- <a class="dropdown-toggle" href="#" data-toggle="dropdown" data-target="#login_form_div" aria-expanded="false"><i class="fa fa-minus"></i></a> -->
+									<a class="dropdown-toggle" href="#" data-toggle="modal" data-target="#modal_login" data-title="Connexion" rel="tooltip" data-placement="bottom" data-original-title="<i class='text-info fa fa-info fa-2x'></i>&nbsp; Connexion" data-html="true">
+									<i class="fa fa-sign-in"></i></a>
+								</span> 
+							</div>
+  
+
+
+<!-- 							<form class="navbar-form navbar-right" name="login-form" id="login-form" method="post" action="/app/login">
 								<div class="form-group">
 									<input class="input-medium thin" type="email" placeholder="Email" name="username">
 									<input class="input-small thin" type="password" placeholder="Password" name="password">
 									<input type="hidden" name="redirect" id="redirect" value="">
 								</div>
-								<!-- <button type="submit" class="btn btn-mini" style="margin-top:9px;">Se Connecter</button> -->
 								<button type="submit" class="btn btn-xs">Se Connecter</button>
-							</form>	
-						<?php }?>
+							</form>
+ -->							<!-- end login button -->
+						<? }?>
 
 						<!-- fullscreen button -->
 						<div id="fullscreen" class="btn-header transparent pull-right">
@@ -255,7 +259,6 @@
 									<i class="fa fa-arrows-alt"></i>
 								</a>
 							</span> 
-							<!-- <span> <a href="javascript:void(0);" title="Full Screen" data-action="launchFullscreen"><i class="fa fa-arrows-alt"></i></a> </span> -->
 						</div>
 						<!-- end fullscreen button -->
 
@@ -264,6 +267,44 @@
 
 				</header>
 				<!-- END HEADER -->
+
+
+				<div class="modal fade" id="modal_login">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+								<h4 class="modal-title">Connexion</h4>
+							</div>
+
+							<form class="navbar-form navbar-right" name="login-form" id="login-form" method="post" action="/app/login">
+								<div class="modal-body">
+									<input id="user_username" style="margin-bottom: 15px;" type="text" name="username" size="30" />
+									<input id="user_password" style="margin-bottom: 15px;" type="password" name="password" size="30" />
+									<!-- <input id="user_remember_me" style="float: left; margin-right: 10px;" type="checkbox" name="user[remember_me]" value="1" /> -->
+									<label class="string optional" for="user_remember_me"> Remember me</label>
+									<p class="text-right"><a href="#">Mot de passe oublié?</a></p>
+								</div>
+								<div class="modal-footer">
+									<a href="#" data-dismiss="modal" class="btn">Close</a>
+									<input class="btn btn-primary" type="submit" name="commit" value="Connexion" />
+									<!-- <a href="#" class="btn btn-primary">Log-in</a> -->
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+
+							            <div id="login_form_div" class="dropdown-menu" style="padding: 15px; padding-bottom: 0px;">
+										<form class="navbar-form navbar-right" name="login-form" id="login-form" method="post" action="/app/login">
+										  <input id="user_username" style="margin-bottom: 15px;" type="text" name="username" size="30" />
+										  <input id="user_password" style="margin-bottom: 15px;" type="password" name="password" size="30" />
+										  <input id="user_remember_me" style="float: left; margin-right: 10px;" type="checkbox" name="user[remember_me]" value="1" />
+										  <label class="string optional" for="user_remember_me"> Remember me</label>
+										  <input class="btn btn-primary" style="clear: left; width: 100%; height: 32px; font-size: 13px;" type="submit" name="commit" value="Sign In" />
+										</form>
+						            </div>
+			
 
 				<!-- SHORTCUT AREA : With large tiles (activated via clicking user name tag)
 				Note: These tiles are completely responsive,
@@ -275,7 +316,7 @@
 							<a href="<?php echo APP_URL; ?>/inbox.php" class="jarvismetro-tile big-cubes bg-color-blue"> <span class="iconbox"> <i class="fa fa-envelope fa-4x"></i> <span>Mail <span class="label pull-right bg-color-darken">14</span></span> </span> </a>
 						</li> -->
 						<li>
-							<a href="<?php echo APP_URL; ?>app/calendrier" class="jarvismetro-tile big-cubes bg-color-blue"> <span class="iconbox"> <i class="fa fa-calendar fa-4x"></i> <span>Calendrier</span> </span> </a>
+							<a href="<?php echo APP_URL; ?>app/calendrier" class="jarvismetro-tile big-cubes bg-color-blue"> <span class="iconbox"> <i class="fa fa-calendar fa-4x"></i> <span>Le Calendrier</span> </span> </a>
 						</li>
 						<li>
 							<a href="<?php echo APP_URL; ?>app/wizard" class="jarvismetro-tile big-cubes bg-color-green"> <span class="iconbox"> <i class="fa fa-magic fa-4x"></i> <span>Assistant</span> </span> </a>
@@ -289,6 +330,9 @@
 						<li>
 							<a href="<?php echo APP_URL; ?>/gallery.php" class="jarvismetro-tile big-cubes bg-color-greenLight"> <span class="iconbox"> <i class="fa fa-picture-o fa-4x"></i> <span>Gallery </span> </span> </a>
 						</li> -->
+						<li>
+							<a href="<?php echo APP_URL; ?>app/agenda" class="jarvismetro-tile big-cubes selected bg-color-purple"> <span class="iconbox"> <i class="fa fa-list-ul fa-4x"></i> <span>Mes parties</span> </span> </a>
+						</li>
 						<li>
 							<a href="<?php echo APP_URL; ?>app/informations" class="jarvismetro-tile big-cubes selected bg-color-blueLight"> <span class="iconbox"> <i class="fa fa-user fa-4x"></i> <span>Mes informations</span> </span> </a>
 						</li>

@@ -35,6 +35,6 @@
 
 <script>
 	$('#refresh').click(function () {
-	  document.location.reload();
+	  // document.location.reload();
 	})
 </script>

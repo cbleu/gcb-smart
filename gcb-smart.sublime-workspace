@@ -1,0 +1,465 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"templa",
+				"template"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "application/classes/Controller/Golf/Main.php",
+			"settings":
+			{
+				"buffer_size": 4193,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "application/classes/Controller/Golf/App.php",
+			"settings":
+			{
+				"buffer_size": 19867,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "application/classes/Controller/Golf/ResAjax.php",
+			"settings":
+			{
+				"buffer_size": 65848,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "application/classes/EGP/GameReservation.php",
+			"settings":
+			{
+				"buffer_size": 79246,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "application/views/fragments/calendrier.php",
+			"settings":
+			{
+				"buffer_size": 10408,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "application/classes/EGP/GamePlayer.php",
+			"settings":
+			{
+				"buffer_size": 1284,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "application/classes/EGP/GameSlot.php",
+			"settings":
+			{
+				"buffer_size": 3238,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "assets/js/easygolfpack/egp.js",
+			"settings":
+			{
+				"buffer_size": 79937,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 347.0,
+		"selected_items":
+		[
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 449.0
+	},
+	"console":
+	{
+		"height": 279.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/cesar/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/Users/cesar/Library/Application Support/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
+		"/Users/cesar/Library/Application Support/Sublime Text 2/Packages/User/PHP.sublime-settings",
+		"/Users/cesar/Documents/DEV/GIT/kohana/application/classes/Controller/Welcome.php",
+		"/Users/cesar/Documents/DEV/GIT/kohana/system/classes/Controller.php",
+		"/Users/cesar/Documents/DEV/GIT/kohana/application/views/public.php",
+		"/Users/cesar/Documents/DEV/GIT/kohana/application/classes/Controller/Main.php",
+		"/Users/cesar/Documents/DEV/GIT/kohana/application/views/public/content.php",
+		"/Users/cesar/Documents/DEV/GIT/kohana/application/classes/Controller/Public/Application.php",
+		"/Users/cesar/Documents/DEV/GIT/kohana/assets/vendor/bootstrap/css/carousel.css",
+		"/Users/cesar/Documents/DEV/GIT/easygolf_dev/application/views/public/reservation.php",
+		"/Users/cesar/Documents/DEV/GIT/easygolf_dev_1.1/application/views/public/reservation.php",
+		"/Users/cesar/Documents/DEV/GIT/easygolf_dev/application/classes/Controller/Golf/Golf.php",
+		"/Users/cesar/Documents/DEV/GIT/easygolf_dev/application/bootstrap.php",
+		"/Users/cesar/Documents/DEV/GIT/easygolf_dev/application/classes/Controller/Golf/Reservation.php",
+		"/Users/cesar/Documents/DEV/GIT/easygolf_dev/application/classes/Controller/Golf/Reservationajax.php",
+		"/Users/cesar/Documents/DEV/GIT/easygolf_dev/application/classes/Controller/Main.php",
+		"/Users/cesar/Documents/DEV/GIT/easygolf_dev/easygolfpack.sublime-project",
+		"/Users/cesar/Documents/DEV/GIT/easygolf_dev/application/wizard.php"
+	],
+	"find":
+	{
+		"height": 23.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+			"<open folders>",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			" \n",
+			"assets/app/",
+			"myCarousel",
+			"/apps/",
+			"vendor/",
+			"vendor",
+			"app/",
+			"cal_here",
+			"jquery"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"",
+			"front-caroussel",
+			"/app/",
+			"/assets/vendor/",
+			"/assets/apps/"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 3,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "application/classes/Controller/Golf/Main.php",
+					"settings":
+					{
+						"buffer_size": 4193,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "application/classes/Controller/Golf/App.php",
+					"settings":
+					{
+						"buffer_size": 19867,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "application/classes/Controller/Golf/ResAjax.php",
+					"settings":
+					{
+						"buffer_size": 65848,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								30960,
+								30960
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 11251.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "application/classes/EGP/GameReservation.php",
+					"settings":
+					{
+						"buffer_size": 79246,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								40733,
+								40733
+							]
+						],
+						"settings":
+						{
+							"auto_complete": false,
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 15551.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "application/views/fragments/calendrier.php",
+					"settings":
+					{
+						"buffer_size": 10408,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "application/classes/EGP/GamePlayer.php",
+					"settings":
+					{
+						"buffer_size": 1284,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1001,
+								1001
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "application/classes/EGP/GameSlot.php",
+					"settings":
+					{
+						"buffer_size": 3238,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2464,
+								2464
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 622.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "assets/js/easygolfpack/egp.js",
+					"settings":
+					{
+						"buffer_size": 79937,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 100.0
+	},
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"",
+				"application/classes/EGP/GameReservation.php"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 185.0,
+	"status_bar_visible": true
+}

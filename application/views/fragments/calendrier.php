@@ -37,24 +37,57 @@
 
 											<div class="dhx_cal_prev_button">&nbsp;</div>
 											<div class="dhx_cal_next_button">&nbsp;</div>
-											<div class="dhx_cal_today_button"></div>
+											<div class="dhx_cal_today_button">&nbsp;</div>
 											<div class="dhx_cal_date"></div>
 
 											<div class="egp_cal_navline_icon egp_minical_icon" id="dhx_minical_icon">
-												<i class="fa fa-calendar fa-2x txt-color-blue"></i>
+												<i class="fa fa-calendar fa-2x "></i>
 											</div>
 
-											<div class="egp_cal_navline_icon egp_unit_icon " id="unit_tab" name="unit_tab">
-												<i class="fa fa-columns fa-2x" style="color: grey;"></i>
-											</div>
+											<? if(!$isMobile) { ?>
 
-											<div class="egp_cal_navline_icon egp_agenda_icon " id="agenda_tab" name="agenda_tab">
-												<i class="fa fa-list-ul fa-2x" style="color: grey;"></i>
-											</div>
 
-											<div class="egp_cal_navline_icon egp_event_icon" id="egp_event_icon">
-												<i class="fa fa-flag fa-2x txt-color-pink"></i>
-											</div>
+												<div class="egp_cal_navline_icon egp_unit_icon " id="unit_tab" name="unit_tab">
+													<i class="fa fa-columns fa-2x" style="color: grey;"></i>
+												</div>
+
+												<div class="egp_cal_navline_icon egp_agenda_icon " id="agenda_tab" name="agenda_tab">
+													<i class="fa fa-list-ul fa-2x" style="color: grey;"></i>
+												</div>
+
+												<? if($isAdmin){ ?>
+													<div class="egp_cal_navline_icon egp_event_icon" id="egp_event_icon">
+														<i class="fa fa-flag fa-2x txt-color-pink"></i>
+													</div>
+												<? } ?>
+
+											<? }else{ ?>
+
+												<div class="egp_cal_navline_icon egp_other_icon" id="dhx_other_icon">
+													<i class="fa fa-th fa-2x"></i>
+													<a href="#" class="dropdown-toggle" data-toggle="dropdown">&nbsp;<b class="caret"></b></a>
+													<ul class="dropdown-menu">
+														<li><a href="#">Aujourd'hui</a></li>
+														<li><a href="#">Affichage Calendrier</a></li>
+														<li><a href="#">Affichage Parties</a></li>
+														<? if($isAdmin){ ?>
+															<li class="divider"></li>
+															<li><a href="#">Ajouter un evenement</a></li>
+															<!-- <li><a href="#"></a></li> -->
+														<? } ?>
+													</ul>
+												</div>
+
+
+<!-- 												<div class="egp_cal_navline_icon egp_other_icon pull-left" id="dhx_other_icon">
+													<a class="dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-tools"></i></a>
+												</div>
+ -->
+<!-- 											<div class="btn-header pull-right egp_cal_navline_icon egp_other_icon" id="dhx_other_icon">
+													<i class="fa fa-tools fa-2x txt-color-blue"></i>
+												</div>
+ -->
+											<? } ?>
 
 											<!-- <div class="dhx_cal_tab" name="myplay_tab" id="myplay_tab" style="left:220px"></div> -->
 										</div>
@@ -73,6 +106,11 @@
 		</div>
 
 	</div> <!-- end row -->
+
+
+
+
+
 
 	<!-- ****************************** -->
 	<!-- popup de reservation           -->
@@ -141,45 +179,50 @@
 
 													<?if($i == 1) {	// Joueur 1: Utilisateur courant
 														if($isAdmin){
-															$user_value = " value='' ";
+															$user_value = "";
 															$user_id	= "2";	// utilisateur temporaire pour le moment
 														}else if($isLogged){
 															// $user_value = " value='" .$current_user_fullname ."' disabled ";
-															$user_value = " value='" .$thisUserFullName ."' disabled ";
+															$user_value = $thisUserFullName;
 															$user_id	= $current_user_id;
 														} else {
-														$user_value	= "";
-														$user_id	= "";
-													}
+															$user_value	= "";
+															$user_id	= "";
+														}
 													}else {
 														$user_value	= "";
 														$user_id	= "";
 													}?>
 
-													<!-- User Hidden Inputs for that reservation -->
-													<input type="hidden" name="crud_J<?= $i;?>" id="crud_J<?= $i;?>" value="none" class="serialize" />
-													<input type="hidden" name="id_J<?=$i;?>" id="id_J<?=$i;?>" value="<?=$user_id;?>" class=" serialize" />
-													<input type="hidden" name="nb_trous_J<?= $i;?>" id="nb_trous_J<?= $i;?>" value="18" class=" serialize" >
 
 													<div class="<?= ($i % 2 == 0) ? "joueur_pair" : "joueur_impair"; ?> player_div" name="">
 
-														<div class="input-group">
+														<div class="input-group hidden-group">
+															<!-- User Hidden Inputs for that reservation -->
+															<input type="hidden" name="crud_J<?= $i;?>" id="crud_J<?= $i;?>" class="serialize" />
+															<input type="hidden" name="id_J<?=$i;?>" id="id_J<?=$i;?>" value="<?=$user_id;?>" class=" serialize" />
+															<input type="hidden" name="nb_trous_J<?= $i;?>" id="nb_trous_J<?= $i;?>" class=" serialize" >
+															<input type="hidden" name="res_J<?= $i;?>" id="res_J<?= $i;?>" class=" serialize" >
+														</div>
 
-															<?if($i != 1) {?>
+														<div class="input-group name-group">
+
+															<!-- <?//if($i != 1) {?> -->
 																<span class="input-group-btn btn_clear_user" id="btn_clear_user_<?=$i;?>" hidden>
 																	<button class="btn btn-danger" type="button">
 																		<i class="fa fa-remove"></i>
 																	</button>
 																</span>
-															<?}?>
+															<!-- <?//}?> -->
 
 															<span class="input-group-addon"><?= $i;?></span>
 
-															<input class="form-control" name="joueur<?= $i;?>" id="joueur<?= $i;?>" <?=$user_value;?> type="text">
+															<!-- <input class="form-control serialize" name="joueur<?= $i;?>" id="joueur<?= $i;?>" value="<?=$user_value;?>" type="text"> -->
+															<input class="form-control serialize" name="joueur<?= $i;?>" id="joueur<?= $i;?>" type="text" >
 
 															<span class="input-group-addon">
 																<span class="onoffswitch">
-																	<input type="checkbox" name="nbTrousJ<?= $i;?>" class="onoffswitch-checkbox nbTrousJ" id="nbTrousJ<?= $i;?>" checked>
+																	<input type="checkbox" name="nbTrousJ<?= $i;?>" class="onoffswitch-checkbox nbTrousJ" id="nbTrousJ<?= $i;?>">
 																	<label class="onoffswitch-label" for="nbTrousJ<?= $i;?>">
 																		<span class="onoffswitch-inner" data-swchon-text="18T" data-swchoff-text="9T"></span>
 																		<span class="onoffswitch-switch"></span>
@@ -189,7 +232,7 @@
 
 														</div>
 
-														<div class="input-group">
+														<div class="input-group options-group">
 															<div class="form-group">
 																<label class="col-md-4 player_div control-label">options:</label>
 																<div class="col-md-8 player_div">

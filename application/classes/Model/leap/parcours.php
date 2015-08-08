@@ -23,11 +23,11 @@ class Model_Leap_Parcours extends DB_ORM_Model
 				'max_length' => 11,
 				'nullable' => FALSE,
 			)),
-			'parcour_aller' => new DB_ORM_Field_Integer($this, array(
+			'parcours_aller' => new DB_ORM_Field_Integer($this, array(
 				'max_length' => 11,
 				'nullable' => TRUE,
 			)),
-			'parcour_retour' => new DB_ORM_Field_Integer($this, array(
+			'parcours_retour' => new DB_ORM_Field_Integer($this, array(
 				'max_length' => 11,
 				'nullable' => TRUE,
 			)),

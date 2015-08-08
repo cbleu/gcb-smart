@@ -7,6 +7,9 @@
 class Controller_Golf_App extends Controller_Golf_Main
 {
 	// public $template = 'egp_template';	// Default template
+
+	public $isMobile;
+
 	//////////////////////////////////////////////////////////
 	// PUBLIC FUNCS											//
 	//////////////////////////////////////////////////////////
@@ -36,6 +39,21 @@ class Controller_Golf_App extends Controller_Golf_Main
 			"Accueil" => "/",
 		);
 		//////////////////////////////////////////////////////////
+
+		// Include and instantiate the class.
+		// require Kohana::find_file('vendor', 'Mobile-Detect/Mobile_Detect');
+
+		$detect = new Device;
+
+		// Any mobile device (phones or tablets).
+		if ( $detect->is_mobile() ) {
+			$this->isMobile = true;
+		}else{
+			$this->isMobile = false;
+		}
+
+		View::bind_global('isMobile', $this->isMobile);
+		Helpers_InputForJs::add('isMobile', $this->isMobile);
 
 	}	// before
 	
@@ -415,7 +433,7 @@ class Controller_Golf_App extends Controller_Golf_Main
 		// $this->template->title = 'Réservation - Golf Club de Bourbon';
 		$this->template->content = View::factory('/fragments/calendrier');
 		$this->template->content->ressources	= $this->ressources;
-		$this->template->content->parcours		= $this->parcours;
+		$this->template->content->golf_courses		= $this->golf_courses;
 		
 		if($this->isLogged && !$this->isAdmin){
 			// $this->template->content->current_user_fullname =  " ".$this->user->firstname." ".$this->user->lastname." (".$this->user->indgolf.")";
@@ -456,8 +474,10 @@ class Controller_Golf_App extends Controller_Golf_Main
 		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_recurring.js');
 		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_agenda_view.js');
 		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_grid_view.js');
+		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_key_nav.js');
 
 		Helpers_Javascript::add('/assets/js/colourPicker/jquery.colourPicker.js');
+		Helpers_Javascript::add('/assets/js/plugin/Add-Clear/addclear.js');
 
 		// load main App Module JS
 		Helpers_Javascript::add('/assets/js/easygolfpack/egp.js');
@@ -517,7 +537,7 @@ class Controller_Golf_App extends Controller_Golf_Main
 		$this->template->title = 'Assistant de réservation - Golf Club de Bourbon';
 		$this->template->content = View::factory( '/fragments/wizard');
 		$this->template->content->logged_in_user 		= $this->user;
-		$this->template->content->parcours 				= $this->parcours;
+		$this->template->content->golf_courses 				= $this->golf_courses;
 		$this->template->content->ressources 			= $this->ressources;
 		$this->template->content->maxdate				= $maxDate;
 		$this->template->content->timeStr				= $timeStr;

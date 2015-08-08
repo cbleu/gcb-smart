@@ -3,19 +3,20 @@
 ******************************/
 
 
-#logo {
+/*#logo {
 	display: inline-block;
 	width: 175px;
 	margin-top: 5px;
 	margin-left: 5px;
 }
-
-#logo img {
+*/
+/*#logo img {
+	height: 27px;
 	height: 37px;
 	width: auto;
 	padding-left: 0px;
 }
-
+*/
 /*.footer-container{
 	padding-left: 40px;
 }

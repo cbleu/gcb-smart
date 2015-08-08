@@ -27,42 +27,42 @@ class Model_Leap_Combinaison_parcours extends DB_ORM_Model
 
 		$this->relations = array
 		(
-			'parcours' => new DB_ORM_Relation_BelongsTo($this, array(
+			'golf_courses' => new DB_ORM_Relation_BelongsTo($this, array(
 				'child_key' => array('id_parcours'),
-				'parent_model' => 'parcours',
+				'parent_model' => 'golf_courses',
 				'parent_key' => array('id'),
 			)),
-			'parcours' => new DB_ORM_Relation_BelongsTo($this, array(
+			'golf_courses' => new DB_ORM_Relation_BelongsTo($this, array(
 				'child_key' => array('id_type_parcours'),
 				'parent_model' => 'type_parcours',
 				'parent_key' => array('id'),
 			)),
-			'parcours' => new DB_ORM_Relation_BelongsTo($this, array(
+			'golf_courses' => new DB_ORM_Relation_BelongsTo($this, array(
 				'child_key' => array('id_parcours'),
-				'parent_model' => 'parcours',
+				'parent_model' => 'golf_courses',
 				'parent_key' => array('id'),
 			)),
-			'parcours' => new DB_ORM_Relation_BelongsTo($this, array(
+			'golf_courses' => new DB_ORM_Relation_BelongsTo($this, array(
 				'child_key' => array('id_type_parcours'),
 				'parent_model' => 'type_parcours',
 				'parent_key' => array('id'),
 			)),
-			'parcours' => new DB_ORM_Relation_BelongsTo($this, array(
+			'golf_courses' => new DB_ORM_Relation_BelongsTo($this, array(
 				'child_key' => array('id_parcours'),
-				'parent_model' => 'parcours',
+				'parent_model' => 'golf_courses',
 				'parent_key' => array('id'),
 			)),
-			'parcours' => new DB_ORM_Relation_BelongsTo($this, array(
+			'golf_courses' => new DB_ORM_Relation_BelongsTo($this, array(
 				'child_key' => array('id_type_parcours'),
 				'parent_model' => 'type_parcours',
 				'parent_key' => array('id'),
 			)),
-			'parcours' => new DB_ORM_Relation_BelongsTo($this, array(
+			'golf_courses' => new DB_ORM_Relation_BelongsTo($this, array(
 				'child_key' => array('id_parcours'),
-				'parent_model' => 'parcours',
+				'parent_model' => 'golf_courses',
 				'parent_key' => array('id'),
 			)),
-			'parcours' => new DB_ORM_Relation_BelongsTo($this, array(
+			'golf_courses' => new DB_ORM_Relation_BelongsTo($this, array(
 				'child_key' => array('id_type_parcours'),
 				'parent_model' => 'type_parcours',
 				'parent_key' => array('id'),
