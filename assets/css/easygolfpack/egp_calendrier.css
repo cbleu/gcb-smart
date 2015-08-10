@@ -318,11 +318,11 @@ float: left;
 */
 }
 
-#game_type_div {
+#ev_game_type_aller, #ev_game_type_retour {
 	border: 1px solid #b5b3b4;
 	border-width: 1px 0;
 	border-top: 1px solid #9bd2ee;
-	background: #0c5fa3 url(../images/old-browsers-bg/block-header-bg.png) repeat-x top;
+/*	background: #0c5fa3 url(../images/old-browsers-bg/block-header-bg.png) repeat-x top;*/
 	-webkit-background-size: 100% 100%;
 	-moz-background-size: 100% 100%;
 	-o-background-size: 100% 100%;
@@ -383,7 +383,7 @@ float: left;
 	top:50%;
 }
 
-#parcours_div {
+.tab-content {
 	padding: 1px;
 }
 #eventToAdd {

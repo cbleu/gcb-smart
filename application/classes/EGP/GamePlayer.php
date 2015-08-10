@@ -1,5 +1,11 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
+/**
+ * EGP_GamePlayer
+ *
+ * @package default
+ * @author Cesar Jacquet
+ */
 class EGP_GamePlayer
 {
 	public $id				= 1;		// invité par defaut
@@ -12,7 +18,6 @@ class EGP_GamePlayer
 	public $lastname		= "";		// nom
 	public $info			= "";		// pour les invités ou visiteurs: l'info saisie 
 
-	// public $typeParcourIds	= array();	// les ids des demi-parcours dans l'ordre aller/retour de type_parcours
 	
 	public function EGP_GamePlayer($id, $nbhole, $firstname = "", $lastname = "", $info = ""){
 		$this->id		= $id;

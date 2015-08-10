@@ -166,7 +166,7 @@
 										<input type="hidden" name="id_resa_provi_retour" id="id_resa_provi_retour" class="serialize">
 
 										<div type="text" id="eventStartDate"></div>
-										<div type="text" id="game_type_div"></div>
+										<div type="text" id="ev_game_type"></div>
 
 										<div class="parcours_aller_div">
 
@@ -326,7 +326,7 @@
 									<div class="tab-pane fade" id="tab_parcours_retour">
 
 										<div type="text" id="eventStartDate"></div>
-										<div type="text" id="game_type_div"></div>
+										<div type="text" id="ev_game_type"></div>
 
 										<div class="parcours_aller_div">
 

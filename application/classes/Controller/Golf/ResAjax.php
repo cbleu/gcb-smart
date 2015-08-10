@@ -497,15 +497,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 			$isValid = true;
 			$returnArray[$id_reservation]['isSelected'] = true;
 			$returnArray[$id_reservation]['usr_in'] = $current_user_in_resa;
-			$returnArray[$id_reservation]['game_type'] = $actual_resa->slotAller->gameType;
-			// $returnArray[$id_reservation]['slotAller'] = $actual_resa->slotAller;
-			// $returnArray[$id_reservation]['slotRetour'] = $actual_resa->slotRetour;
-			// $returnArray[$id_reservation]['slotAller'] = $actual_resa->slotAller->id;
-			// if(isset($actual_resa->slotRetour)){
-				// $returnArray[$id_reservation]['slotRetour'] = $actual_resa->slotRetour->id;
-			// }else{
-				// $returnArray[$id_reservation]['slotRetour'] = null;
-			// }
+			$returnArray[$id_reservation]['game_type'] = $actual_resa->slotCurrent->gameType;
 
 			$returnArray[$id_reservation]['GameReservation'] = $actual_resa;
 
@@ -527,11 +519,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 					// $returnArray = $actual_resa->MakeResaProvi();
 					$isValid = true;
 					$returnArray[$otherone['id']]['isSelected'] = false;
-					$returnArray[$otherone['id']]['game_type'] = $other_resa->slotAller->gameType;
-					// $returnArray[$otherone['id']]['players'] = $tmpresa->slotCurrent->players;
-					// $returnArray[$otherone['id']]['players'] = $tmpresa->players;
-					// $returnArray[$id_reservation]['slotCurrent'] = $other_resa->slotAller;
-					// $returnArray[$id_reservation]['slotRetour'] = $actual_resa->slotRetour;
+					$returnArray[$otherone['id']]['game_type'] = $other_resa->slotCurrent->gameType;
 
 					$returnArray[$otherone['id']]['GameReservation'] = $other_resa;
 
@@ -539,9 +527,9 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 					$isValid = false;
 					$returnArray = $funcresult;
 				}
-				
+
 			}
-			// $returnArray['other_resa'] = $otherplayers;
+
 		}
 		
 		//////////////////////////////////////////////////////////////////////////

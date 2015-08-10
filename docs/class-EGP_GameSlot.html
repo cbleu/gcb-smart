@@ -16,8 +16,22 @@
 
 
 		<div id="groups">
+				<h3>Packages</h3>
+			<ul>
+				<li>
+					<a href="package-default.html">
+						default					</a>
+
+						</li>
+				<li>
+					<a href="package-None.html">
+						None					</a>
+
+						</li>
+			</ul>
 		</div>
 
+		<hr>
 
 
 		<div id="elements">
@@ -44,7 +58,6 @@
 				<li><a href="class-Controller_Golf_Users.html">Controller_Golf_Users</a></li>
 				<li><a href="class-DataTable.html">DataTable</a></li>
 				<li><a href="class-EGP_GamePlayer.html">EGP_GamePlayer</a></li>
-				<li><a href="class-EGP_GameReservation.html">EGP_GameReservation</a></li>
 				<li class="active"><a href="class-EGP_GameSlot.html">EGP_GameSlot</a></li>
 				<li><a href="class-Helpers_Includefile.html">Helpers_Includefile</a></li>
 				<li><a href="class-Helpers_InputForJs.html">Helpers_InputForJs</a></li>
@@ -120,6 +133,8 @@
 			<li>
 				<a href="index.html" title="Overview"><span>Overview</span></a>
 			</li>
+			<li>
+<span>Package</span>			</li>
 			<li class="active">
 <span>Class</span>			</li>
 		</ul>
@@ -151,7 +166,7 @@
 		
 		
 
-			<b>Located at</b> <a href="source-class-EGP_GameSlot.html#3-79" title="Go to source code">classes/EGP/GameSlot.php</a>
+			<b>Located at</b> <a href="source-class-EGP_GameSlot.html#3-120" title="Go to source code">classes/EGP/GameSlot.php</a>
 		<br>
 	</div>
 
@@ -171,7 +186,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_EGP_GameSlot">#</a>
-		<code><a href="source-class-EGP_GameSlot.html#23-25" title="Go to source code">EGP_GameSlot</a>( <span> <var>$thisresa</var> = <span class="php-keyword1">null</span></span>, <span> <var>$thistype</var> = <span class="php-num">0</span></span> )</code>
+		<code><a href="source-class-EGP_GameSlot.html#26-33" title="Go to source code">EGP_GameSlot</a>( <span> <var>$thisresa</var> = <span class="php-keyword1">null</span></span>, <span> <var>$isProvisoire</var> = <span class="php-keyword1">false</span></span>, <span> <var>$thistype</var> = <span class="php-num">0</span></span> )</code>
 
 		<div class="description short">
 			
@@ -201,7 +216,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setSlot">#</a>
-		<code><a href="source-class-EGP_GameSlot.html#27-39" title="Go to source code">setSlot</a>( <span> <var>$thisresa</var></span>, <span> <var>$thistype</var> = <span class="php-num">0</span></span> )</code>
+		<code><a href="source-class-EGP_GameSlot.html#35-47" title="Go to source code">setSlot</a>( <span> <var>$thisresa</var></span>, <span> <var>$thistype</var> = <span class="php-num">0</span></span> )</code>
 
 		<div class="description short">
 			
@@ -231,7 +246,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setParcours">#</a>
-		<code><a href="source-class-EGP_GameSlot.html#41-61" title="Go to source code">setParcours</a>( <span> <var>$id_type_parcours</var></span>, <span> <var>$begin_date</var></span> )</code>
+		<code><a href="source-class-EGP_GameSlot.html#49-75" title="Go to source code">setParcours</a>( <span> <var>$id_type_parcours</var></span>, <span> <var>$begin_date</var></span> )</code>
 
 		<div class="description short">
 			
@@ -261,7 +276,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_nbPlayers">#</a>
-		<code><a href="source-class-EGP_GameSlot.html#63-66" title="Go to source code">nbPlayers</a>( )</code>
+		<code><a href="source-class-EGP_GameSlot.html#77-83" title="Go to source code">nbPlayers</a>( )</code>
 
 		<div class="description short">
 			
@@ -291,7 +306,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_addPlayer">#</a>
-		<code><a href="source-class-EGP_GameSlot.html#68-72" title="Go to source code">addPlayer</a>( <span> <var>$player</var></span> )</code>
+		<code><a href="source-class-EGP_GameSlot.html#85-91" title="Go to source code">addPlayer</a>( <span> <var>$player</var></span> )</code>
 
 		<div class="description short">
 			
@@ -321,7 +336,67 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_addPlayers">#</a>
-		<code><a href="source-class-EGP_GameSlot.html#74-78" title="Go to source code">addPlayers</a>( <span> <var>$players</var></span> )</code>
+		<code><a href="source-class-EGP_GameSlot.html#93-99" title="Go to source code">addPlayers</a>( <span> <var>$players</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setNProviPlayers" id="_setNProviPlayers">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setNProviPlayers">#</a>
+		<code><a href="source-class-EGP_GameSlot.html#101-108" title="Go to source code">setNProviPlayers</a>( <span> <var>$nb</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="removePlayer" id="_removePlayer">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_removePlayer">#</a>
+		<code><a href="source-class-EGP_GameSlot.html#110-118" title="Go to source code">removePlayer</a>( <span> <var>$playerId</var></span> )</code>
 
 		<div class="description short">
 			
@@ -650,56 +725,6 @@
 		<td class="value">
 			<div>
 				<a href="#$nbTee" class="anchor">#</a>
-				<code></code>
-			</div>
-		</td>
-	</tr>
-	<tr data-order="resa" id="$resa">
-		<td class="attributes"><code>
-			public  
-			
-		</code></td>
-
-		<td class="name">
-				<a href="source-class-EGP_GameSlot.html#19" title="Go to source code"><var>$resa</var></a>
-
-			<div class="description short">
-				
-			</div>
-
-			<div class="description detailed hidden">
-				
-
-			</div>
-		</td>
-		<td class="value">
-			<div>
-				<a href="#$resa" class="anchor">#</a>
-				<code></code>
-			</div>
-		</td>
-	</tr>
-	<tr data-order="typeParcours" id="$typeParcours">
-		<td class="attributes"><code>
-			public  
-			
-		</code></td>
-
-		<td class="name">
-				<a href="source-class-EGP_GameSlot.html#20" title="Go to source code"><var>$typeParcours</var></a>
-
-			<div class="description short">
-				
-			</div>
-
-			<div class="description detailed hidden">
-				
-
-			</div>
-		</td>
-		<td class="value">
-			<div>
-				<a href="#$typeParcours" class="anchor">#</a>
 				<code></code>
 			</div>
 		</td>

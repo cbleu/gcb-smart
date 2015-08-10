@@ -1,5 +1,11 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
+/**
+ * EGP_GameSlot
+ *
+ * @package default
+ * @author Cesar Jacquet
+ */
 class  EGP_GameSlot
 {
 	const UNIQ   = 0;

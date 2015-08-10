@@ -130,14 +130,14 @@
 								<!-- ONGLETS ALLER/RETOUR -->
 								<ul id="nav_tab_parcours" class="nav nav-tabs bordered">
 									<li class="active">
-										<a href="#tab_parcours" data-toggle="tab" aria-expanded="true">
+										<a href="#tab_parcours_aller" data-toggle="tab" aria-expanded="true">
 											<i class="fa fa-fw fa-lg txt-color-blue fa-arrow-circle-right"></i>
 											Aller
 											<span class="badge bg-color-blue txt-color-white">Trou 1</span>
 										</a>
 									</li>
 									<li class="">
-										<a href="#tab_parcours" data-toggle="tab" aria-expanded="false">
+										<a href="#tab_parcours_retour" data-toggle="tab" aria-expanded="false">
 											<i class="fa fa-fw fa-lg txt-color-blue fa-arrow-circle-left"></i>
 											Retour
 											<span class="badge bg-color-blue txt-color-white">Trou 10</span>
@@ -148,129 +148,113 @@
 								<!-- CONTENU DES ONGLETS -->
 								<div id="parcours_div" class="tab-content">
 
-									<!-- CONTENU ONGLET ALLER -->
-									<div class="tab-pane fade active in" id="tab_parcours">
+									<!-- Global Hidden Inputs for that reservation -->
+									<input type="hidden" name="id_reservation" id="id_reservation" class="serialize" />
+									<input type="hidden" name="date_resa" id="date_resa" class="serialize" />
+									<input type="hidden" name="heure_resa" id="heure_resa" class="serialize" />
+									<input type="hidden" name="trou_depart" id="trou_depart" class="serialize" />
+									<input type="hidden" name="event_type" id="event_type" class="serialize" />
+									<input type="hidden" name="crud_mode" id="crud_mode" value="none" class="serialize" />
+									<input type="hidden" name="current_user_id" id="current_user_id" value="<?= $current_user_id?>" class="serialize" />
+									<input type="hidden" name="isFormValid" id="isFormValid"  class="serialize" value="false">
+									<input type="hidden" name="id_resa_provi_aller" id="id_resa_provi_aller"  class="serialize">
+									<input type="hidden" name="id_resa_provi_retour" id="id_resa_provi_retour" class="serialize">
+									<input type="hidden" name="nb_joueurs" id="nb_joueurs" value="1" class="serialize">
 
-										<!-- Global Hidden Inputs for that reservation -->
-										<input type="hidden" name="id_reservation" id="id_reservation" class="serialize" />
-										<input type="hidden" name="date_resa" id="date_resa" class="serialize" />
-										<input type="hidden" name="heure_resa" id="heure_resa" class="serialize" />
-										<input type="hidden" name="trou_depart" id="trou_depart" class="serialize" />
-										<input type="hidden" name="event_type" id="event_type" class="serialize" />
-										<input type="hidden" name="crud_mode" id="crud_mode" value="none" class="serialize" />
-										<!-- <input type="hidden" name="user" id="user" class="serialize" /> -->
-										<!-- <input type="hidden" name="current_full_name" id="current_full_name" value="<?// echo $current_user_fullname?>" class="serialize" /> -->
-										<!-- <input type="hidden" name="current_full_name" id="current_full_name" value="<?// echo $thisUserFullName?>" class="serialize" /> -->
-										<input type="hidden" name="current_user_id" id="current_user_id" value="<?= $current_user_id?>" class="serialize" />
-										<input type="hidden" name="isFormValid" id="isFormValid"  class="serialize" value="false">
-										<input type="hidden" name="id_resa_provi_aller" id="id_resa_provi_aller"  class="serialize">
-										<input type="hidden" name="id_resa_provi_retour" id="id_resa_provi_retour" class="serialize">
-										<input type="hidden" name="nb_joueurs" id="nb_joueurs" value="1" class="serialize">
+									<!-- Boucle principale sur les 4 joueurs possibles -->
+									<? for($p = 0; $p <= 4; $p+=4) { // Boucle sur les 2 demi-parcours ALLER et RETOUR ?>
 
-										<div type="text" id="eventStartDate"></div>
-										<div type="text" id="game_type_div"></div>
+										<!-- CONTENU ONGLET ALLER ou RETOUR -->
+										<div class="tab-pane fade <?= $p == 0 ? "active" : ""; ?> in" id="tab_parcours<?= $p == 0 ? "_aller" : "_retour"; ?>" >
 
-										<div class="parcours_aller_div">
+											<!-- <div type="text" id="eventStartDate"></div> -->
+											<div type="text" id="ev_begin_date<?= $p == 0 ? "_aller" : "_retour"; ?>"></div>
+											<div type="text" id="ev_game_type<?= $p == 0 ? "_aller" : "_retour"; ?>"></div>
 
-											<div class="players_div">
+											<div class="div_parcours<?= $p == 0 ? "_aller" : "_retour"; ?>" >
 
-												<!-- Boucle principale sur les 4 joueurs possibles -->
-												<? for($i = 1; $i <= 4; $i++) { // Boucle sur les 4 joueurs possibles ?>
+												<div class="players_div">
 
-													<?if($i == 1) {	// Joueur 1: Utilisateur courant
-														if($isAdmin){
-															$user_value = "";
-															$user_id	= "2";	// utilisateur temporaire pour le moment
-														}else if($isLogged){
-															// $user_value = " value='" .$current_user_fullname ."' disabled ";
-															$user_value = $thisUserFullName;
-															$user_id	= $current_user_id;
-														} else {
-															$user_value	= "";
-															$user_id	= "";
-														}
-													}else {
-														$user_value	= "";
-														$user_id	= "";
-													}?>
+													<!-- Boucle principale sur les 4 joueurs possibles -->
+													<? for($i = 1; $i <= 4; $i++) { // Boucle sur les 4 slots possibles $p etant pour l'aller (1-4) et le retour (5-8) '?>
+														<? $slot = $i + $p;?>
 
+														<div class="<?= ($i % 2 == 0) ? "joueur_pair" : "joueur_impair"; ?> player_div" name="J<?= $slot;?>">
 
-													<div class="<?= ($i % 2 == 0) ? "joueur_pair" : "joueur_impair"; ?> player_div" name="">
+															<div class="input-group hidden-group">
+																<!-- User Hidden Inputs for that reservation -->
+																<input type="hidden" name="crud_J<?= $slot;?>" id="crud_J<?= $slot;?>" class="serialize" />
+																<!-- <input type="hidden" name="id_J<?=$i;?>" id="id_J<?=$i;?>" value="<?//= $user_id;?>" class=" serialize" /> -->
+																<input type="hidden" name="id_J<?=$slot;?>" id="id_J<?=$slot;?>" class=" serialize" />
+																<input type="hidden" name="nb_trous_J<?= $slot;?>" id="nb_trous_J<?= $slot;?>" class=" serialize" >
+																<input type="hidden" name="res_J<?= $slot;?>" id="res_J<?= $slot;?>" class=" serialize" >
+															</div>
 
-														<div class="input-group hidden-group">
-															<!-- User Hidden Inputs for that reservation -->
-															<input type="hidden" name="crud_J<?= $i;?>" id="crud_J<?= $i;?>" class="serialize" />
-															<input type="hidden" name="id_J<?=$i;?>" id="id_J<?=$i;?>" value="<?=$user_id;?>" class=" serialize" />
-															<input type="hidden" name="nb_trous_J<?= $i;?>" id="nb_trous_J<?= $i;?>" class=" serialize" >
-															<input type="hidden" name="res_J<?= $i;?>" id="res_J<?= $i;?>" class=" serialize" >
-														</div>
+															<div class="input-group name-group">
 
-														<div class="input-group name-group">
-
-															<!-- <?//if($i != 1) {?> -->
-																<span class="input-group-btn btn_clear_user" id="btn_clear_user_<?=$i;?>" hidden>
+																<span class="input-group-btn btn_clear_user" id="btn_clear_user_<?=$slot;?>" hidden>
 																	<button class="btn btn-danger" type="button">
 																		<i class="fa fa-remove"></i>
 																	</button>
 																</span>
-															<!-- <?//}?> -->
 
-															<span class="input-group-addon"><?= $i;?></span>
+																<span class="input-group-addon"><?= $slot;?></span>
 
-															<!-- <input class="form-control serialize" name="joueur<?= $i;?>" id="joueur<?= $i;?>" value="<?=$user_value;?>" type="text"> -->
-															<input class="form-control serialize" name="joueur<?= $i;?>" id="joueur<?= $i;?>" type="text" >
+																<input class="form-control serialize" name="joueur<?= $slot;?>" id="joueur<?= $slot;?>" type="text" >
 
-															<span class="input-group-addon">
-																<span class="onoffswitch">
-																	<input type="checkbox" name="nbTrousJ<?= $i;?>" class="onoffswitch-checkbox nbTrousJ" id="nbTrousJ<?= $i;?>">
-																	<label class="onoffswitch-label" for="nbTrousJ<?= $i;?>">
-																		<span class="onoffswitch-inner" data-swchon-text="18T" data-swchoff-text="9T"></span>
-																		<span class="onoffswitch-switch"></span>
-																	</label>
-																</span>
-															</span>
-
-														</div>
-
-														<div class="input-group options-group">
-															<div class="form-group">
-																<label class="col-md-4 player_div control-label">options:</label>
-																<div class="col-md-8 player_div">
-																	<? if($isAdmin){?>
-
-																		<label class="radio radio-inline">
-																			<input type="checkbox" id="joueur<?= $i;?>_visiteur" class="radiobox"/>
-																			<span class="visiteur_label<?=$i;?>"> Visiteur</span>
+																<span class="input-group-addon">
+																	<span class="onoffswitch">
+																		<input type="checkbox" name="nbTrousJ<?= $slot;?>" class="onoffswitch-checkbox nbTrousJ" id="nbTrousJ<?= $slot;?>">
+																		<label class="onoffswitch-label" for="nbTrousJ<?= $slot;?>">
+																			<span class="onoffswitch-inner" data-swchon-text="18T" data-swchoff-text="9T"></span>
+																			<span class="onoffswitch-switch"></span>
 																		</label>
+																	</span>
+																</span>
 
-																		<? if($i > 1) {?>
-																			<label class="radio radio-inline">
-																				<input type="checkbox" id="joueur<?= $i;?>_invite" class="radiobox"/>
-																				<span class="invite_label<?=$i;?>"> Invité</span>
-																			</label>
-																		<? }?>
-																	<? }?>
-
-																<? for($k = 0; $k < count($ressources); $k++) {?>
-																	<label class="radio radio-inline">
-																	<input type='checkbox' name='<?=$ressources[$k]['ressource'];?>[]' value='<?=$i-1;?>' id='<?=$ressources[$k]['ressource'];?>_<?=$i;?>' class='radiobox <?=$ressources[$k]['ressource'];?>_check serialize'/> 
-																	<?=$ressources[$k]['ressource'];?>
-																	</label>
-																<?} // for k?>
-
-																</div>
 															</div>
+
+															<div class="input-group options-group">
+																<!-- <div class="form-group"> -->
+																	<!-- <label class="col-md-4 player_div control-label">options:</label> -->
+																	<div class="col-md-8 player_div">
+																		<? if($isAdmin){?>
+
+																			<label class="radio radio-inline">
+																				<input type="checkbox" id="joueur<?= $slot;?>_visiteur" class="radiobox"/>
+																				<span class="visiteur_label<?=$slot;?>"> Visiteur</span>
+																			</label>
+
+																			<? if($i > 1) {?>
+																				<label class="radio radio-inline">
+																					<input type="checkbox" id="joueur<?= $slot;?>_invite" class="radiobox"/>
+																					<span class="invite_label<?=$slot;?>"> Invité</span>
+																				</label>
+																			<? }?>
+																		<? }?>
+
+																	<? for($k = 0; $k < count($ressources); $k++) {?>
+																		<label class="radio radio-inline">
+																		<input type='checkbox' name='<?=$ressources[$k]['ressource'];?>[]' value='<?=$i-1;?>' id='<?=$ressources[$k]['ressource'];?>_<?=$slot;?>' class='radiobox <?=$ressources[$k]['ressource'];?>_check serialize'/> 
+																		<?=$ressources[$k]['ressource'];?>
+																		</label>
+																	<?} // for k?>
+
+																	</div>
+																<!-- </div> -->
+															</div>
+
 														</div>
 
-													</div>
+													<? } // for i : Boucle sur les 4 joueurs possibles ?>
 
-												<? } // for i : Boucle sur les 4 joueurs possibles ?>
+												</div>	<!-- END .players_div -->
 
-											</div>
+											</div>	<!-- END .div_parcours_xxxx -->
 
-										</div>
+										</div>	<!-- END #tab_parcours -->
 
-									</div>
+									<? }?>	<!-- boucle sur p: les parcours ALLER p=1 et RETOUR p =2 -->
 
 								</div>
 
