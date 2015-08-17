@@ -902,11 +902,23 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		$valid = false;
 		$method = $_POST;
 		
-		$user_to_remove = Arr::get($method, 'id_user');
+		// $user_to_remove = Arr::get($method, 'id_user');
 		
-		$users_has_reservation = DB_ORM::model('users_has_reservation');
-		$users_has_reservation->id = Arr::get($method, 'id_users_has_reservation');
-		$users_has_reservation->load();
+		// $users_has_reservation = DB_ORM::model('users_has_reservation');
+		// $users_has_reservation->id = Arr::get($method, 'id_users_has_reservation');
+		// $users_has_reservation->load();
+		try {
+			$users_has_reservation = DB_ORM::model('users_has_reservation', array(Arr::get($method, 'id_users_has_reservation')));
+		} catch (Exception $e) {
+			echo json_encode(array(
+				'valid' => false,
+				'message' => $e->getMessage(),
+				'event_id' => null
+			));
+			return false;
+		}
+		
+		$event_id = $users_has_reservation->id_reservation;
 		
 		$resp = $this->leave_reservation(Arr::get($method, 'id_users_has_reservation'));
 		
@@ -918,7 +930,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 			goto end;
 		}
 		
-		// Récupère la reservation lié si il y en a une
+		// Récupère la reservation liée si il y en a une
 		$reservation_linked = DB_ORM::model("reservation");
 		if($reservation->id_parent > 0) {
 			$reservation_linked->id = $reservation->id_parent;
@@ -956,6 +968,7 @@ class Controller_Golf_ResAjax extends Controller_Golf_Main
 		echo json_encode(array(
 			'valid' => $valid,
 			'message' => $message,
+			'event_id' => $users_has_reservation->id_reservation
 		));
 	}	// action_leave
 

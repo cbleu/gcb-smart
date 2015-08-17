@@ -170,7 +170,7 @@
 
 										<div class="parcours_aller_div">
 
-											<div class="players_div">
+											<div class="players-div">
 
 												<? for($i = 1; $i <= 4; $i++) { // Boucle sur les 4 joueurs possibles ?>
 													<?if($i == 1) {	// Joueur 1: Utilisateur courant
@@ -185,8 +185,8 @@
 														$user_value	= "";
 														$user_id	= "";
 													}?>
-													<!-- <div class="<?= ($i % 2 == 0) ? "joueur_pair" : "joueur_impair"; ?> joueur_div "> -->
-													<div class="<?= ($i % 2 == 0) ? "joueur_pair" : "joueur_impair"; ?> player_div">
+													<!-- <div class="<?= ($i % 2 == 0) ? "joueur-pair" : "joueur-impair"; ?> joueur_div "> -->
+													<div class="<?= ($i % 2 == 0) ? "joueur-pair" : "joueur-impair"; ?> player-div">
 
 														<input type="hidden" name="crud_J<?= $i;?>" id="crud_J<?= $i;?>" value="none" class="serialize" />
 
@@ -195,7 +195,7 @@
 															<input class="form-control serialize" name="joueur<?= $i;?>" id="joueur<?= $i;?>" placeholder="Joueur <?= $i;?>: taper un nom ... "  <?=$user_value;?> type="text">
 														</div> -->
 
-														<!-- <div class="col-sm-12 player_div"> -->
+														<!-- <div class="col-sm-12 player-div"> -->
 														<div class="input-group">
 
 															<!-- <div class="input-group-btn open">
@@ -259,8 +259,8 @@
 
 														<div class="input-group">
 															<div class="form-group">
-																<label class="col-md-4 player_div control-label">options:</label>
-																<div class="col-md-8 player_div">
+																<label class="col-md-4 player-div control-label">options:</label>
+																<div class="col-md-8 player-div">
 																	<? if($isAdmin){?>
 
 																	<label class="radio radio-inline">
@@ -330,11 +330,11 @@
 
 										<div class="parcours_aller_div">
 
-											<div class="players_div">
+											<div class="players-div">
 
 												<? for($i = 1; $i <= 4; $i++) { // Boucle sur les 4 joueurs possibles ?>
 
-													<div class="<?= ($i % 2 == 0) ? 'joueur_pair' : 'joueur_impair'; ?> player_div">
+													<div class="<?= ($i % 2 == 0) ? 'joueur-pair' : 'joueur-impair'; ?> player-div">
 
 														<input type="hidden" name="crud_J<?= $i;?>" id="crud_J<?= $i;?>" value="none" class="serialize" />
 
@@ -369,8 +369,8 @@
 
 														<div class="input-group options-group">
 															<div class="form-group">
-																<label class="col-md-4 player_div control-label">options:</label>
-																<div class="col-md-8 player_div">
+																<label class="col-md-4 player-div control-label">options:</label>
+																<div class="col-md-8 player-div">
 																	<? if($isAdmin){?>
 
 																	<label class="radio radio-inline">

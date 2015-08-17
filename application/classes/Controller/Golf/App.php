@@ -464,6 +464,7 @@ class Controller_Golf_App extends Controller_Golf_Main
 		// // Helper to add js file
 		Helpers_Javascript::add('/assets/js/plugin/jquery-form/jquery-form.min.js');
 		Helpers_Javascript::add('/assets/js/plugin/colorpicker/bootstrap-colorpicker.min.js"');
+		Helpers_Javascript::add('/assets/js/plugin/moment/moment.min.js"');
 		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/dhtmlxscheduler.js');
 		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/locale/locale_fr.js');
 		Helpers_Javascript::add('/assets/js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_units.js');

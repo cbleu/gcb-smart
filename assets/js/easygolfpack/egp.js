@@ -306,13 +306,13 @@ function initWizard()
 
 
 
-	$("#joueur1, #joueur2, #joueur3, #joueur4, #joueur5, #joueur6, #joueur7, #joueur8").focus(function(){
+	$(list_div_joueurs).focus(function(){
 		lastNameValue = $(this).val();
 		$(this).css('color', 'black');
 		$(this).select();
 	});
 
-	$("#joueur1, #joueur2, #joueur3, #joueur4, #joueur5, #joueur6, #joueur7, #joueur8").change(function(){
+	$(list_div_joueurs).change(function(){
 		var idxj = this.name.slice( -1); 
 		if(lastNameValue != "" && $(this).val() != lastNameValue) {
 			// unvalidate_name($(this));
@@ -324,7 +324,7 @@ function initWizard()
 		// joueurs_presents_[parseInt(id_name.substring(id_name.length-1)) - 1] = $("#id_"+id_name).val();
 	});
 
-	$("#joueur1, #joueur2, #joueur3, #joueur4, #joueur5, #joueur6, #joueur7, #joueur8").focusout(function(){
+	$(list_div_joueurs).focusout(function(){
 		var idxj = this.name.slice( -1); 
 		if(lastNameValue != "" && $(this).val() == lastNameValue) {
 			// validate_name($(this));
@@ -334,7 +334,7 @@ function initWizard()
 		// update_joueurs_presents();
 	});
 
-	$("#joueur1, #joueur2, #joueur3, #joueur4, #joueur5, #joueur6, #joueur7, #joueur8").autocomplete({
+	$(list_div_joueurs).autocomplete({
 		source: function( request, response ) {
 			$.ajax({
 				async: true,
@@ -830,9 +830,28 @@ var reservation_lightbox;
 
 var isAnEmptyClick;
 var action_data;
+var tempEvent;
+
+// $(document).on('click', 'a.accordion-toggle', function(e) {
+// 	console.log("a.accordion-toggle");
+// 	// $(this).parent().parent().collapse("toggle");
+// 	// return true;
+// 	// $(e.target).parent().toggle();
+//     // $(e.target).parent().siblings('.accordion-body').on('hidden', function(e) {
+//     //     e.stopPropagation();
+//     // });
+// });
+//
+// $('.collapse').on('click', 'a.accordion-toggle', function(e) {
+// 	console.log("jQuery a.accordion-toggle");
+// });
+
 
 function initCalendrier()
 {
+	var list_div_joueurs = "#joueur1, #joueur2, #joueur3, #joueur4, #joueur5, #joueur6, #joueur7, #joueur8";
+	var list_div_ressources1 = "#Chariot_1, #Chariot_2, #Chariot_3, #Chariot_4, #Chariot_5, #Chariot_6, #Chariot_7, #Chariot_8";
+	
 	resize_calendar();
 	initScheduler();
 	// update_joueurs_presents();
@@ -842,12 +861,14 @@ function initCalendrier()
 	});
 
 
+	// $('.collapse').collapse();
+	$('.collapse').on('click', 'a.accordion-toggle', function(e) {
+		console.log("jQuery a.accordion-toggle");
+	});
+	
 	$('#refresh').click(function () {
-		// document.location.reload();
 		schedulerLoad();
-		// scheduler.setCurrentView();
-		// scheduler.setCurrentView(scheduler._date, "starter_units");
-	})
+	});
 	
 	// When clicking button to add recurring event, we set the lightbox back to default and open it
 	$("#egp_event_icon").click(function(){
@@ -876,7 +897,7 @@ function initCalendrier()
 	});
 
 	// Checkbox de la ressource Chariot: uniquement visuel => la donnée est dans #nb_trous_J
-	$("#Chariot_1, #Chariot_2, #Chariot_3, #Chariot_4").change(function(){
+	$(list_div_ressources1).change(function(){
 		var idxj = this.id.slice( -1); 
 		if (this.checked) {	// this is true if the switch is on
 			// $("#res_J" + idxj).val($("#id_J" + idxj).val());
@@ -908,7 +929,7 @@ function initCalendrier()
 		}
 	});
 
-	$("#joueur1, #joueur2, #joueur3, #joueur4, #joueur5, #joueur6, #joueur7, #joueur8").addClear({
+	$(list_div_joueurs).addClear({
 		onClear: function(){
 			// alert("call back!");
 			inputfield = document.activeElement.id;
@@ -922,13 +943,13 @@ function initCalendrier()
 	});
 
 
-	$("#joueur1, #joueur2, #joueur3, #joueur4, #joueur5, #joueur6, #joueur7, #joueur8").focus(function(){
-		// lastNameValue = $(this).val();
-		// unvalidate_name($(this));
-		// $(this).select();
-	});
+	// $(list_div_joueurs).focus(function(){
+	// 	// lastNameValue = $(this).val();
+	// 	// unvalidate_name($(this));
+	// 	// $(this).select();
+	// });
 
-	$("#joueur1, #joueur2, #joueur3, #joueur4, #joueur5, #joueur6, #joueur7, #joueur8").change(function(){
+	$(list_div_joueurs).change(function(){
 		var idxj = this.name.slice( -1); 
 		if(lastNameValue != "" && $(this).val() != lastNameValue) {
 			// unvalidate_name($(this));
@@ -939,12 +960,12 @@ function initCalendrier()
 		}
 	});
 	
-	$("#joueur1, #joueur2, #joueur3, #joueur4, #joueur5, #joueur6, #joueur7, #joueur8").focusout(function(){
-		// validate_name($(this));
-		update_joueurs_presents();
-	});
+	// $(list_div_joueurs).focusout(function(){
+	// 	// validate_name($(this));
+	// 	update_joueurs_presents();
+	// });
 
-	$("#joueur1, #joueur2, #joueur3, #joueur4, #joueur5, #joueur6, #joueur7, #joueur8").autocomplete({
+	$(list_div_joueurs).autocomplete({
 		source: function( request, response ) {
 			$.ajax({
 				async: true,
@@ -972,7 +993,7 @@ function initCalendrier()
 				}
 			});
 		},
-		appendTo: "#wizard_form, #form, #details_form_div",
+		appendTo: "#wizard_form, #form",
 		minLength: 2,
 		select: function( event, ui ) {
 			// var idxj = parseInt(this.name.substr(this.name.length-1));
@@ -1035,7 +1056,7 @@ function initCalendrier()
 		}// bloc admin
 	});
 		
-	$(".btn_clear_user").click(function(ev){
+	$(".btn_clear_user").click(function(){
 		$.ajax({
 			async: true,
 			url: '/resajax/leave',
@@ -1045,17 +1066,42 @@ function initCalendrier()
 			cache: false,
 			success: function (data) {
 				if(data.valid) {
-					scheduler.endLightbox(false, document.getElementById('resa_form_div'));
+					// scheduler.endLightbox(false, document.getElementById('modal_resa_form_div'));
 					ReleaseResaProvi($("#form .serialize"));
+
 					schedulerLoad();
+
+					var ev = scheduler.getEvent(data.event_id);
+
+					////////////////////////////////////////////////////////
+					// initialise la popup avec les valeurs de la partie
+					// init des champs hidden
+					$("#id_reservation").val(ev.id);
+					$("#date_resa").val(shortDate_format(ev.start_date));
+					$("#heure_resa").val(shortTime_format(ev.start_date));
+					$("#trou_depart").val(ev.sh);
+					$("#event_type" ).val(2);	// event_type 1 => joueur 2 => resa provi 3 => event
+
+					// On charge les parties sur ce slot horaire
+					reset_form(ev);
+					loadEventsDetails(ev);
+
+				    // $("#modal_resa_form_div .modal-body").load(target, function() {
+				    //      $("#modal_resa_form_div").modal("show");
+				    // });
+
 				}
 				alert(data.message);
+
 			}
 		});
 	}); 
 
 	$("#add_new_button").click(function(){
 		var isCurrentUserAdded = false;
+
+		// var ev = scheduler.getEvent($("#id_reservation").val());
+		// getPlayersBySlotFor(ev);	// bloque les switchs pour les 18 trous mais ne marche pas dans ce cas
 
 		for(var i = 1; i <= max_joueurs; i++) {
 			if($("#id_J"+i).val() == "") {
@@ -1115,6 +1161,9 @@ function initCalendrier()
 
 		// On cré une resa provi pour les places encore dispo
 		CreateResaProvi($("#form .serialize"));
+		
+		// var ev = scheduler.getEvent($("#id_reservation").val());
+		// getPlayersBySlotFor(ev);	// bloque les switchs pour les 18 trous
 
 		// On adapte les slots joueurs
 		$("#crud_mode").val("Update");
@@ -1159,13 +1208,13 @@ function initCalendrier()
 
 
 	$("#update_button").click(function(){	// ajax 
-		var resa_form = document.getElementById('resa_form_div');
 		if(!validate_form()) {
 			return false;
 		}
-		$("#loading_div").height($("#form").height());
-		$("#form").hide();
-		$("#loading_div").show();
+		// $("#loading_div").height($("#form").height());
+		// $("#form").hide();
+		// $("#loading_div").show();
+
 		$.ajax({
 			async: true,
 			url: '/resajax/update',
@@ -1174,13 +1223,14 @@ function initCalendrier()
 			dataType: 'json',
 			cache: false,
 			success: function (data) {
-				$("#form").show();
-				$("#loading_div").hide();
+				// $("#form").show();
+				// $("#loading_div").hide();
 				if(!data.valid) {
 					alert(data.message);
 				}
 				else {
-					scheduler.endLightbox(false, resa_form);
+					// var resa_form = document.getElementById('modal_resa_form_div');
+					// scheduler.endLightbox(false, resa_form);
 					schedulerLoad();
 				}
 			}
@@ -1200,8 +1250,8 @@ function initCalendrier()
 					alert(data.message);
 				}
 				else {
-					var resa_form = document.getElementById('resa_form_div');
-					scheduler.endLightbox(false, resa_form);
+					// var resa_form = document.getElementById('modal_resa_form_div');
+					// scheduler.endLightbox(false, resa_form);
 					schedulerLoad();
 				}
 			}
@@ -1209,11 +1259,37 @@ function initCalendrier()
 	});
 		
 	$("#annuler_button").click(function(){
-		var resa_form = document.getElementById('resa_form_div');
-		scheduler.endLightbox(false, resa_form);
 		ReleaseResaProvi($("#form .serialize"));
-	});
 		
+		// deleteTempEvent();
+	});
+
+	$('#modal_resa_form_div').on('hidden.bs.modal', function () {
+		deleteTempEvent();
+	});
+
+	// $('#parcours_aller').on('hide.bs.collapse', function () {
+	// 	console.log("aller collapsed");
+	// 	$('#parcours_retour').collapse("show");
+	// });
+	//
+	// $('#parcours_retour').on('hide.bs.collapse', function () {
+	// 	console.log("retour collapsed");
+	// 	$('#parcours_aller').collapse("show");
+	// });
+	// ////////////////////////////////////////
+
+	$('#parcours_aller').on('show.bs.collapse', function () {
+		console.log("aller show");
+		$('#parcours_retour').collapse("hide");
+	});
+
+	$('#parcours_retour').on('show.bs.collapse', function () {
+		console.log("retour show");
+		$('#parcours_aller').collapse("hide");
+	});
+
+	
 	$("#unit_tab").click(function(){
 		scheduler.setCurrentView(scheduler._date, "starter_units");
 	});
@@ -1235,38 +1311,45 @@ function initCalendrier()
 
 	});
 		
-	$('#form').ajaxForm({
-		// beforeSerialize: function($form, options) {
-		// 	$("#nbTrousJ1").val("9");
-		// },
-		beforeSubmit: function(data, form, options) {
-			// console.log("nbTrousj1:" , $("#nbTrousJ1").val());
-			if(!validate_form()) {
-				return false;
-			}
-			if(vars.isLogged){
-				options['url'] = "/resajax/add";
-			}else{
-				options['url'] = "/resajax/addpublic";
-			}
-			// $("#loading_div").height($("#form").height());
-			// $("#form").hide();
-			// $("#loading_div").show();
-		},
-		success: function(data) {
-			var resp = jQuery.parseJSON(data);
-			if(!resp.valid) {
-				alert(resp.message);
+	$("#reserver_button").click(function(){
+
+		$.ajax({
+			async: true,
+			url: '/resajax/add',
+			type: "POST",
+			data: $("#form").serialize(),
+			dataType: 'json',
+			cache: false,
+			beforeSubmit: function(data, form, options) {
+				log("#reserver_button beforeSubmit", "info");
+				if(!validate_form()) {
+					return false;
+				}
+				// if(vars.isLogged){
+				// 	options['url'] = "/resajax/add";
+				// }else{
+				// 	options['url'] = "/resajax/addpublic";
+				// }
+				// $("#loading_div").height($("#form").height());
+				// $("#form").hide();
+				// $("#loading_div").show();
+			},
+			success: function(data) {
+				log("#reserver_button success => /resajax/add", "info");
+				// var resp = jQuery.parseJSON(data);
+				if(!data.valid) {
+					alert(data.message);
+					// $("#form").show();
+					// $("#loading_div").hide();
+					return false;
+				}
+				// var resa_form = document.getElementById('modal_resa_form_div');
 				// $("#form").show();
 				// $("#loading_div").hide();
-				return false;
-			}
-			// var resa_form = document.getElementById('resa_form_div');
-			// $("#form").show();
-			// $("#loading_div").hide();
-			scheduler.endLightbox(true, document.getElementById('resa_form_div'));
-			schedulerLoad();
-		},
+				// scheduler.endLightbox(true, document.getElementById('modal_resa_form_div'));
+				schedulerLoad();
+			},
+		});
 	});
 
 }	// initCalendrier
@@ -1426,10 +1509,13 @@ function initScheduler()
 
 	scheduler.deleteEvent = function(id) {
 		var ev = scheduler.getEvent(id);
-		console.log("deleteEvent", ev.id, ev.evt);
-		if(ev.evt == 1)	// une resa joueur
-			return false;
-		else{
+		// console.log("deleteEvent", ev.id, ev.evt);
+
+		if("evt" in ev){
+			if(ev.evt == 1){	// une resa joueur
+				return false;
+			}
+		}else{
 			delete this._events[id];
 			this.unselect(id);
 			this.event_updated(ev);
@@ -1618,11 +1704,11 @@ function initScheduler()
 
 	scheduler.attachEvent("onEventAdded", function(id,ev){
 
+		console.log("onEventAdded: ",id, ev.rec_type);
 		if( ev.evt != 3 ) {	// evt == 3 uniquement pour les evenements !
 			return true;
 		}
 		console.log("For recurring event ONLY: onEventAdded");
-		console.log("onEventAdded: ",id, ev.rec_type);
 
 		// We add the event to the database
 		//ev.trou_depart = [1,10];
@@ -1692,9 +1778,9 @@ function initScheduler()
 		// 	// return true;
 		// }
 
-		if(vars.isMobile){
-			scheduler.addEventNow({ start_date: date });
-		}
+		// if(vars.isMobile){
+		// 	scheduler.addEventNow({ start_date: date });
+		// }
 
 		// var fixed_date = fix_date(date);
 		// scheduler.addEventNow(date, scheduler.date.add(date, scheduler.config.time_step, "minute"));
@@ -1707,22 +1793,12 @@ function initScheduler()
 
 		action_data = scheduler.getActionData(native_event_object);
 		
-		// openReservationLightbox( scheduler.getEvent(event_id) );
-		
 		reservationLightbox(event_id);
 		
 		return false;	// default action canceled
 		
 		// var ev = scheduler.getEvent(event_id);
-		//
-		// if(click_disabled || scheduler.config.readonly ) {
-		// 	return false;
-		// }
-		// if( ev.evt == 3 ) {
-		// 	return true;	// default action triggered: open lightbox
-		// }
-		// startEditEventForm(ev);
-		// return false;	// default action canceled
+
 	});	// => openlightbox to edit form
 		
 	scheduler.attachEvent("onDblClick", function (event_id, native_event_object){
@@ -1878,6 +1954,10 @@ function detectUserPlayTimespan(target){
 	}
 }	// detectUserPlayTimespan
 
+function deleteTempEvent(){
+	console.log("deleteTempEvent :", tempEvent.id)
+	scheduler.deleteEvent(tempEvent.id);
+}
 
 function reservationLightbox(id) {
 	console.log("Openning Custom Lightbox: reservationLightbox id: ", id)
@@ -1923,8 +2003,12 @@ function reservationLightbox(id) {
 		}
 		log("Stop: Evenement non joueur", "warning")
 		return false;
+
 	}else{
 		// Sinon on reset, initialise et ouvre la popup
+
+		tempEvent = ev;
+
 		openReservationLightbox(ev);
 	}
 
@@ -1978,7 +2062,7 @@ function openReservationLightbox(ev) {
 
 	////////////////////////////////////////////////////////
 	// On recupère le formulaire dans le DOM
-	var resa_form = document.getElementById('resa_form_div');
+	// var resa_form = document.getElementById('modal_resa_form_div');
 	
 	////////////////////////////////////////////////////////
 	// On réinitialise tous les champs du formulaire
@@ -1992,7 +2076,6 @@ function openReservationLightbox(ev) {
 	$("#heure_resa").val(shortTime_format(ev.start_date));
 	$("#trou_depart").val(ev.sh);
 	$("#event_type" ).val(2);	// event_type 1 => joueur 2 => resa provi 3 => event
-	// $("#crud_mode").val("add");
 
 	// // init de l'affichage
 	// $("#eventStartDate").html(french_format(ev.start_date));
@@ -2001,13 +2084,15 @@ function openReservationLightbox(ev) {
 	// setDetailFormMode("add");
 
 	console.log("\t\tstartLightbox ... ");
-	scheduler.startLightbox(ev.id, resa_form);	// ouverture de la lightbox basee sur resa_form
-
+	// scheduler.startLightbox(ev.id, resa_form);	// ouverture de la lightbox basee sur resa_form
+	$("#modal_resa_form_div").modal("show");
+	
 	close_onClick_outside();
 
 }	// openReservationLightbox
 
 function getPlayersBySlotFor(ev){
+	// TODO REFAIRE CETTE FONCTION
 
 	var thatMorning = new Date(ev.start_date);
 	thatMorning.setHours(0);
@@ -2038,14 +2123,17 @@ function getPlayersBySlotFor(ev){
 			// if(date_key in occupation_array[ev.sh]) {
 			if(date_key in data[ev.sh]) {
 				// for(var i = 4; i > 4-occupation_array[ev.sh][date_key]; i--) {
+					console.log("getPlayersBySlotFor:",ev.sh, " ", date_key, " ", data[ev.sh][date_key]);
 				for(var i = max_joueurs; i > max_joueurs - data[ev.sh][date_key]; i--) {
 
-					Change_PlayerDiv(i,	// Numero du slot
-						null,			// Div joueur entiere
-						null, null,		// joueur name, et name
-						null,				// id_user
-						false, false		// nbTrousJ et check 18
-					)
+					if(!(($("#crud_J" + i).val() == "Edit") && ($("#nb_trous_J" + i).val() == 18))){	// patch: pour l'update
+						Change_PlayerDiv(i,	// Numero du slot
+							null,			// Div joueur entiere
+							null, null,		// joueur name, et name
+							null,				// id_user
+							false, false		// nbTrousJ et check 18
+						)
+					}
 
 					// $("#nbTrousJ" + i).prop("disabled", true);
 					// $("#nbTrousJ" + i).prop("checked", false);
@@ -2083,30 +2171,33 @@ function loadEventsDetails(ev){
 			$.each(data, function(index, value) {
 				if(value.isSelected){
 					// $("#ev_game_type").show();
-					$("#ev_game_type_aller").html("Parcours Aller");
-					$("#ev_game_type_retour").html("Parcours Retour");
+					// $("#ev_game_type_aller").html("Parcours Aller");
+					// $("#ev_game_type_retour").html("Parcours Retour");
+					console.log("loadEventsDetails:", value.game_type);
 					switch(value.game_type){
 						case 0:
-							$("#ev_game_type_aller").html("Parcours 9 trous");
-							$('.nav-tabs a[href="#tab_parcours_aller"]').tab('show');
-							$('.nav-tabs a[href="#tab_parcours_retour"]').hide();
-							vars['selected_parcours'] = 0;
-							break;
 						case 1:
-							$('.nav-tabs a[href="#tab_parcours_aller"]').tab('show');
-							$('.nav-tabs a[href="#tab_parcours_retour"]').show();
+							// $('.panel a[href="#parcours_aller"]').collapse('show');
+							$("#parcours_aller").collapse('show');
+							// $("#parcours_retour").collapse('hide');
 							vars['selected_parcours'] = 0;
+							$(".span-start-hole-aller").html("Trou  1");
+							$(".span-start-hole-retour").html("Trou 10");
 							break;
 						case 2:
-							$('.nav-tabs a[href="#tab_parcours_retour"]').show();
-							$('.nav-tabs a[href="#tab_parcours_retour"]').tab('show');
+							// $("#parcours_aller").collapse('hide');
+							$("#parcours_retour").collapse('show');
 							vars['selected_parcours'] = 1;
+							$(".span-start-hole-aller").html("Trou 10");
+							$(".span-start-hole-retour").html("Trou  1");
 							slotIndex += max_joueurs;
 							break;
 						default:
-							// $("#ev_game_type").hide();
 							vars['selected_parcours'] = 0;
 					}
+
+					$(".parcours-heading-label-aller").html("Parcours: <strong>Aller</strong>" + " (" + moment(value.GameReservation.slotAller.begin.date).format('HH:mm') + ")");
+					$(".parcours-heading-label-retour").html("Parcours: <strong>Retour</strong>" + " (" + moment(value.GameReservation.slotRetour.begin.date).format('HH:mm') + ")");
 				}
 
 				//////////////////////////////////////////////////////////
@@ -2297,7 +2388,7 @@ function setDetailFormMode(mode){
 			$("#delete_button").show();
 		else
 			$("#delete_button").hide();			
-		$("#joueur1, #joueur2, #joueur3, #joueur4, #joueur5, #joueur6, #joueur7, #joueur8").prop("disabled", true);
+		$(list_div_joueurs).prop("disabled", true);
 		// $("#joueur1, #joueur2, #joueur3, #joueur4").addClass("disabled");
 		break;
 	case "update":
@@ -2339,6 +2430,10 @@ function reset_form(ev){
 	$("#id_resa_provi_aller").val("");
 	$("#id_resa_provi_retour").val("");
 	$("#id_reservation").val("");
+
+	$("#parcours_aller").collapse('show');
+	// $("#parcours_retour").collapse('hide');
+
 	scheduler.updateEvent(ev.id);
 	
 	for (var i=1; i <= max_joueurs * 2; i++){	// Aller et Retour
@@ -2469,7 +2564,7 @@ function Change_PlayerDiv(slot,
 	enabledInvited = defaultFor(enabledInvited, null);
 	valueInvited = defaultFor(valueInvited, null);
 
-	if(!enabledDiv){
+	if(enabledDiv == false){
 		enabledUser 		= false;
 		enabledNbHoleSwitch	= false;
 		enabledRes1			= false;
@@ -2600,7 +2695,7 @@ function update_joueurs_presents(){
 	joueurs_dans_partie = Array();
 	for (var i = 1; i <= max_joueurs; i++){
 		if($("#id_J"+i).val() !== ""){
-			if(($("#crud_J"+i).val() == "Create") || ($("#crud_J"+i).val() == "Update") ){
+			if(($("#crud_J"+i).val() == "Create") || ($("#crud_J"+i).val() == "Edit") || ($("#crud_J"+i).val() == "Modified") ){
 				joueurs_dans_partie.push($("#id_J"+i).val());	// nb de joueurs dans cette partie
 			}
 			joueurs_presents_.push($("#id_J"+i).val());			// nb total des joueurs sur ce slot horaire

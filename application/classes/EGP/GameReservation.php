@@ -192,8 +192,15 @@ class EGP_GameReservation
 				if(!$formplayernbtrous) {
 					$formplayernbtrous = Arr::get( $post, 'nb_trous');	// Si resa du Wizard
 				}
-				$pl	= DB_ORM::model('users',array($formplayerid));
-				$pl->load();
+				try{
+					 $pl	= DB_ORM::model('users',array($formplayerid));
+				}catch (Exception $e) {
+					return array(
+						'valid' => false,
+						'message' => $e->getMessage()
+					);
+				}
+				// $pl->load();
 				$info = "";
 				if($formplayerid == 0 || $formplayerid == 1 || $formplayerid == 2) {
 					$info = Arr::get( $post, 'joueur'.($i+1));
@@ -259,8 +266,21 @@ class EGP_GameReservation
 	 */
 	public function InitResaByLoading($id_resa)
 	{
+
+
 		// On charge la ligne de la resa
-		$postresa = DB_ORM::model("reservation", array($id_resa));
+		// $postresa = DB_ORM::model("reservation", array($id_resa));
+		try {
+			$postresa = DB_ORM::model("reservation", array($id_resa));
+		} catch (Exception $e) {
+			// echo 'Exception reçue : ',  $e->getMessage(), "\n";
+			$this->message = $e->getMessage();
+			$this->isValid = false;
+			return array(
+				'valid' => false,
+				'message' => $e->getMessage()
+			);
+		}
 
 		// Init de beginDatetime
 		$this->beginDateTime = new DateTime($postresa->date_reservation);	// Datetime du début de partie: Slot horaire
@@ -683,7 +703,9 @@ class EGP_GameReservation
 
 				// Si j'ai une resa provisoire
 				// On convertit les résa provisoires en résa finales avec les bons paramètres
-				if($this->UpdateReservationsToPermanent()){
+				$check_result = $this->UpdateReservationsToPermanent();
+
+				if($check_result['valid']) {
 					// Ok resa transformée: nb_joueurs ajusté, on coninue ...
 					break;
 				}else{
@@ -696,6 +718,13 @@ class EGP_GameReservation
 					);
 				}
 			}
+		}
+
+		if(!$check_result['valid']) {
+			return array(
+				'valid' => $check_result['valid'],	// ici c'est false !
+				'message' => $check_result['message']
+			);
 		}
 		
 		//////////////////////////////////////////////////////////////////////////
@@ -1543,7 +1572,11 @@ class EGP_GameReservation
 	public function UpdateReservationsToPermanent()	// passe la resa de provisoire a permanent,met à jour le nb de joueurs
 	{
 		if(!isset($this->slotAller->id)){
-			return false;
+			return array(
+				'valid' => false,	// ici c'est false !
+				'message' => "Erreur, pas de reservation Aller !"
+			);
+			// return false;
 		}
 
 		$haveaReturn = false;
@@ -1576,7 +1609,11 @@ class EGP_GameReservation
 							->where('id', '=', intval($this->slotAller->id));	
 		$reservation_update_query->execute(TRUE);	// SQL UPDATE la reservation
 		
-		return true;
+		return array(
+			'valid' => true,
+			'message' => ""
+		);
+		// return true;
 	}	// UpdateReservationsToPermanent
 
 	/**
@@ -1847,7 +1884,12 @@ class EGP_GameReservation
 		if(!isset($startdatetime)){
 			return false;
 		}
-		$golf = DB_ORM::model('golf', array(1));
+		try {
+			$golf = DB_ORM::model('golf', array(1));
+		} catch (Exception $e) {
+			return false;
+		}
+		// $golf = DB_ORM::model('golf', array(1));
 		$golf->load();
 		$compareResa	= new DateTime($startdatetime->format('Y-m-d H:i:s'));
 		$lastStartTime	= new DateTime($compareResa->format('Y-m-d H:i:s'));

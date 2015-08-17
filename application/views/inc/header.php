@@ -11,7 +11,10 @@
 		<meta name="description" content="">
 		<meta name="author" content="cesar jacquet - cbleu.re">
 
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<!-- <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0;" /> -->
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<!-- <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> -->
 
 		<!-- Basic Styles -->
 		<link rel="stylesheet" type="text/css" media="screen" href="<?php echo ASSETS_URL; ?>/css/bootstrap.min.css">
@@ -279,7 +282,7 @@
 
 							<form class="navbar-form navbar-right" name="login-form" id="login-form" method="post" action="/app/login">
 								<div class="modal-body">
-									<input id="user_username" style="margin-bottom: 15px;" type="text" name="username" size="30" />
+									<input id="user_username" style="margin-bottom: 15px;" type="email" name="username" size="30" />
 									<input id="user_password" style="margin-bottom: 15px;" type="password" name="password" size="30" />
 									<!-- <input id="user_remember_me" style="float: left; margin-right: 10px;" type="checkbox" name="user[remember_me]" value="1" /> -->
 									<label class="string optional" for="user_remember_me"> Remember me</label>
